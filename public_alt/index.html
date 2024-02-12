@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediaSFU - Events</title>
+
+  <!-- Meta tags for description and social media sharing -->
+  <meta name="description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta property="og:title" content="MediaSFU - Meeting Room">
+  <meta property="og:description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta property="og:image" content="/images/logo512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@mediasfu">
+  <meta name="twitter:creator" content="@mediasfu">
+  <meta name="twitter:title" content="MediaSFU - Meeting Room">
+  <meta name="twitter:description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta name="twitter:image" content="/images/logo512.png">
+  <meta property="og:url" content="https://mediasfu.com">
+  <meta property="og:type" content="website">
+  <meta property="og:image:alt" content="MediaSFU Logo">
+  <meta itemprop="name" content="MediaSFU - Meeting Room">
+  <meta itemprop="description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta itemprop="image" content="/images/logo512.png">
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
+
+
+  <link href="./style.css" rel="stylesheet">
+
+  <script src=
+     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+    </script>
+
+
+</head>
+
+<body>
+  <!-- <video id="mainVideo" autoplay muted></video>
+
+    <div id="mini-videos"></div> -->
+
+  <div class="container-fluid w-100 " id="meeting" style="background-color:#e8eaec;">
+    <div class="card-deck w-100 h-100">
+      <div class="card border-0 h-100">
+        <div class="card-body" style="background-color:#e8eaec;">
+          <div class="row no-gutters h-100" id="preview">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12" id="meetingDetails">
+              <div class="card-columns w-100" style="background-color: #e8eaec;">
+                <div class="card border-0" style="background-color: #e8eaec;">
+                  <div class="card-body" >
+                    <h5 class="card-title text-dark tune-event">Meeting ID</h5>
+                    <div class="input-group mb-3 ">
+                      <input type="text" id="eventIDInput" class="form-control text-black"
+                        placeholder="Enter Event ID" aria-label="Meeting ID" aria-describedby="eventIDHelp"
+                        style="max-width: 100%;">
+                      <div class="input-group-append">
+                        <button class="btn btn-secondary btn-outline-secondary text-dark" type="button"
+                          id="confirmEventIDBtn">Confirm</button>
+                      </div>
+                    </div>
+                    <small id="eventIDHelp" class="form-text text-dark tune-event">Enter the meeting ID provided to you.</small>
+                    <div id="warningMessage" class="text-danger"></div>
+                    <div class="divider text-dark"><span>OR</span></div>
+                    <button id="toggleButton" class="btn btn-secondary mt-3 tune-event">Start a new meeting</button>
+                  </div>
+                </div>
+                <div class="card border-0" style="background-color: #e8eaec;">
+                  <div class="card-body" style="background-color: #e8eaec;">
+                    <h5 class="card-title text-dark">Name</h5>
+                    <div class="input-group">
+                      <input type="text" id="userNameInputMain" class="form-control text-black" placeholder="Enter name"
+                        aria-label="User Name" aria-describedby="userNameHelpMain" style="max-width: 100%;" readonly>
+                      <div class="input-group-append">
+                        <button id="joinButton" class="btn btn-secondary" disabled>Join</button>
+                      </div>
+                    </div>
+                    <small id="userNameHelpMain" class="form-text text-dark tune-event">Enter your name to be displayed in the
+                      meeting.</small>
+                    <div id="userNameWarn" class="text-danger"></div>
+                    <div id="qrcode1" style="margin-top:30px; margin-bottom:30px;justify-content: center;justify-items: center; justify-self: center;display: none;"> 
+                    </div>
+                    <div class="form-group" id="start-guide1" style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #eeeded; padding: 20px; border-radius: 10px;display:none;">
+                    <p style="font-weight: bold; color: #e8e8ee; font-size: medium; margin-bottom: 10px;">Join on your mobile app or the web:</p>
+                    <p id="qrCodeParagraph1" style="margin-bottom: 10px; color: #e8e8ee;font-size: small;" >1. Use your mobile app to scan the QR code (or enter your secret) to join the event.</p>
+                    <p style="margin-bottom: 5px; color: #e8e8ee;font-size: small;">2. Or, click <button type="button" style="background-color: #0b0b0b; padding: 5px;font-size: smaller;"  class="btn btn-secondary btn-small" id="joinWeb"> this button </button> to proceed on the web (here).</p>
+                  </div>
+                  
+        
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12" id="mediaSelection">
+              <div class="card-columns w-100 " style="background-color: #e8eaec;">
+                <div class="card border-0" style="background-color: #e8eaec;">
+                  <div class="card-body" style="background-color: #e8eaec;">
+                    <h5 class="card-title text-dark">Camera Selection</h5>
+                    <select id="cameraList"></select>
+                    <div id="cameraPreview">
+                      <video id="videoOutputPreview" autoplay muted></video>
+                    </div>
+                  </div>
+                </div>
+                <div class="card border-0" style="background-color: #e8eaec;">
+                  <div class="card-body" style="background-color: #e8eaec;">
+                    <h5 class="card-title text-dark">Microphone Selection</h5>
+                    <select id="microphoneList"></select>
+                    <br>
+                    <hr>
+                    <br>
+                    <h5 class="card-title text-dark">Sound Selection</h5>
+                    <select id="audioOutputList"></select>
+                    <br>
+                    <hr>
+                    <br>
+                    <h5 class="card-title text-dark">Sound & Mic Preview</h5>
+                    <audio id="audioOutputPreview" controls></audio>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--Start Meeting Modal-->
+  <div class="modal fade" id="startMeetingModal" tabindex="-1" role="dialog" aria-labelledby="startMeetingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content" style="background-color: #a0aab1;">
+        <div class="modal-header">
+          <h5 class="modal-title tune-event" id="startMeetingModalLabel">Start a New Meeting</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="overflow-y: auto; max-height: 85vh;">
+          <div class="form-group">
+            <label for="durationSelect" class="tune-event">Meeting Duration</label>
+            <select class="form-control" id="durationSelect" aria-label="Meeting Duration">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="capacityInput">Room Capacity</label>
+            <input type="number" value="2" class="form-control" id="capacityInput" min="2" placeholder="2"
+              aria-label="Room Capacity">
+          </div>
+          <div class="form-group">
+            <label for="userNameInputModal">Display Name</label>
+            <input type="text" id="userNameInputModal" class="form-control text-black" placeholder="Enter name"
+              aria-label="User Name" aria-describedby="userNameHelpModal" style="max-width: 100%;" value="">
+            <small id="userNameHelpModal" class="form-text text-muted tune-event">Enter your name to be displayed in the
+              meeting.</small>
+          </div>
+          <div class="form-group">
+            <label for="datetimePicker">Schedule Date and Time</label>
+            <div class="input-group date" id="datetimePicker" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#datetimePicker" />
+              <div class="input-group-append" data-target="#datetimePicker" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="waitingRoomToggle">Waiting Room</label>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="waitingRoomToggle" checked>
+              <label class="custom-control-label" for="waitingRoomToggle">Enable Waiting Room</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="recordToggle">May Record Event?</label>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="recordToggle" checked>
+              <label class="custom-control-label" for="recordToggle">Enable Recording Possibility </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" id="advancedSettingsBtn">Show Advanced Settings</button>
+          </div>
+
+
+
+          <div id="recordingParamsPanel" style="display: none; padding: 20px; border: 1px solid #ccc;">
+            <h5>Recording Parameters</h5>
+            <div class="form-group">
+              <label for="recordingAudioPausesLimit">Audio Pauses Limit:</label>
+              <input type="number" class="form-control" id="recordingAudioPausesLimit" value="3" min="0">
+            </div>
+            <div class="form-group">
+              <label for="recordingAudioSupport">Audio Support:</label>
+              <select class="form-control" id="recordingAudioSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingAudioPeopleLimit">Audio People Limit:</label>
+              <input type="number" class="form-control" id="recordingAudioPeopleLimit" value="3" min="0">
+            </div>
+            <div class="form-group">
+              <label for="recordingAudioParticipantsTimeLimit">Audio Participants Time Limit (seconds):</label>
+              <input type="number" class="form-control" id="recordingAudioParticipantsTimeLimit" value="180" min="0">
+            </div>
+            <div class="form-group">
+              <label for="recordingVideoPausesLimit">Video Pauses Limit:</label>
+              <input type="number" class="form-control" id="recordingVideoPausesLimit" value="4" min="0">
+            </div>
+            <div class="form-group">
+              <label for="recordingVideoSupport">Video Support:</label>
+              <select class="form-control" id="recordingVideoSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingVideoPeopleLimit">Video People Limit:</label>
+              <input type="number" class="form-control" id="recordingVideoPeopleLimit" value="3" min="0">
+            </div>
+            <div class="form-group">
+              <label for="recordingVideoParticipantsTimeLimit">Video Participants Time Limit (seconds):</label>
+              <input type="number" class="form-control" id="recordingVideoParticipantsTimeLimit" value="180" min="0">
+            </div>
+            <div class="form-group">
+              <label for="recordingAllParticipantsSupport">All Participants Support:</label>
+              <select class="form-control" id="recordingAllParticipantsSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingVideoParticipantsSupport">Video Participants Support:</label>
+              <select class="form-control" id="recordingVideoParticipantsSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingAllParticipantsFullRoomSupport">All Participants Full Room Support:</label>
+              <select class="form-control" id="recordingAllParticipantsFullRoomSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingVideoParticipantsFullRoomSupport">Video Participants Full Room Support:</label>
+              <select class="form-control" id="recordingVideoParticipantsFullRoomSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingPreferredOrientation">Preferred Orientation:</label>
+              <select class="form-control" id="recordingPreferredOrientation">
+                <option value="landscape">Landscape</option>
+                <option value="portrait">Portrait</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingSupportForOtherOrientation">Support for Other Orientation:</label>
+              <select class="form-control" id="recordingSupportForOtherOrientation">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingMultiFormatsSupport">Multi-Formats Support:</label>
+              <select class="form-control" id="recordingMultiFormatsSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recordingHLSSupport">HLS Conversion Support:</label>
+              <select class="form-control" id="recordingHLSSupport">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Create a panel for Meeting Parameters (initially hidden) -->
+          <div id="meetingParamsPanel" style="display: none; padding: 20px; border: 1px solid #ccc;">
+            <h5 class="tune-event">Meeting Parameters</h5>
+            <div class="form-group">
+              <label for="itemPageLimit">People Per Page:</label>
+              <input type="number" class="form-control" id="itemPageLimit" value="4" min="0">
+            </div>
+            <div class="form-group">
+              <label for="mediaType">Media Type:</label>
+              <select class="form-control" id="mediaType">
+                <option value="video">Video</option>
+                <option value="audio">Audio</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="addCoHost">Add Co-Host:</label>
+              <select class="form-control" id="addCoHost">
+                <option value="true">Allowed</option>
+                <option value="false">Not Allowed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="targetOrientation">Desired Orientation All:</label>
+              <select class="form-control" id="targetOrientation">
+                <option value="landscape">Landscape</option>
+                <option value="portrait">Portrait</option>
+                <option value="neutral">Neutral</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="targetOrientationHost">Desired Orientation Host:</label>
+              <select class="form-control" id="targetOrientationHost">
+                <option value="landscape">Landscape</option>
+                <option value="portrait">Portrait</option>
+                <option value="neutral">Neutral</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="targetResolution">Video Resolution:</label>
+              <select class="form-control" id="targetResolution">
+                <option value="hd">HD</option>
+                <option value="sd">SD</option>
+                <option value="QnHD">QnHD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="targetResolutionHost">Video Resolution Host:</label>
+              <select class="form-control" id="targetResolutionHost">
+                <option value="hd">HD</option>
+                <option value="sd">SD</option>
+                <option value="QnHD">QnHD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="actType">Event Type:</label>
+              <select class="form-control" id="actType">
+                <option value="broadcast">Broadcast</option>
+                <option value="webinar">Webinar</option>
+                <option value="conference">Conference</option>
+                <option value="chat">Chat</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="audioSetting">Audio Setting:</label>
+              <select class="form-control" id="audioSetting">
+                <option value="approval">Approval</option>
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="videoSetting">Video Setting:</label>
+              <select class="form-control" id="videoSetting">
+                <option value="approval">Approval</option>
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="screenshareSetting">Screenshare Setting:</label>
+              <select class="form-control" id="screenshareSetting">
+                <option value="approval">Approval</option>
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="chatSetting">Chat Setting:</label>
+              <select class="form-control" id="chatSetting">
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" id="start-guide" style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #0b0b0b; padding: 20px; border-radius: 10px;display:none;">
+            <p style="font-weight: bold; color: #171718; font-size: medium; margin-bottom: 10px;">Join on your mobile app or the web (here):</p>
+            <p style="margin-bottom: 10px;font-size:smaller;" id="qrCodeParagraph" >1. Use your mobile app to scan the QR code (or enter your secret) to join the event.</p>
+            
+            <p style="margin-bottom: 5px; color: #171718;font-size: small;">2. Or, click <button type="button" style="background-color: #0b0b0b; padding: 5px;font-size: smaller;"  class="btn btn-secondary btn-small" id="joinWeb1"> this button </button> to proceed on the web (here).</p>
+          </div>
+
+          <div class="form-group" id="start-guide-ins" style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #0b0b0b; padding: 20px; border-radius: 10px;display:none;"> 
+            <p style="margin-bottom: 5px;font-size:smaller;">Click the "Passcode Copy" button (first) and then <br>
+              the "Meeting (event) ID Copy" button to finalize the event room creation.</p>
+          </div>
+          
+
+          <div class="form-group" id="qrcode" style="margin-top:30px; margin-bottom:50px;justify-content: center;justify-items: center; justify-self: center;">
+ 
+          </div>
+
+
+          <div class="form-group">
+            <label for="PassIDInputModal">Passcode <span><small class="hideable">(click confirm to generate)</small></span> </label>
+            <div class="input-group">
+              <input type="text" class="form-control text-black" id="PassIDInputModal" aria-label="Pass ID" readonly>
+              <div class="input-group-append hideable">
+                <span class="input-group-text hideable" id="PassIDCopyBtn">Copy</span>
+              </div>
+            </div>
+            <div id="copyPassMessageFailed" class="text-danger hideable"></div>
+          </div>
+          <div class="form-group">
+            <label for="eventIDInputModal" class="tune-event">Meeting ID <span><small class="hideable">(click confirm to generate)</small></span> </label>
+            <div class="input-group">
+              <input type="text" class="form-control text-black" id="eventIDInputModal" aria-label="Meeting ID"
+                readonly>
+              <div class="input-group-append hideable">
+                <span class="input-group-text" id="eventIDCopyBtn">Copy</span>
+              </div>
+            </div>
+            <div id="copyMessageFailed" class="text-danger hideable"></div>
+          </div>
+
+        </div>
+        <div class="modal-footer hideable">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelMeetingBtn">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="startMeetingBtn">Confirm</button>
+          <!-- <button type="button" class="btn btn-secondary" id="scheduleMeetingBtn">Schedule</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Alert modal -->
+  <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+      <div class="modal-content" style="background-color: #a0aab1;">
+        <div class="modal-body">
+          <div class="alert alert-success" role="alert">
+            <p id="alertMessage" style="padding:0;margin:0"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add a modal for the spinner -->
+  <div class="modal fade" id="waitingModal" tabindex="-1" role="dialog" aria-labelledby="waitingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="background-color: #a0aab1;">
+        <div class="modal-body text-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <h6 class="mt-3">Waiting for host to join or allow you in, you will be automatically redirected.</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add a modal for admin welcome and passcode -->
+  <div class="modal fade" id="adminWelcomeModal" tabindex="-1" role="dialog" aria-labelledby="adminWelcomeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="background-color: #a0aab1;">
+        <div class="modal-header">
+          <h5 class="modal-title" id="adminWelcomeModalLabel">Welcome Back, Host!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Enter the passcode to continue:</p>
+          <div class="form-group">
+            <input type="password" class="form-control" id="passcodeInput" placeholder="Enter passcode">
+          </div>
+        </div>
+        <div id="warningAdmin" class="text-danger"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="submitPasscodeBtn">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
+
+
+
+
+
+</body>
+<footer>
+
+
+
+
+
+
+  <script src="bundle.js"></script>
+
+
+
+</footer>
+
+</html>

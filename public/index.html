@@ -1,0 +1,916 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <title>MediaSFU - Events Room</title>
+
+  <!-- Meta tags for description and social media sharing -->
+  <meta name="description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta property="og:title" content="MediaSFU - Meeting Room">
+  <meta property="og:description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta property="og:image" content="/images/logo512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@mediasfu">
+  <meta name="twitter:creator" content="@mediasfu">
+  <meta name="twitter:title" content="MediaSFU - Meeting Room">
+  <meta name="twitter:description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta name="twitter:image" content="/images/logo512.png">
+  <meta property="og:url" content="https://mediasfu.com">
+  <meta property="og:type" content="website">
+  <meta property="og:image:alt" content="MediaSFU Logo">
+  <meta itemprop="name" content="MediaSFU - Meeting Room">
+  <meta itemprop="description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta itemprop="image" content="/images/logo512.png">
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/images/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+
+
+  <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link href="./style.css" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+  
+  </head>
+  <body>
+    <!-- <video id="mainVideo" autoplay muted></video>
+
+    <div id="mini-videos"></div> -->
+
+    <div class="container-fluid m-0 p-0 h-100 w-100 mediasfu" style="overflow-y: hidden;overflow-x: hidden;display: hidden;">
+
+      <div class="row no-gutters m-0 p-0" style="overflow-y: hidden;overflow-x: hidden;display: hidden;padding: 0px;margin: 0px;">
+        <div class="col-12 no-gutters m-0 p-0" style="overflow-y: hidden;overflow-x: hidden;display: hidden;padding: 0px;margin: 0px;">
+      
+
+            <div class="card border-0 m-0 p-0" id="mainAspect"> 
+              <div class="card-body m-0 p-0" style="background-color:#e8eaec;" >
+
+                <div class="row no-gutters screencontainer" style="height: 100%; overflow-y: hidden;overflow-x: hidden;" >
+
+                  <!-- //start main 📽 -->
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 p_dcard maingrid">
+                
+                    <!-- <div class="card dcard" style="height: 100%;">
+                      <div class="card-body" id="host" style="background-color: rgb(0, 213, 255);height: 100%;">
+                
+                      </div>
+
+                    </div> -->
+
+
+                    <div class="maingrid-container" style="height: 100%;">
+
+                      <!-- Meeting progress timer -->
+ 
+
+
+                      <div class="maingrids" style="display: grid; grid-gap: 0px; justify-content: center;width: 100%;margin: 0%;padding: 0%;margin-top: 0%;padding-top:0px">
+
+
+                      
+                      
+                      </div>
+                    </div>
+
+                    
+                    <div class="badge-container" >
+                      <div id="meetingProgressTimer" class="progress-timer badge bg-success"></div>
+                    </div>
+                    
+                
+                  </div>
+                
+                  <!-- //end main 📽 -->
+                
+                  <!-- //start mini 📽 -->
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 p_dcard othergrid" style="overflow-y: hidden;overflow-x: hidden;">
+         
+                    <div class="minigrid-container" style="height: 100%;">
+                      
+                      <ul class="nav nav-tabs nav-minigrid mb-0 pb-0 d-flex flex-nowrap overflow-auto" id="minigrid-tab" role="tablist" style="margin: 0; padding: 0; " >
+                      </ul>
+                  
+                      <div class="minigrid-content" id="minigrid-tabContent" style="margin: 0; padding: 0;">
+
+                        <div class="tab-pane fade show active" id="minigrid-home" role="tabpanel" aria-labelledby="minigrid-home-tab" style="height: 100%;width: 100%;">                     
+                          <div class="minigrid" style="display: grid; grid-gap: 3px; justify-content: center;width: 100%;margin: 0%;padding: 0%;margin-top: 0%;padding-top:0px"></div>
+                          <div class="minigrid1" style="display: grid; grid-gap: 3px; justify-content: center;width: 100%;margin: 0%;padding: 0%;margin-top: 0%;padding-top:0px"></div>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <!-- //end mini 📽 -->
+                
+                </div>
+                
+
+              </div>
+            </div>
+          <!-- <br>   -->
+
+          
+
+
+            <div class="card border-0 m-0 p-0" id = "subAspect" style=" display:hidden;"> 
+
+              <div class="card-body p-0 m-0" style="background-color:#e8eaec;" >
+
+                <div class="row no-gutters p-0 m-0" >
+
+                  <!-- basic info part -->
+                <!-- <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 justify-content-center recControl" >
+                  </div>  -->
+                 <!--end basic infor part -->
+
+
+                 <!-- create contorl buttons part -->
+
+                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 justify-content-xl-between" id = "controlButtons">
+
+                  <div class="row no-gutters align-items-center"  id="bottomItems">
+
+                    <div class="col-2 " >
+                      <button style="background-color: transparent;border: 0; font-size: medium;" id="micState" class="micStated"> <i class="fas fa-microphone-slash fa-lg border-0"  > </i>  </button>
+
+                    </div>
+
+                      <div class="col-2 " >
+                        <button style="background-color: transparent;border: 0; font-size: medium;" id="videoState" class="videoStated"> <i class="fas fa-video-slash fa-lg border-0"  > </i>  </button>
+  
+                      </div>
+
+                        <div class="col-2 " >
+                          <!-- <button style="background-color: transparent;border: 0; font-size: medium;" id="screenshareState"> <i class="fas fa-desktop fa-lg border-0"  > </i>  </button> -->
+                          <button style="background-color: transparent;border: 0; font-size: medium;position: relative;" id="screenshareState"> <span class="fa-stack fa-md border-0" ><i class="fas fa-desktop fa-stack-1x border-0"></i><i class="fas fa-ban fa-stack-2x border-0" style="color:Tomato"></i></span> </button>
+                        </div>
+
+                          <div class="col-2 " >
+                            
+                            <button style="background-color: transparent;border: 0; font-size: medium;" id="endState"> <i class="fas fa-phone fa-lg border-0"  > </i>  </button>
+      
+                          </div>
+
+                            <div class="col-2 " >
+                             
+                              <!-- #participantsModal -->
+                              <button style="background-color: transparent;border: 0; font-size: medium;" data-toggle="modal" data-target= "#participantsModal"> <i class="fas fa-users fa-lg border-0"  > </i>  </button>
+        
+                            </div>
+
+                            <div class="col-2 " >
+                              <!-- <button type="button" id="shareAccess" style="background-color: transparent;border: 0; font-size: medium;" > <i class="fas fa-bars fa-lg border-0 "> </i>  <span id="spanned" class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger request-count"></span> </button> -->
+                                <button type="button" id="menuAccess" style="background-color: transparent;border: 0; font-size: medium;" > <i class="fas fa-bars fa-lg border-0 "> </i>  <span id="spanned" class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger request-count"></span> </button>
+                            </div>       
+
+                  </div>
+
+                  <!-- <button class="floating-button" data-toggle="modal" data-target="#messageModal">
+                    <i class="fas fa-comments fa-lg"></i> <span id="spannedmessage" class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger message-count"></span> 
+                  </button> -->
+
+                  <!-- <button class="floating-button" data-toggle="modal" data-target="#messageModal">
+                    <i class="fas fa-comments fa-lg"></i>
+                    <span id="spannedmessage" class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger message-count">
+                      <i class="fas fa-bolt"></i>
+                    </span>
+                  </button> -->
+
+                  <button class="floating-button" data-toggle="modal" data-target="#messageModal">
+                    <i class="fas fa-comments fa-lg"></i>
+                    <span id="spannedMessage" class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger message-count" style="position: absolute; top: -8px; right: -8px;">
+                      <i id="boltIcon" class="fas fa-bolt fa-sm" ></i>
+                    </span>
+                  </button>
+                  
+                  
+
+                </div>
+
+                 <!-- end create contorl buttons part -->
+
+
+                <!-- basic infor part -->
+                <!-- <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 justify-content-center settingControl"  > -->
+              
+                      <!-- <button style="background-color: transparent;border: 0" data-toggle="modal" data-target="#settingsModal" > <i class="fas fa-gear fa-lg border-0"  > </i>  </button>
+ -->
+
+                  <!-- </div> -->
+                 
+              </div>
+              <!--end basic infor part -->
+                                
+                
+                </div>
+
+
+               </div>
+
+  
+            </div>
+
+       
+      </div>
+      </div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title">Participants <span class="badge bg-secondary" id="participant-counter"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+        <div class="form-group">
+          <input type="text" class="form-control" id="participant-filter" placeholder="Search ...">
+        </div>
+        <div id="participant-list">
+          <!-- Participant rows will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Menu Modal -->
+<div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md" >
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="menuModalLabel"><i class="fas fa-bars"></i> Menu</h5>
+        <button type="button" class="btn-close-menu" data-bs-dismiss="modal"  aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="list-group" style="margin: 0; padding: 0;">
+
+          <button class="list-group-item list-group-item-action recordStated" style="background-color: transparent;border: 0; font-size: medium; padding-left: 0; margin-left: 0;" id="recordState"> <i class="fas fa-record-vinyl fa-lg border-0 mr-2" > </i>Record</button>
+           <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#settingsModal" id ="addSettingsID" > <i class="fas fa-gear fa-lg border-0 mr-2"  > </i>Meeting Settings</button>
+           <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; font-size: medium; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#requestsModal" id="addRequestsID" > <i class="fas fa-users fa-lg border-0 mr-2"  ></i>Requests</button>
+           <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; font-size: medium; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#waitingRoomModal" id ="addWaitingID" > <i class="fas fa-clock fa-lg border-0 mr-2"  ></i>Waiting</button>
+           <button class="list-group-item list-group-item-action" style="background-color: transparent; border: 0; font-size: medium; padding-left: 0; margin-left: 0" id="addCoHostBtn"   data-toggle="modal" data-target="#cohostModal"   > <i class="fas fa-user-plus fa-lg border-0 mr-2"></i>Co-host</button>
+
+           <hr>
+
+           <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#mediaSettingsModal" id ="addMediaSettingsID" > <i class="fas fa-tools fa-lg border-0 mr-2"  > </i>Set Media</button>
+          <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#displaySettingsModal" id ="displaySettingsID" > <i class="fas fa-desktop fa-lg border-0 mr-2"  > </i>Display</button>
+         
+        
+        </div>
+
+
+       <hr>
+    
+
+        <div class="form-group">
+          <label for="meetingIdCopy2">Meeting ID:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="meetingIdCopy2" value="" readonly>
+            <div class="input-group-append">
+              <button class="btn btn-secondary" type="button" id="copyMeetingIdButton2" data-toggle="tooltip" data-placement="bottom" title="Copy Meeting ID to clipboard"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" id="adminPasscodeDiv">
+          <label for="meetingPasscodeCopy">Meeting Passcode (Host):</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="meetingPasscodeCopy" value="" readonly>
+            <div class="input-group-append">
+              <button class="btn btn-secondary" type="button" id="copyMeetingPasscodeButton" data-toggle="tooltip" data-placement="bottom" title="Copy Host Meeting Passcode to clipboard"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="text" id="shareLink2" class="form-control" readonly>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="copyShareLinkButton2" data-toggle="tooltip" data-placement="top" title="Copy Link"><i class="far fa-copy"></i></button>
+            <button class="btn btn-outline-secondary" type="button" id="shareWhatsappButton2"><i class="fab fa-whatsapp"></i></button>
+            <button class="btn btn-outline-secondary" type="button" id="shareFacebookButton2"><i class="fab fa-facebook"></i></button>
+            <button class="btn btn-outline-secondary" type="button" id="shareEmailButton2"><i class="far fa-envelope"></i></button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for Share Meeting -->
+<div class="modal fade" id="shareMeetingModal" tabindex="-1" role="dialog" aria-labelledby="shareMeetingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareMeetingModalLabel">Share Meeting</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="list-group" style="margin: 0; padding: 0;">
+           <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#mediaSettingsModal" id ="addMediaSettingsID_2" > <i class="fas fa-tools fa-lg border-0 mr-2"  > </i>Set Media</button>
+        </div>
+
+        <div class="list-group" style="margin: 0; padding: 0;">
+          <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#displaySettingsModal" id ="displaySettingsID_2" > <i class="fas fa-desktop fa-lg border-0 mr-2"  > </i>Display</button>
+       </div>
+
+      
+       <hr>
+     
+
+        <div class="form-group">
+          <label for="meetingIdCopy">Meeting ID:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="meetingIdCopy" value="" readonly>
+            <div class="input-group-append">
+              <button class="btn btn-secondary" type="button" id="copyMeetingIdButton" data-toggle="tooltip" data-placement="bottom" title="Copy Meeting ID to clipboard"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="input-group mb-3">
+          <input type="text" id="shareLink" class="form-control" readonly>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="copyShareLinkButton" data-toggle="tooltip" data-placement="top" title="Copy Link"><i class="far fa-copy"></i></button>
+            <button class="btn btn-outline-secondary" type="button" id="shareWhatsappButton"><i class="fab fa-whatsapp"></i></button>
+            <button class="btn btn-outline-secondary" type="button" id="shareFacebookButton"><i class="fab fa-facebook"></i></button>
+            <button class="btn btn-outline-secondary" type="button" id="shareEmailButton"><i class="far fa-envelope"></i></button>
+          </div>
+        </div>
+        
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Media Settings Modal mediaSettingsModal-->
+<div class="modal" tabindex="-1" role="dialog" id="mediaSettingsModal">
+  <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+    <div class="modal-content text-dark" style="background-color: #e8eaec;">
+      <div class="modal-header">
+        <h5 class="modal-title">Media Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="settingsForm">
+          <div class="form-group row">
+            <label for="cameraList" class="col-lg-12 col-form-label">
+              <i class="fas fa-camera"></i> Select Camera:
+            </label>
+            <div class="col-lg-12">
+              <select class="form-control" id="cameraList" name="cameraList"></select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="microphoneList" class="col-lg-12 col-form-label">
+              <i class="fas fa-microphone"></i> Select Microphone:
+            </label>
+            <div class="col-lg-12">
+              <select class="form-control" id="microphoneList" name="microphoneList"></select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="switchCamera" class="col-lg-12 col-form-label">
+              <i class="fas fa-sync-alt"></i> Switch Camera:
+            </label>
+            <div class="col-lg-12">
+              <button class="btn btn-primary btn-block switchCamera" id="switchCamera"  type="button" >Switch</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Settings Modal-->
+<div class="modal" tabindex="-1" role="dialog" id="settingsModal">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title">Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="settingsForm">
+          <div class="form-group row">
+            <label for="audio" class="col-sm-7 col-form-label">User audio:</label>
+            <div class="col-sm-5">
+              <select class="form-control" id="audio" name="audio">
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+                <option value="approval">Upon approval</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="video" class="col-sm-7 col-form-label">User video:</label>
+            <div class="col-sm-5">
+              <select class="form-control" id="video" name="video">
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+                <option value="approval">Upon approval</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="screenshare" class="col-sm-7 col-form-label">User screenshare:</label>
+            <div class="col-sm-5">
+              <select class="form-control" id="screenshare" name="screenshare">
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+                <option value="approval">Upon approval</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="chat" class="col-sm-7 col-form-label">User chat:</label>
+            <div class="col-sm-5">
+              <select class="form-control" id="chat" name="chat">
+                <option value="disallow">Disallow</option>
+                <option value="allow">Allow</option>
+                <!-- <option value="approval">Upon approval</option> -->
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" form="settingsForm" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Requests Modal -->
+<div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-sm">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title">Requests <span class="badge bg-secondary" id="request-counter"></span></h5>
+        <button type="button" class="btn-close-requests" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+        <div class="form-group">
+          <input type="text" class="form-control" id="request-filter" placeholder="Search ...">
+        </div>
+        <div id="request-list" class="row">
+          <!-- Request items will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Display Settings Modal -->
+<div class="modal fade" id="displaySettingsModal" tabindex="-1" aria-labelledby="displaySettingsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title">Display Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      </div>
+      <div class="modal-body">
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="displayOption" id="displayOptionVideo" value="video">
+          <label class="form-check-label" for="displayOptionVideo">
+            Video Participants Only
+          </label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="displayOption" id="displayOptionMedia" value="media">
+          <label class="form-check-label" for="displayOptionMedia">
+            Media Participants Only
+          </label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="displayOption" id="displayOptionAll" value="all" checked>
+          <label class="form-check-label" for="displayOptionAll">
+            Show All Participants
+          </label>
+        </div>
+
+        <hr>
+
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="displayOptionOverlay" value="overlay">
+          <label class="form-check-label" for="displayOptionOverlay">
+            Display Audiographs
+          </label>
+        </div>
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="displayOptionFull" value="full">
+          <label class="form-check-label" for="displayOptionFull">
+            Force Full Display
+          </label>
+        </div>
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="displayOptionForce" value="force">
+          <label class="form-check-label" for="displayOptionForce">
+            Force Video Participants
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="applyDisplaySettings">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add a modal for the spinner -->
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color: #e8eaec;">
+      <div class="modal-body text-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Waiting Modal -->
+<div class="modal fade" id="waitingRoomModal" tabindex="-1" aria-labelledby="waitingRoomLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-sm">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title">Waiting <span class="badge bg-secondary" id="waitings-counter"></span></h5>
+        <button type="button" class="btn-close-waitings" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+        <div class="form-group">
+          <input type="text" class="form-control" id="waitingroom-filter" placeholder="Search ...">
+        </div>
+        <div id="waitingroom-list" class="row">
+          <!-- people waiting will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alert modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="alert alert-success" role="alert">
+          <p id="alertMessage" style="padding:0;margin:0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-sm">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Confirm Exit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to exit?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmExit">Exit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Message Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content" >
+      <div class="modal-header">
+        <ul class="nav nav-tabs" id="messageTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="directMessageTab" data-toggle="tab" href="#directMessagePanel" role="tab" aria-controls="directMessagePanel" aria-selected="true">Direct</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="groupChatTab" data-toggle="tab" href="#groupChatPanel" role="tab" aria-controls="groupChatPanel" aria-selected="false">Group</a>
+          </li>
+        </ul>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="directMessagePanel" role="tabpanel" aria-labelledby="directMessageTab">
+            <!-- Direct Message Panel Content -->
+          </div>
+          <div class="tab-pane fade" id="groupChatPanel" role="tabpanel" aria-labelledby="groupChatTab">
+
+          </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- Add a modal for confrimhere -->
+<div class="modal fade" id="confirmationHereModal" tabindex="-1" role="dialog" aria-labelledby="confirmationHereModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color: #a0aab1;">
+      <div class="modal-body text-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <h3 class="modal-title">Are you still there?</h3>
+        <p class="modal-message">Please confirm if you are still present.</p>
+        <p class="modal-counter">Time remaining: <span id="here-counter"></span></p>
+        <button id="confirmButtonHere" class="close-here">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recording Modal -->
+<div class="modal fade" id="recordingModal" tabindex="-1" role="dialog" aria-labelledby="recordingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+    <div class="modal-content" style="background-color: #e8eaec;">
+      <div class="modal-header">
+        <ul class="nav nav-tabs" id="recordingTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="standardTab" data-toggle="tab" href="#standardPanel" role="tab" aria-controls="standardPanel" aria-selected="true">Standard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="advancedTab" data-toggle="tab" href="#advancedPanel" role="tab" aria-controls="advancedPanel" aria-selected="false">Advanced</a>
+          </li>
+        </ul>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-dark" style="max-height: 400px; overflow-y: auto;">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="standardPanel" role="tabpanel" aria-labelledby="standardTab">
+            <!-- Standard Panel Content -->
+          </div>
+          <div class="tab-pane fade" id="advancedPanel" role="tabpanel" aria-labelledby="advancedTab">
+            <!-- Advanced Panel Content -->
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <button type="button" class="btn btn-primary btn-block" id="confirmRecButton">Confirm</button>
+          </div>
+          <div class="col-6">
+            <button type="button" class="btn btn-success btn-block" id="startRecButton">Start</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Co-host Modal -->
+<div class="modal fade" id="cohostModal" tabindex="-1" role="dialog" aria-labelledby="cohostModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+    <div class="modal-content text-dark" style="background-color: #e8eaec;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cohostModalLabel">Manage Co-host</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <strong><label for="currentCohost">Current Co-host:</label></strong>
+          <input type="text" class="form-control" id="currentCohost" placeholder="Enter current co-host name" readonly>
+        </div>
+        <div class="form-group">
+          <strong><label for="selectParticipant">Select New Co-host:</label></strong>
+          <select class="form-control" id="selectParticipant">
+            <option>Select a participant</option>
+            <!-- Add participants dynamically as options -->
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-5 ">
+            <div class="form-group ">
+              <strong><label for="responsibilityField">Responsibility</label></strong>
+            </div>
+          </div>
+          <div class="col-3 text-center">
+            <div class="form-group">
+              <strong><label for="selectField">Select</label></strong>
+            </div>
+          </div>
+          <div class="col-4 text-center">
+            <div class="form-group">
+              <strong><label for="dedicatedField">Dedicated</label></strong>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <div class="form-group">
+              <label for="manageParticipantsToggle">Participants</label>
+            </div>
+          </div>
+          <div class="col-3 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="manageParticipantsToggle">
+                <label class="custom-control-label" for="manageParticipantsToggle"></label>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="dedicateToManageParticipantsToggle">
+                <label class="custom-control-label" for="dedicateToManageParticipantsToggle"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <div class="form-group">
+              <label for="manageMediaToggle">Media</label>
+            </div>
+          </div>
+          <div class="col-3 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="manageMediaToggle">
+                <label class="custom-control-label" for="manageMediaToggle"></label>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="dedicateToManageMediaToggle">
+                <label class="custom-control-label" for="dedicateToManageMediaToggle"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <div class="form-group">
+              <label for="manageWaitingRoomToggle">Waiting Room</label>
+            </div>
+          </div>
+          <div class="col-3 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="manageWaitingRoomToggle">
+                <label class="custom-control-label" for="manageWaitingRoomToggle"></label>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 text-center" >
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="dedicateToManageWaitingRoomToggle">
+                <label class="custom-control-label" for="dedicateToManageWaitingRoomToggle"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <div class="form-group">
+              <label for="manageChatToggle">Chat</label>
+            </div>
+          </div>
+          <div class="col-3 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="manageChatToggle">
+                <label class="custom-control-label" for="manageChatToggle"></label>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 text-center">
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="dedicateToManageChatToggle">
+                <label class="custom-control-label" for="dedicateToManageChatToggle"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-right">
+        <button type="button" class="btn btn-primary" id="saveCohostBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+  </body>
+  <footer>
+
+    <script>
+      
+      let windowHeight = $(window).innerHeight();
+      var height95 = 0.95 * windowHeight;
+      var height5 = 0.05 * windowHeight;
+      $('#mainAspect').css('height',height95);
+      $('#subAspect').css('height',height5);
+
+
+      $('#loadingModal').modal({
+        backdrop: 'static', // Prevent dismissing the modal by clicking outside or pressing the Esc key
+        keyboard: false, // Disable keyboard events
+      });
+      
+      
+
+    
+  </script>
+
+
+
+<script src="bundle.js"></script>
+        
+  </footer>
+</html>
+
