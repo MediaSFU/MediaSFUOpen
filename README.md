@@ -1,0 +1,2 @@
+# MediaSFUOpen
+ MediaSFU Community Edition
