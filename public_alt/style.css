@@ -1,0 +1,276 @@
+html {
+  background-color:  #2c678f;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+body {
+  font-family: "Nunito", sans-serif;
+  font-size: 12px;
+  color: #788288;
+  background-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.53846154;
+  margin: 0;
+  padding: 0;
+  background-color:  #8cc1e4;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.container-fluid {
+  padding: 0;
+  margin: 0;
+  padding: 0;
+  background-color:  #8cc1e4;
+  
+
+}  
+
+.fa {
+  border: none;
+}
+
+
+.card {
+  margin: 0;
+  padding: 0;
+}
+
+.request-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.request-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+}
+
+.request-name {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.request-icon {
+  margin-right: 8px;
+  font-size: 1.0rem;
+}
+
+.request-actions button {
+  margin-left: 3px;
+}
+
+.request-actions .btn-success {
+  background-color: green;
+}
+
+.request-actions .btn-danger {
+  background-color: red;
+}
+
+.request-item + li {
+  border-top: 1px solid #dee2e6;
+}
+
+#menuAccess {
+  position: relative;
+}
+
+#menuAccess.active::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 10px rgba(255, 0, 0, 0.5);
+  animation: pulse 3s ease-out;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 30px rgba(255, 0, 0, 0);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+/* Add border between participant rows */
+#participant-list .row {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+/* Add margin to bottom of last row */
+#participant-list .row:last-child {
+  margin-bottom: 0;
+}
+
+#settingsForm .form-group {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #ccc;
+}
+
+/* Style the close icon */
+.modal-header .btn-close {
+  font-size: 1.0rem;
+  margin-top: -2px;
+}
+
+.modal-dialog {
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+  right: 0%;
+  padding-right: 5px;
+  float: right;
+  transform: translate(-50%, -50%);
+}
+
+#host::before {
+  content: attr(data-initials);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 213, 255);
+  font-size: 80px;
+  color: white;
+  text-transform: uppercase;
+  font-family: "Nunito", cursive;
+}
+
+.mini-carded::before {
+  content: attr(data-initials);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 187, 255);
+  font-size: 30px;
+  color: white;
+  font-family: "Nunito", cursive;
+
+  /* text-transform: uppercase; */
+}
+
+
+.fa-stack {
+display: inline-block;
+position: relative;
+vertical-align: middle;
+}
+
+/* CSS for the waiting room modal */
+/* #waitingRoomModal .modal{
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+display: none;
+overflow: auto;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 9999;
+}
+
+#waitingRoomModal .modal-content {
+margin: 10% auto;
+width: 90%;
+max-width: 700px;
+background-color: #fefefe;
+padding: 20px;
+border: 1px solid #888;
+border-radius: 10px;
+} */
+
+#preview {
+min-height: 100vh;
+}
+
+select {
+max-width: 100%;
+}
+
+.card-columns{
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+/* grid-auto-rows: 1fr; */
+grid-column-gap: 10px;
+grid-row-gap: 5px;
+overflow: hidden;
+}
+
+#cameraPreview video {
+display: block;
+margin: 0 auto;
+border: 1px solid #ccc;
+width: 100%;
+height: 100%;
+}
+
+.divider {
+display: flex;
+align-items: center;
+text-align: center;
+margin: 1rem 0;
+}
+.divider:before,
+.divider:after {
+content: "";
+flex: 1;
+border-bottom: 1px solid #000;
+}
+.divider span {
+margin: 0 0.5rem;
+}
+
+
+
+
+@media (max-width: 576px) {
+
+  /* .p_dcard {
+    height: 50%;
+  } */
+
+  .recControl  {
+      display: none !important;
+  }
+
+  .settingControl{
+      display: none !important;
+  }
+
+  .card-columns{
+
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+    
+}
+
+
+
+
