@@ -4,7 +4,7 @@ import cors from 'cors';
 import crypto from 'crypto';
 const app = express()
 const ip = '111.222.222.111'
-const PORT = process.env.PORT || 3000
+const PORT = 3000
 
 app.use(cors())
 
