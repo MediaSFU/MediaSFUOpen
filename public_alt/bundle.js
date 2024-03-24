@@ -6858,7 +6858,6 @@ createLoadingModal()
 //connect to socket
 let socket
 socket = io('/media', { transports: ['websocket'] })
-//io("https://test.mediasfu.com/media")
 let socket_ = socket
 let apiChecked = false
 let apiKey = null
@@ -8034,7 +8033,6 @@ const checkAndSetAPI = (meetingRoomParams_, recordingParams_) => {
                 refRoomCapacity = 2
             }
 
-            // socket = io("https://sandbox.mediasfu.com/media")
             populateDuration()
         } else if (apiType_ === 'production') {
             if (actType == 'broadcast') {
@@ -8046,7 +8044,6 @@ const checkAndSetAPI = (meetingRoomParams_, recordingParams_) => {
                 refRoomCapacity = 2
             }
 
-            // socket = io("https://meeting.mediasfu.com/media")
             maxMeetingDuration = 24;
             populateDuration()
 
