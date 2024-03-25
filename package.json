@@ -8,7 +8,7 @@
         "start": "nodemon index.js"
     },
     "author": "mediasfu",
-    "license": "AGPL-3.0-only",
+    "license": "MIT",
     "type": "module",
     "dependencies": {
         "cors": "^2.8.5",
