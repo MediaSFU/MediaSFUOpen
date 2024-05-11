@@ -1,14 +1,14 @@
 {
     "name": "mediasfuopen",
     "version": "1.0.0",
-    "description": "",
+    "description": "MediaSFU Open Source Meeting Server",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon index.js"
     },
     "author": "mediasfu",
-    "license": "AGPL-3.0-only",
+    "license": "MIT",
     "type": "module",
     "dependencies": {
         "cors": "^2.8.5",

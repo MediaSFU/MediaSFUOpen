@@ -5,6 +5,7 @@ import crypto from 'crypto';
 const app = express()
 const ip = '111.222.222.111'
 const PORT = 3000
+const safeOrigins = [`https://localhost:${PORT}`];
 
 app.use(cors())
 
@@ -47,14 +48,14 @@ const io = new Server(httpServer, { cors: { origin: '*' } });
 const connections = io.of('/media')
 
 let worker
-let rooms = {}          // { roomName1: { Router, rooms: [ socketId1, ... ] }, ...}
-let peers = {}          // { socketId1: { roomName1, socket, transports = [id1, id2,] }, producers = [id1, id2,] }, consumers = [id1, id2,], peerDetails }, ...}
-let transports = []     // [ { socketId1, roomName1, transport, consumer }, ... ]
-let producers = []      // [ { socketId1, roomName1, producer, }, ... ]
-let screenProducers = [] // [ { socketId1, roomName1, producer, }, ... ]
-let consumers = []      // [ { socketId1, roomName1, consumer, }, ... ]
-let tempEventRooms = {} // { roomName1: { Router, rooms: [ socketId1, ... ] }, ...}
-let tempEventPeers = {} // { socketId1: { roomName1, socket, transports = [id1, id2,] }, producers = [id1, id2,], consumers = [id1, id2,], peerDetails }, ...}
+let rooms = {}          
+let peers = {}          
+let transports = []     
+let producers = []     
+let screenProducers = [] 
+let consumers = []      
+let tempEventRooms = {} 
+let tempEventPeers = {} 
 
 const mode = process.env.MODE
 const apiUserName = process.env.APIUSERNAME
@@ -582,15 +583,24 @@ monitorEventsInterval()
 
 connections.on('connection', async socket => {
 
-  socket.emit('connection-success', {
+  const origin = socket.handshake.headers['origin']
+
+  let responseData = {
     socketId: socket.id,
     mode: mode,
-    apiUserName: apiUserName,
-    apiKey: apiKey,
     allowRecord: allowRecord == 'true' || allowRecord == true ? true : false,
     meetingRoomParams_: mode == 'sandbox' ? meetingRoomParams_Sandbox : meetingRoomParams_Production,
     recordingParams_: mode == 'sandbox' ? recordingParams_Sandbox : recordingParams_Production
-  })
+  };
+  
+  // Check if the origin is safe and add the API credentials to the response data
+  if (safeOrigins.includes(origin)) {
+    responseData.apiUserName = apiUserName;
+    responseData.apiKey = apiKey;
+  }
+ 
+  socket.emit('connection-success', responseData);
+
 
   const removeItems = (items, socketId, type) => {
     items.forEach(item => {

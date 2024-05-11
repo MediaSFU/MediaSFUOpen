@@ -1,3 +1,30 @@
+<p align="center">
+  <img src="https://www.mediasfu.com/logo192.png" width="100" alt="MediaSFU Logo">
+</p>
+
+<p align="center">
+  <a href="https://twitter.com/media_sfu">
+    <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt="Twitter" style="margin-right: 10px;">
+  </a>
+  <a href="https://www.mediasfu.com/forums">
+    <img src="https://img.icons8.com/color/48/000000/communication--v1.png" alt="Community Forum" style="margin-right: 10px;">
+  </a>
+  <a href="https://github.com/MediaSFU">
+    <img src="https://img.icons8.com/fluent/48/000000/github.png" alt="Github" style="margin-right: 10px;">
+  </a>
+  <a href="https://www.mediasfu.com/">
+    <img src="https://img.icons8.com/color/48/000000/domain--v1.png" alt="Website" style="margin-right: 10px;">
+  </a>
+  <a href="https://www.youtube.com/channel/UCELghZRPKMgjih5qrmXLtqw">
+    <img src="https://img.icons8.com/color/48/000000/youtube--v1.png" alt="Youtube" style="margin-right: 10px;">
+  </a>
+</p>
+
+
+MediaSFU offers a cutting-edge streaming experience that empowers users to customize their recordings and engage their audience with high-quality streams. Whether you're a content creator, educator, or business professional, MediaSFU provides the tools you need to elevate your streaming game.
+
+---
+
 # Getting Started with [MediaSFU](https://mediasfu.com) Community Edition
 
 Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedom to customize your recordings with unlimited pausing and resuming, ensuring you have complete control over your content. Immerse yourself in simulcasted high-quality streams featuring lightning-fast 30ms latency, providing a seamless and immersive viewing experience for your audience.
@@ -168,6 +195,26 @@ Follow these steps to install MediaSFU on Ubuntu:
     ```
 
     Updating the IP address ensures that MediaSFUOpen binds to the correct network interface and listens on the appropriate IP address.
+    
+16. **🛡️ Edit the `index.js` file to specify safe origins for secure Socket.IO Connections**
+
+    To restrict Socket.IO connections to specific origins for enhanced security, follow these steps:
+
+
+    Open the `index.js` file located in your Node.js application's directory.
+
+    Find the section of code where the safe origins are specified.
+
+    Add the origins you want to allow to the `safeOrigins` array.
+
+    Save the changes and close the file.
+
+    ```javascript
+    // Example: Define safe origins
+    const safeOrigins = [`https://localhost:${PORT}`];
+    ```
+
+    Replace with the origins you want to allow. You can add as many origins as needed to the array. Example const safeOrigins = ['https://subdomain.example.com']; 
 
 16. **Start the MediaSFU application using PM2:**
 
