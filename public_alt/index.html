@@ -7,62 +7,50 @@
   <title>MediaSFU - Events</title>
 
   <!-- Meta tags for description and social media sharing -->
-  <meta name="description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta name="description"
+    content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
   <meta property="og:title" content="MediaSFU - Meeting Room">
-  <meta property="og:description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta property="og:description"
+    content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
   <meta property="og:image" content="/images/logo512.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@mediasfu">
   <meta name="twitter:creator" content="@mediasfu">
   <meta name="twitter:title" content="MediaSFU - Meeting Room">
-  <meta name="twitter:description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta name="twitter:description"
+    content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
   <meta name="twitter:image" content="/images/logo512.png">
   <meta property="og:url" content="https://mediasfu.com">
   <meta property="og:type" content="website">
   <meta property="og:image:alt" content="MediaSFU Logo">
   <meta itemprop="name" content="MediaSFU - Meeting Room">
-  <meta itemprop="description" content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
+  <meta itemprop="description"
+    content="Events room for MediaSFU. Stream, meet, chat, and more with our events feature. Create or join events and enjoy the future of media streaming.">
   <meta itemprop="image" content="/images/logo512.png">
 
   <!-- Favicon -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-  <link rel="manifest" href="/images/site.webmanifest">
-  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="shortcut icon" href="/images/favicon.ico">
   <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="msapplication-config" content="/images/browserconfig.xml">
-
-  
 
   <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-
-
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
     integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
-
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
 
-
   <link href="./style.css" rel="stylesheet">
 
-  <script src=
-     "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
-    </script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
 
 </head>
 
@@ -71,34 +59,37 @@
 
     <div id="mini-videos"></div> -->
 
-  <div class="container-fluid w-100 " id="meeting" style="background-color:#e8eaec;">
+  <div class="container-fluid w-100 " id="meeting" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
     <div class="card-deck w-100 h-100">
       <div class="card border-0 h-100">
-        <div class="card-body" style="background-color:#e8eaec;">
+        <div class="card-body" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
           <div class="row no-gutters h-100" id="preview">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12" id="meetingDetails">
-              <div class="card-columns w-100" style="background-color: #e8eaec;">
-                <div class="card border-0" style="background-color: #e8eaec;">
-                  <div class="card-body" >
+              <div class="card-columns w-100" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
+                <div class="card border-0" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
+                  <div class="card-body">
                     <h5 class="card-title text-dark tune-event">Meeting ID</h5>
                     <div class="input-group mb-3 ">
-                      <input type="text" id="eventIDInput" class="form-control text-black"
-                        placeholder="Enter Event ID" aria-label="Meeting ID" aria-describedby="eventIDHelp"
-                        style="max-width: 100%;">
+                      <input type="text" id="eventIDInput" class="form-control text-black" placeholder="Enter Event ID"
+                        aria-label="Meeting ID" aria-describedby="eventIDHelp" style="max-width: 100%;">
                       <div class="input-group-append">
                         <button class="btn btn-secondary btn-outline-secondary text-dark" type="button"
                           id="confirmEventIDBtn">Confirm</button>
                       </div>
                     </div>
-                    <small id="eventIDHelp" class="form-text text-dark tune-event">Enter the meeting ID provided to you.</small>
-                    <p class="text-dark">Need help creating or joining an event? Watch this <a class="text-danger" style="font-weight: bolder;"  href="https://www.youtube.com/watch?v=AyhfkDWQ-3k&list=PL1JaYsvPqLVza5CZJUOpdHFfR0O5K_3kF&ab_channel=MediaSFU" target="_blank">video</a> for assistance.</p>
+                    <small id="eventIDHelp" class="form-text text-dark tune-event">Enter the meeting ID provided to
+                      you.</small>
+                    <p class="text-dark">Need help creating or joining an event? Watch this <a class="text-danger"
+                        style="font-weight: bolder;"
+                        href="https://www.youtube.com/watch?v=AyhfkDWQ-3k&list=PL1JaYsvPqLVza5CZJUOpdHFfR0O5K_3kF&ab_channel=MediaSFU"
+                        target="_blank">video</a> for assistance.</p>
                     <div id="warningMessage" class="text-danger"></div>
                     <div class="divider text-dark"><span>OR</span></div>
                     <button id="toggleButton" class="btn btn-secondary mt-3 tune-event">Start a new meeting</button>
                   </div>
                 </div>
-                <div class="card border-0" style="background-color: #e8eaec;">
-                  <div class="card-body" style="background-color: #e8eaec;">
+                <div class="card border-0" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
+                  <div class="card-body" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
                     <h5 class="card-title text-dark">Name</h5>
                     <div class="input-group">
                       <input type="text" id="userNameInputMain" class="form-control text-black" placeholder="Enter name"
@@ -107,36 +98,51 @@
                         <button id="joinButton" class="btn btn-secondary" disabled>Join</button>
                       </div>
                     </div>
-                    <small id="userNameHelpMain" class="form-text text-dark tune-event">Enter your name to be displayed in the
+                    <small id="userNameHelpMain" class="form-text text-dark tune-event">Enter your name to be displayed
+                      in the
                       meeting.</small>
                     <div id="userNameWarn" class="text-danger"></div>
-                    <div id="qrcode1" style="margin-top:30px; margin-bottom:30px;justify-content: center;justify-items: center; justify-self: center;display: none;"> 
+                    <div id="qrcode1"
+                      style="margin-top:30px; margin-bottom:30px;justify-content: center;justify-items: center; justify-self: center;display: none;">
                     </div>
-                    <div class="form-group" id="start-guide1" style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #eeeded; padding: 20px; border-radius: 10px;display:none;">
-                    <p style="font-weight: bold; color: #e8e8ee; font-size: medium; margin-bottom: 10px;">Join on your mobile app or the web:</p>
-                    <p id="qrCodeParagraph1" style="margin-bottom: 10px; color: #e8e8ee;font-size: small;" >1. Use your mobile app to scan the QR code (or enter your secret) to join the event.</p>
-                    <p style="margin-bottom: 5px; color: #e8e8ee;font-size: small;">2. Or, click <button type="button" style="background-color: #0b0b0b; padding: 5px;font-size: smaller;"  class="btn btn-secondary btn-small" id="joinWeb"> this button </button> to proceed on the web (here).</p>
+                    <div class="form-group" id="start-guide1"
+                      style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #eeeded; padding: 20px; border-radius: 10px;display:none;">
+                      <p style="font-weight: bold; color: #e8e8ee; font-size: medium; margin-bottom: 10px;">Join on your
+                        mobile app or the web:</p>
+                      <p id="qrCodeParagraph1" style="margin-bottom: 10px; color: #e8e8ee;font-size: small;">1. Use your
+                        mobile app to scan the QR code (or enter your secret) to join the event.</p>
+                      <p style="margin-bottom: 5px; color: #e8e8ee;font-size: small;">2. Or, click <button type="button"
+                          style="background-color: #0b0b0b; padding: 5px;font-size: smaller;"
+                          class="btn btn-secondary btn-small" id="joinWeb"> this button </button> to proceed on the web
+                        (here).</p>
+                    </div>
+
+
                   </div>
-                  
-        
-                  </div>
-                  
+
                 </div>
               </div>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-12" id="mediaSelection">
-              <div class="card-columns w-100 " style="background-color: #e8eaec;">
-                <div class="card border-0" style="background-color: #e8eaec;">
-                  <div class="card-body" style="background-color: #e8eaec;">
+              <div class="card-columns w-100 " style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
+                <div class="card border-0" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
+                  <div class="card-body" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
                     <h5 class="card-title text-dark">Camera Selection</h5>
                     <select id="cameraList"></select>
                     <div id="cameraPreview">
-                      <video id="videoOutputPreview" autoplay muted></video>
+                      <video id="videoOutputPreview" autoplay muted playsinline></video>
                     </div>
                   </div>
+
+                  <h5 class="card-title text-dark">Virtual Background</h5>
+                  <div id="defaultImages" class="d-flex flex-wrap"></div>
+                  <input type="file" id="uploadImage" class="form-control-file mt-2 text-dark">
+                  <p class="text-dark">Max file size: 2MB; Dimensions: 1280x1280
+                  </p>
+
                 </div>
-                <div class="card border-0" style="background-color: #e8eaec;">
-                  <div class="card-body" style="background-color: #e8eaec;">
+                <div class="card border-0" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
+                  <div class="card-body" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
                     <h5 class="card-title text-dark">Microphone Selection</h5>
                     <select id="microphoneList"></select>
                     <br>
@@ -198,6 +204,16 @@
               </div>
             </div>
           </div>
+
+          <div class="form-group" id="start-guide-ins"
+            style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #F6F1F1; padding: 20px; border-radius: 10px; max-width: 300px;">
+            <p style="margin-bottom: 5px;font-size:smaller;">Enter at least a display name then click 'confirm' to
+              create a new event. You may optionally configure advanced settings. Leave the date unchanged to start the
+              event immediately.</p>
+          </div>
+
+          <div id="copyMessageFailedAlt" class="text-danger hideable"></div>
+
           <div class="form-group">
             <label for="waitingRoomToggle">Waiting Room</label>
             <div class="custom-control custom-switch">
@@ -217,8 +233,6 @@
           <div class="form-group">
             <button type="button" class="btn btn-secondary" id="advancedSettingsBtn">Show Advanced Settings</button>
           </div>
-
-
 
           <div id="recordingParamsPanel" style="display: none; padding: 20px; border: 1px solid #ccc;">
             <h5>Recording Parameters</h5>
@@ -413,26 +427,32 @@
             </div>
           </div>
 
-          <div class="form-group" id="start-guide" style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #0b0b0b; padding: 20px; border-radius: 10px;display:none;">
-            <p style="font-weight: bold; color: #171718; font-size: medium; margin-bottom: 10px;">Join on your mobile app or the web (here):</p>
-            <p style="margin-bottom: 10px;font-size:smaller;" id="qrCodeParagraph" >1. Use your mobile app to scan the QR code (or enter your secret) to join the event.</p>
-            
-            <p style="margin-bottom: 5px; color: #171718;font-size: small;">2. Or, click <button type="button" style="background-color: #0b0b0b; padding: 5px;font-size: smaller;"  class="btn btn-secondary btn-small" id="joinWeb1"> this button </button> to proceed on the web (here).</p>
+          <div class="form-group" id="start-guide"
+            style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #0b0b0b; padding: 20px; border-radius: 10px;display:none;">
+            <p style="font-weight: bold; color: #171718; font-size: medium; margin-bottom: 10px;">Join on your mobile
+              app or the web (here):</p>
+            <p style="margin-bottom: 10px;font-size:smaller;" id="qrCodeParagraph">1. Use your mobile app to scan the QR
+              code (or enter your secret) to join the event.</p>
+
+            <p style="margin-bottom: 5px; color: #171718;font-size: small;">2. Or, click <button type="button"
+                style="background-color: #0b0b0b; padding: 5px;font-size: smaller;" class="btn btn-secondary btn-small"
+                id="joinWeb1"> this button </button> to proceed on the web (here).</p>
           </div>
 
-          <div class="form-group" id="start-guide-ins" style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #0b0b0b; padding: 20px; border-radius: 10px;display:none;"> 
+          <div class="form-group" id="start-guide-ins"
+            style="justify-content: center; justify-items: center; justify-self: center; border: 2px solid #0b0b0b; padding: 20px; border-radius: 10px;display:none;">
             <p style="margin-bottom: 5px;font-size:smaller;">Click the "Passcode Copy" button (first) and then <br>
               the "Meeting (event) ID Copy" button to finalize the event room creation.</p>
           </div>
-          
 
-          <div class="form-group" id="qrcode" style="margin-top:30px; margin-bottom:50px;justify-content: center;justify-items: center; justify-self: center;">
- 
+
+          <div class="form-group" id="qrcode"
+            style="margin-top:30px; margin-bottom:50px;justify-content: center;justify-items: center; justify-self: center;">
+
           </div>
 
-
-          <div class="form-group">
-            <label for="PassIDInputModal">Passcode <span><small class="hideable">(click confirm to generate)</small></span> </label>
+          <div class="form-group detailed">
+            <label for="PassIDInputModal">Passcode <span><small class="hideable"></small></span> </label>
             <div class="input-group">
               <input type="text" class="form-control text-black" id="PassIDInputModal" aria-label="Pass ID" readonly>
               <div class="input-group-append hideable">
@@ -441,8 +461,9 @@
             </div>
             <div id="copyPassMessageFailed" class="text-danger hideable"></div>
           </div>
-          <div class="form-group">
-            <label for="eventIDInputModal" class="tune-event">Meeting ID <span><small class="hideable">(click confirm to generate)</small></span> </label>
+          <div class="form-group detailed">
+            <label for="eventIDInputModal" class="tune-event">Meeting ID <span><small class="hideable">(click confirm to
+                  generate)</small></span> </label>
             <div class="input-group">
               <input type="text" class="form-control text-black" id="eventIDInputModal" aria-label="Meeting ID"
                 readonly>
@@ -517,19 +538,6 @@
       </div>
     </div>
   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -3,13 +3,13 @@ import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
 const app = express()
-const ip = '111.222.222.111'
+const ip = '111.222.222.111';
 const PORT = 3000
 const safeOrigins = [`https://localhost:${PORT}`, `https://${ip}:${PORT}`, `http://localhost:${PORT}`, `http://${ip}:${PORT}`]
 
 app.use(cors())
 
-import http from 'http';
+import https from 'httpolyglot'
 import fs from 'fs'
 import path from 'path'
 const _dirname = path.resolve()
@@ -38,24 +38,32 @@ app.use('/meeting/:name', express.static(path.join(_dirname, 'public_alt')))
 app.use('/meet/:room/:pem', express.static(path.join(_dirname, 'public')))
 app.use('/images', express.static(path.join(_dirname, 'public/images')))
 
-const httpServer = http.createServer(app);
-httpServer.listen(PORT, () => {
+
+// SSL cert for HTTPS access
+const options = {
+  key: fs.readFileSync('./ssl/local.com.key', 'utf-8'),
+  cert: fs.readFileSync('./ssl/local.com.pem', 'utf-8')
+}
+
+const httpsServer = https.createServer(options, app)
+httpsServer.listen(PORT, () => {
   console.log('listening on port: ' + PORT);
 });
 
-const io = new Server(httpServer, { cors: { origin: '*' } });
+
+const io = new Server(httpsServer, { cors: { origin: '*' } });
 
 const connections = io.of('/media')
 
 let worker
-let rooms = {}          
-let peers = {}          
-let transports = []     
-let producers = []     
-let screenProducers = [] 
-let consumers = []      
-let tempEventRooms = {} 
-let tempEventPeers = {} 
+let rooms = {}
+let peers = {}
+let transports = []
+let producers = []
+let screenProducers = []
+let consumers = []
+let tempEventRooms = {}
+let tempEventPeers = {}
 
 const mode = process.env.MODE
 const apiUserName = process.env.APIUSERNAME
@@ -592,13 +600,13 @@ connections.on('connection', async socket => {
     meetingRoomParams_: mode == 'sandbox' ? meetingRoomParams_Sandbox : meetingRoomParams_Production,
     recordingParams_: mode == 'sandbox' ? recordingParams_Sandbox : recordingParams_Production
   };
-  
+
   // Check if the origin is safe and add the API credentials to the response data
   if (safeOrigins.includes(origin)) {
     responseData.apiUserName = apiUserName;
     responseData.apiKey = apiKey;
   }
- 
+
   socket.emit('connection-success', responseData);
 
 
@@ -858,12 +866,12 @@ connections.on('connection', async socket => {
   }
 
   const joinRoom = async ({ roomName, islevel }) => {
-  
+
     const router = await createRoom(roomName, socket.id)
 
     peers[socket.id] = {
       socket,
-      roomName,   
+      roomName,
       transports: [],
     }
 
@@ -917,7 +925,7 @@ connections.on('connection', async socket => {
               checkHost = true
             }
           }
-   
+
           for (let i = 0; i < members.length; i++) {
             const member = members[i];
             names.push(member.name)
@@ -1416,7 +1424,7 @@ connections.on('connection', async socket => {
       await rooms[roomName].members.forEach(async member => {
         if (member.islevel !== '2') {
 
-  
+
           try {
             let { members, settings, requests, coHost, coHostResponsibilities } = await getRoomSummary(roomName)
             await updateMembers({ roomName, member, coHost, requests, coHostResponsibilities, settings, members })
@@ -1597,7 +1605,7 @@ connections.on('connection', async socket => {
 
   const updateHostCoHostOfRequest = async ({ roomName, userRequest, forCoHost, coHost }) => {
 
-   
+
     let Host
 
     if (forCoHost) {
@@ -2273,21 +2281,21 @@ connections.on('connection', async socket => {
 
   //socket events
   socket.on('updateMediasfuURL', async ({ eventID, mediasfuURL }, callback) => {
-      try {
+    try {
 
-          let userName = rooms[eventID].members.find(member => member.id === socket.id).name;
+      let userName = rooms[eventID].members.find(member => member.id === socket.id).name;
 
-          if (tempEventRooms[eventID]) {
-              let memberIndex = tempEventRooms[eventID].members.findIndex(member => member.name === userName);
-              if (memberIndex !== -1) {
-                  tempEventRooms[eventID].members[memberIndex].mediasfuURL = mediasfuURL;
-              }
-          }
-
-          callback({ success: true });
-      } catch (error) {
-          callback({ success: false });
+      if (tempEventRooms[eventID]) {
+        let memberIndex = tempEventRooms[eventID].members.findIndex(member => member.name === userName);
+        if (memberIndex !== -1) {
+          tempEventRooms[eventID].members[memberIndex].mediasfuURL = mediasfuURL;
+        }
       }
+
+      callback({ success: true });
+    } catch (error) {
+      callback({ success: false });
+    }
   });
 
   socket.on('fetchRoom', async ({ sec }, callback) => {
@@ -2416,7 +2424,7 @@ connections.on('connection', async socket => {
       if (rooms[roomName]) {
 
         try {
-  
+
           const member = room.waiting.find((member) => member.id === participantId) || tempEventRooms[roomName]?.waiting.find((member) => member.id === participantId);
           if (!member) {
             return;
@@ -2978,7 +2986,7 @@ connections.on('connection', async socket => {
       if (rooms[roomName]) {
         let members = await rooms[roomName].members
         if (members) {
-  
+
           let member_info = await members.find(member_info => member_info.name === member)
           if (member_info) {
 
@@ -3022,7 +3030,7 @@ connections.on('connection', async socket => {
         return
       }
 
-      
+
       if (rooms[roomName]) {
         let capacity = await rooms[roomName].capacity
 
@@ -3034,7 +3042,7 @@ connections.on('connection', async socket => {
           return
         }
 
-       
+
         let eventEnded = await rooms[roomName].eventEnded
 
         if (eventEnded) {
@@ -3044,7 +3052,7 @@ connections.on('connection', async socket => {
 
       }
 
-    
+
       const rtpCapabilities = await joinRoom({ roomName, islevel })
 
       let secureCode = tempEventRooms[roomName].secureCode
@@ -3061,7 +3069,7 @@ connections.on('connection', async socket => {
 
 
       let mediasfuURL = tempEventRooms[roomName].members.find(member_info => member_info.name === member).mediasfuURL
-      
+
 
       callback({ rtpCapabilities, isHost, eventStarted, isBanned, hostNotJoined, eventRoomParams: tempEventRooms[roomName].eventRoomParams, recordingParams, secureCode, mediasfuURL, apiKey, apiUserName, allowRecord: allowRecord_ })
 
@@ -3070,7 +3078,7 @@ connections.on('connection', async socket => {
         await socket.emit('screenProducerId', { producerId: screenProducerId })
       }
 
-     
+
       if (islevel == '2') {
 
         //get the requests for all the members in the room
@@ -3142,7 +3150,7 @@ connections.on('connection', async socket => {
             let members = await rooms[roomName].members
             let member_Index = await members.findIndex((memberData) => memberData.name == member)
 
-    
+
             let prev_SocketId = await members[member_Index].id
             if (prev_SocketId) {
               try {
@@ -3233,7 +3241,7 @@ connections.on('connection', async socket => {
 
 
   socket.on('createReceiveAllTransports', async ({ islevel }, callback) => {
- 
+
     try {
       const { roomName } = peers[socket.id]
 
@@ -3435,7 +3443,7 @@ connections.on('connection', async socket => {
       const { roomName } = await peers[socket.id]
       const router = await rooms[roomName].router
 
- 
+
       await getConsumerTransport(roomName, socket.id, serverConsumerTransportId).then(async (consumerTransport) => {
 
         if (router.canConsume({
@@ -3766,7 +3774,7 @@ connections.on('connection', async socket => {
         }
       }
     } catch (error) {
-    
+
     }
 
   })

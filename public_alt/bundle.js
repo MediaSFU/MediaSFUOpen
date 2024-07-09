@@ -6814,8 +6814,6 @@ arguments[4][19][0].apply(exports,arguments)
 },{"dup":19,"ms":42}],42:[function(require,module,exports){
 arguments[4][20][0].apply(exports,arguments)
 },{"dup":20}],43:[function(require,module,exports){
-
-
 const io = require('socket.io-client')
 
 function createLoadingModal() {
@@ -6906,6 +6904,9 @@ let subusername
 let actType = 'webinar'
 let prevActType
 let allowRecording = false
+
+let videoAlreadyOn = false
+let localStreamVideo = null
 
 
 let recordingParams = {
@@ -7022,6 +7023,11 @@ async function previewMedia() {
 
     try {
 
+        const savedVideoDevice = getCookie('videoDevice');
+        const savedAudioDevice = getCookie('audioDevice');
+        const useBackground = getCookie('useBackground');
+        const backgroundSrc = getCookie('backgroundSrc');
+
         await navigator.mediaDevices.enumerateDevices()
             .then(devices => {
                 // Filter the list to get only audio and video input devices
@@ -7054,6 +7060,23 @@ async function previewMedia() {
                     audioOutputDropdown.trigger('change');
                 });
 
+                // Set the default camera, microphone, and audio output sources
+                if (savedVideoDevice) {
+                    //check if the saved video device is in the list of video devices
+                    const videoDevice = videoInputs.find(device => device.deviceId === savedVideoDevice);
+                    if (videoDevice) {
+                        videoDropdown.val(savedVideoDevice);
+                    }
+                }
+
+                if (savedAudioDevice) {
+                    //check if the saved audio device is in the list of audio devices
+                    const audioDevice = audioInputs.find(device => device.deviceId === savedAudioDevice);
+                    if (audioDevice) {
+                        audioInputDropdown.val(savedAudioDevice);
+                    }
+                }
+
                 // Limit the width of the select element
                 audioOutputDropdown.css('max-width', '100%');
                 audioInputDropdown.css('max-width', '100%');
@@ -7076,86 +7099,103 @@ async function previewMedia() {
 document.addEventListener('click', previewMedia);
 
 async function streamSuccessNull() {
-
     try {
+        const useBackground = getCookie('useBackground');
+        const backgroundSrc = getCookie('backgroundSrc');
 
-        // Set the default camera, microphone, and audio output sources
         const videoDropdown = $('#cameraList');
         const audioInputDropdown = $('#microphoneList');
         const audioOutputDropdown = $('#audioOutputList');
 
-        $('#videoOutputPreview').css('max-width', '100%');
-        $('#audioOutputPreview').css('max-width', '100%');
+        $('#videoOutputPreview').css('max-width', '500px');
+        $('#audioOutputPreview').css('max-width', 'auto');
 
         await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: videoDropdown.val() },
+            video: { deviceId: videoDropdown.val(), width: { ideal: 960 }, height: { ideal: 960 } },
             audio: { deviceId: audioInputDropdown.val() }
         })
             .then(stream => {
-                // Use the stream as the video and audio source
                 const videoElement = document.getElementById('videoOutputPreview');
                 const audioElement = document.getElementById('audioOutputPreview');
                 videoElement.srcObject = stream;
                 audioElement.srcObject = stream;
+
+                localStreamVideo = stream;
+                videoAlreadyOn = true;
+
             })
             .catch(error => {
-                // console.log(error);
+                videoAlreadyOn = false;
+                console.log(error);
             });
 
-        // Update the video and audio sources when the user selects a new device
         videoDropdown.on('change', async () => {
             videoPreference = await videoDropdown.val()
             await navigator.mediaDevices.getUserMedia({
-
-                video: { deviceId: videoDropdown.val() },
+                video: { deviceId: videoDropdown.val(), width: { ideal: 960 }, height: { ideal: 960 } },
                 audio: { deviceId: audioInputDropdown.val() }
             })
                 .then(stream => {
-                    // Use the new stream as the video source
                     const videoElement = document.getElementById('videoOutputPreview');
                     videoElement.srcObject = stream;
+                    setCookie('videoDevice', videoDropdown.val(), 365)
+                    videoAlreadyOn = true;
+                    localStreamVideo = stream;
+
+                    //set the facing mode of the video
+                    try {
+                        const facingMode = stream.getVideoTracks()[0].getSettings().facingMode;
+                        setCookie('facingMode', facingMode, 365)
+                    } catch (error) {
+                        
+                    }
+                   
                 })
                 .catch(error => {
-                    // console.log(error);
+                    videoAlreadyOn = false;
+                    console.log(error);
                 });
         });
 
         audioInputDropdown.on('change', async () => {
             audioPreference = await audioInputDropdown.val()
             await navigator.mediaDevices.getUserMedia({
-
-                video: { deviceId: videoDropdown.val() },
+                video: { deviceId: videoDropdown.val(), width: { ideal: 960 }, height: { ideal: 960 } },
                 audio: { deviceId: audioInputDropdown.val() }
             })
                 .then(stream => {
-                    // Use the new stream as the audio source
                     const audioElement = document.getElementById('audioOutputPreview');
                     audioElement.srcObject = stream;
-
+                    setCookie('audioDevice', audioInputDropdown.val(), 365)
+                    //set the facing mode of the video
+                    try {
+                        const facingMode = stream.getVideoTracks()[0].getSettings().facingMode;
+                        setCookie('facingMode', facingMode, 365) 
+                    } catch (error) {
+                        
+                    }
                 })
                 .catch(error => {
-                    // console.log(error);
+                    console.log(error);
                 });
         });
 
         audioOutputDropdown.on('change', async () => {
             audioOutputPreference = await audioOutputDropdown.val()
-            const audioElement = await document.getElementById('audioOutputPreview');
-            const selectedDeviceId = await audioOutputDropdown.val();
+            const audioElement = document.getElementById('audioOutputPreview');
+            const selectedDeviceId = audioOutputDropdown.val();
             if (selectedDeviceId === '') {
-                // If the user selects the default option, stop playing audio
                 audioElement.pause();
                 audioElement.srcObject = null;
             } else {
-                // Otherwise, play the audio through the selected output device
-                const audioOutputConstraints = await { deviceId: audioPreference };
-                await navigator.mediaDevices.getUserMedia({ audio: audioOutputConstraints })
+                await navigator.mediaDevices.getUserMedia({ audio: { deviceId: audioOutputDropdown.val() } })
                     .then(stream => {
                         audioElement.srcObject = stream;
                         audioElement.play();
+                        setCookie('audioOutputDevice', audioOutputDropdown.val(), 365);
                     })
                     .catch(error => {
-                        // console.log(error);
+                        console.log(error);
                     });
             }
         });
@@ -7175,10 +7215,10 @@ async function streamSuccessNull() {
     await showAlert('Join an existing meeting by entering the ID, clicking confirm, then proceeding to enter your name and click join.', 'success', 6000000)
 
     function updateDateTime() {
-        var currentTime = moment();
-        var setDateTime = $('#datetimePicker').datetimepicker('date');
+        let currentTime = moment();
+        let setDateTime = $('#datetimePicker').datetimepicker('date');
 
-        var maxDateTime = moment().add(3, 'months');
+        let maxDateTime = moment().add(3, 'months');
 
         if (currentTime.isAfter(setDateTime)) {
             $('#datetimePicker').datetimepicker('date', currentTime);
@@ -7222,6 +7262,13 @@ toggleBtn.addEventListener('click', () => {
     $('#startMeetingModal').modal('show');
     showAlert('To start an event, enter the room capacity, your name, and date. Then click start event; the event will only start after you click the copy field to get the Passcode then the ID.', 'success', 10000)
 
+    try {
+        $(".detailed").each(function () {
+            $(this).hide();
+        });
+    } catch (error) {
+
+    }
 });
 
 function generateIncrements(maxValue) {
@@ -7309,29 +7356,29 @@ cancelMeetingBtn.addEventListener('click', () => {
 });
 
 // Get the userNameInputModal element
-var userNameInputAlt = document.getElementById('userNameInputMain');
+let userNameInputAlt = document.getElementById('userNameInputMain');
 
 // Listen for the input event
 userNameInputAlt.addEventListener('input', function () {
     // Remove spaces and non-alphanumeric characters from the entered value
-    var modifiedValue = this.value.replace(/[^\w\s]/g, '').replace(/\s/g, '');
+    let modifiedValue = this.value.replace(/[^\w\s]/g, '').replace(/\s/g, '');
     // Ensure the value starts with an alphabet by extracting the first character
-    var firstChar = modifiedValue.charAt(0);
-    var alphabeticValue = /^[A-Za-z]/.test(firstChar) ? modifiedValue : '';
+    let firstChar = modifiedValue.charAt(0);
+    let alphabeticValue = /^[A-Za-z]/.test(firstChar) ? modifiedValue : '';
     // Set the modified value back to the input field
     this.value = alphabeticValue;
 });
 
 // Get the userNameInputModal element
-var userNameInput = document.getElementById('userNameInputModal');
+let userNameInput = document.getElementById('userNameInputModal');
 
 // Listen for the input event
 userNameInput.addEventListener('input', function () {
     // Remove spaces and non-alphanumeric characters from the entered value
-    var modifiedValue = this.value.replace(/[^\w\s]/g, '').replace(/\s/g, '');
+    let modifiedValue = this.value.replace(/[^\w\s]/g, '').replace(/\s/g, '');
     // Ensure the value starts with an alphabet by extracting the first character
-    var firstChar = modifiedValue.charAt(0);
-    var alphabeticValue = /^[A-Za-z]/.test(firstChar) ? modifiedValue : '';
+    let firstChar = modifiedValue.charAt(0);
+    let alphabeticValue = /^[A-Za-z]/.test(firstChar) ? modifiedValue : '';
     // Set the modified value back to the input field
     this.value = alphabeticValue;
 });
@@ -7352,7 +7399,7 @@ function hideQRCode(id = 'qrcode', id1 = 'start-guide') {
     if (id1 == 'start-guide') {
         let guideElementAlt = document.getElementById('start-guide-ins');
         if (guideElementAlt) {
-            guideElementAlt.style.display = "flex";
+            guideElementAlt.style.display = "none";
             guideElementAlt.style.maxWidth = '260px';
 
         }
@@ -7366,44 +7413,51 @@ startMeetingBtn.addEventListener('click', () => {
     const capacityInput = document.getElementById('capacityInput');
     const capacity = parseInt(inputCapacity.value, 10);
     let warningMessage = document.getElementById('copyMessageFailed');
+    let warningMessageAlt = document.getElementById('copyMessageFailedAlt');
 
     if (capacity < 2 || capacity > refRoomCapacity) {
         inputCapacity.setCustomValidity(`Room capacity must be between 2 and ${refRoomCapacity}.`);
         warningMessage.textContent = `Room capacity must be between 2 and ${refRoomCapacity}.`;
+        warningMessageAlt.textContent = `Room capacity must be between 2 and ${refRoomCapacity}.`;
         //set the value to the max
         inputCapacity.value = refRoomCapacity;
     } else {
 
         inputCapacity.setCustomValidity('');
         warningMessage.textContent = '';
+        warningMessageAlt.textContent = '';
     }
 
     capacityInput.max = refRoomCapacity;
     const userNameInput = document.getElementById('userNameInputModal');
     // Check if all fields are filled
     if (!durationSelect.value || !capacityInput.value || !userNameInput || !userNameInput.value) {
-        const warningMessage = document.getElementById('copyMessageFailed');
+        // const warningMessage = document.getElementById('copyMessageFailed');
         warningMessage.textContent = 'Fill in all fields.';
+        warningMessageAlt.textContent = 'Fill in all fields.';
         return
     }
 
     if (capacityInput.value > refRoomCapacity) {
-        const warningMessage = document.getElementById('copyMessageFailed');
+        // const warningMessage = document.getElementById('copyMessageFailed');
         warningMessage.textContent = `Room capacity cannot be more than ${refRoomCapacity}.`
+        warningMessageAlt.textContent = `Room capacity cannot be more than ${refRoomCapacity}.`
         return;
     }
 
     //reomve spaces from the username and make sure it is at least 3 characters long
     const userNam = userNameInput.value.trim();
     if (userNam.length < 2) {
-        const warningMessage = document.getElementById('copyMessageFailed');
+        // const warningMessage = document.getElementById('copyMessageFailed');
         warningMessage.textContent = 'Username must be at least 2 characters long.';
+        warningMessageAlt.textContent = 'Username must be at least 2 characters long.';
         return;
     }
 
     if (isReservedKeyword(userNam)) {
-        const warningMessage = document.getElementById('copyMessageFailed');
+        // const warningMessage = document.getElementById('copyMessageFailed');
         warningMessage.textContent = 'Username cannot be a reserved keyword.';
+        warningMessageAlt.textContent = 'Username cannot be a reserved keyword.';
         return;
     }
 
@@ -7421,33 +7475,40 @@ startMeetingBtn.addEventListener('click', () => {
     startMeetingBtn.disabled = true;
 
 
-    var selectedDateTime = $('#datetimePicker').datetimepicker('date');
+    let selectedDateTime = $('#datetimePicker').datetimepicker('date');
 
-    var scheduledDate = selectedDateTime.toDate();
+    let scheduledDate = selectedDateTime.toDate();
 
     //convert the selected date to a DATE in js
 
     // Get the current time
-    var currentTime = moment();
-
-    // Check if the selected datetime is at least 5 minutes more than the current time
-    if (selectedDateTime.isAfter(currentTime.add(5, 'minutes'))) {
-        //hide the qr code
-        hideQRCode();
-        startMeetingBtn.textContent = 'Scheduling...';
-        const warningMessage = document.getElementById('copyMessageFailed');
-        warningMessage.textContent = 'Click copy to get the Event ID!';
-        warnedMessage.textContent = 'Click copy to get the Passcode!';
-    } else {
-
-        //hide the qr code
-        hideQRCode();
+    let currentTime = moment();
 
 
-        startMeetingBtn.textContent = 'Starting...';
-        return;
 
-    }
+
+      // Check if the selected datetime is at least 5 minutes more than the current time
+      if (selectedDateTime.isAfter(currentTime.add(5, 'minutes'))) {
+          //hide the qr code
+          hideQRCode();
+          startMeetingBtn.textContent = 'Scheduling...';
+          // const warningMessage = document.getElementById('copyMessageFailed');
+          // warningMessage.textContent = 'Click copy to get the Event ID!';
+          // warnedMessage.textContent = 'Click copy to get the Passcode!';
+
+      } else {
+
+          //hide the qr code
+          hideQRCode();
+
+          startMeetingBtn.textContent = 'Starting...';
+          // return;
+
+      }
+
+      $('#PassIDCopyBtn').trigger('click');
+      $('#eventIDCopyBtn').trigger('click');
+
 
 });
 
@@ -7501,12 +7562,12 @@ eventIDCopyBtn.addEventListener('click', async () => {
         const capacityInput = document.getElementById('capacityInput');
         const userNameInput = document.getElementById('userNameInputModal');
 
-        var selectedDateTime = $('#datetimePicker').datetimepicker('date');
+        let selectedDateTime = $('#datetimePicker').datetimepicker('date');
 
-        var scheduledDate = selectedDateTime.toDate();
+        let scheduledDate = selectedDateTime.toDate();
 
         // Get the current time
-        var currentTime = moment();
+        let currentTime = moment();
 
 
         //redirect to the meeting page, url is /meeting/<eventID>/0
@@ -7603,7 +7664,7 @@ inputCapacity.max = refRoomCapacity;
 
 inputCapacity.addEventListener('input', () => {
     const capacity = parseInt(inputCapacity.value, 10);
-    const warningMessage = document.getElementById('copyMessageFailed');
+    const warningMessage = document.getElementById('copyMessageFailedAlt');
 
     if (capacity < 0 || capacity > refRoomCapacity) {
         inputCapacity.setCustomValidity(`Room capacity must be between 0 and ${refRoomCapacity}.`);
@@ -7885,11 +7946,6 @@ const meetingParamsPanel = document.getElementById('meetingParamsPanel');
 // Event listener for the Advanced Settings button
 advancedSettingsBtn.addEventListener('click', () => {
 
-    try {
-
-    } catch (error) {
-
-    }
     // Toggle the visibility of the panels
     if (meetingParamsPanel.style.display === 'none') {
         if (actType != "chat" && showRecording) {
@@ -7981,6 +8037,17 @@ function isValidDomain(domain, protocol) {
 
     return true
 }
+
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    const domain = document.domain ? "; domain=" + document.domain : "";
+    document.cookie = name + "=" + (value || "") + expires + domain + "; path=/";
+  }
 
 
 
@@ -8100,7 +8167,7 @@ function hideAdminWelcomeModal() {
 // Handle the submit passcode button click event
 $('#submitPasscodeBtn').click(function () {
     // Get the entered passcode
-    var passcode = $('#passcodeInput').val();
+    let passcode = $('#passcodeInput').val();
 
     // Check the passcode (replace this with your actual passcode verification logic)
     if (passcode === passWord) {
@@ -8522,7 +8589,259 @@ function loadSocket() {
         }
     });
 
+
+
 }
 
+// Function to get a cookie value by name
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+
+let selfieSegmentation = null;
+
+async function addSelfieSegmentation() {
+    let selectedImage = null;
+    let processedStream = null;
+    let mainCanvas = null;
+
+    const defaultImages = [
+        { full: '/images/backgrounds/wall.png', thumb: '/images/backgrounds/wall_thumbnail.png' },
+        { full: '/images/backgrounds/shelf.png', thumb: '/images/backgrounds/shelf_thumbnail.png' },
+        { full: '/images/backgrounds/clock.png', thumb: '/images/backgrounds/clock_thumbnail.png' },
+        { full: '/images/backgrounds/desert.jpg', thumb: '/images/backgrounds/desert_thumbnail.jpg' },
+        { full: '/images/backgrounds/flower.jpg', thumb: '/images/backgrounds/flower_thumbnail.jpg' },
+    ];
+
+    const defaultImagesContainer = document.getElementById('defaultImages');
+    const uploadImageInput = document.getElementById('uploadImage');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    async function preloadModel() {
+        selfieSegmentation = new SelfieSegmentation({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+        });
+
+        selfieSegmentation.setOptions({
+            modelSelection: 1,
+            selfieMode: true,
+        });
+
+        await selfieSegmentation.initialize();
+    }
+
+    preloadModel().catch(err => console.log('Error preloading model:', err));
+
+    defaultImages.forEach(({ full, thumb }) => {
+        const img = document.createElement('img');
+        img.src = thumb;
+        img.classList.add('img-thumbnail', 'm-1');
+        img.style.width = '80px';
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', () => {
+            loadImageToCanvas(full);
+            setCookie('backgroundSrc', full, 7);
+            setCookie('useBackground', 'true', 7);
+        });
+        defaultImagesContainer.appendChild(img);
+    });
+
+    const noBackgroundButton = document.createElement('div');
+    noBackgroundButton.innerHTML = 'None';
+    noBackgroundButton.classList.add('img-thumbnail', 'm-1', 'd-flex', 'align-items-center', 'justify-content-center');
+    noBackgroundButton.style.width = '80px';
+    noBackgroundButton.style.height = '80px';
+    noBackgroundButton.style.cursor = 'pointer';
+    noBackgroundButton.style.backgroundColor = 'white';
+    noBackgroundButton.addEventListener('click', () => {
+        selectedImage = null;
+        setCookie('useBackground', 'false', 7);
+        segmentationPreview(false);
+    });
+    defaultImagesContainer.appendChild(noBackgroundButton);
+
+    uploadImageInput.addEventListener('change', (event) => {
+        try {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2048 * 1024) { // 2MB
+                    showAlert('File size must be less than 2MB.', 'danger');
+                    return;
+                }
+
+                const validMimeTypes = ['image/jpeg', 'image/png'];
+                if (!validMimeTypes.includes(file.type)) {
+                    showAlert('Invalid file type. Only JPEG and PNG are allowed.', 'danger');
+                    return;
+                }
+
+                const img = new Image();
+                img.onload = () => {
+                    if (img.width !== 1280 || img.height !== 1280) {
+                        showAlert('Image dimensions must be 1280x1280.', 'danger');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        selectedImage = reader.result;
+                        const baseCode = reader.result.split(',')[1];
+                        const basePrefix = reader.result.split(',')[0];
+                        loadImageToCanvas(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                showAlert('Custom images need to be uploaded again when you join the meeting.', 'success');
+            }
+        } catch (error) {
+            console.log('Error uploading:', error);
+        }
+    });
+
+    async function segmentationPreview(doSegmentation) {
+        const videoPreview = document.getElementById('videoOutputPreview');
+        if (!mainCanvas) {
+            mainCanvas = document.createElement('canvas');
+        }
+
+        const virtualImage = new Image();
+        virtualImage.src = selectedImage;
+        const ctx = mainCanvas.getContext('2d');
+
+        if (!doSegmentation) {
+            processedStream = null;
+            videoPreview.srcObject = localStreamVideo;
+            setCookie('useBackground', 'false', 7);
+            setCookie('backgroundSrc', '', 7);
+            return;
+        }
+
+        if (videoAlreadyOn) {
+            const segmentVideo = localStreamVideo;
+            try {
+                await segmentImage(segmentVideo.getVideoTracks()[0]);
+                setCookie('useBackground', 'true', 7);
+            } catch (error) {
+                setCookie('useBackground', 'false', 7);
+            }
+        } else {
+
+            setTimeout(async () => {
+                if (videoAlreadyOn) {
+                    const segmentVideo = localStreamVideo;
+                    try {
+                        await segmentImage(segmentVideo.getVideoTracks()[0]);
+                        setCookie('useBackground', 'true', 7);
+                    } catch (error) {
+                        setCookie('useBackground', 'false', 7);
+                    }
+                }
+            }, 4000);
+        }
+
+        async function segmentImage(videoTrack) {
+            if (!selfieSegmentation) {
+                await preloadModel();
+            }
+
+            selfieSegmentation.onResults(onResults);
+
+            const trackProcessor = new MediaStreamTrackProcessor({ track: videoTrack });
+            const trackGenerator = new MediaStreamTrackGenerator({ kind: 'video' });
+
+            const transformer = new TransformStream({
+                async transform(videoFrame, controller) {
+                    if (selfieSegmentation) {
+                        videoFrame.width = videoFrame.displayWidth;
+                        videoFrame.height = videoFrame.displayHeight;
+                        await selfieSegmentation.send({ image: videoFrame });
+
+                        const timestamp = videoFrame.timestamp;
+                        const newFrame = new VideoFrame(mainCanvas, { timestamp });
+
+                        videoFrame.close();
+                        controller.enqueue(newFrame);
+                    }
+                }
+            });
+
+            trackProcessor.readable.pipeThrough(transformer).pipeTo(trackGenerator.writable).catch(() => { });
+
+            processedStream = new MediaStream();
+            processedStream.addTrack(trackGenerator);
+            videoPreview.srcObject = processedStream;
+        }
+
+        function onResults(results) {
+            ctx.save();
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            ctx.drawImage(results.segmentationMask, 0, 0, mainCanvas.width, mainCanvas.height);
+
+            ctx.globalCompositeOperation = "source-out";
+            const pat = ctx.createPattern(virtualImage, 'no-repeat');
+            ctx.fillStyle = pat;
+            ctx.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+            ctx.globalCompositeOperation = "destination-atop";
+            ctx.drawImage(results.image, 0, 0, mainCanvas.width, mainCanvas.height);
+
+            ctx.restore();
+        }
+    }
+
+    function loadImageToCanvas(src) {
+        const img = new Image();
+        img.onload = () => {
+            selectedImage = src;
+            segmentationPreview(true);
+        };
+        img.src = src;
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+        }
+        const domain = document.domain ? "; domain=" + document.domain : "";
+        document.cookie = name + "=" + (value || "") + expires + domain + "; path=/";
+    }
+
+    const useBackground = getCookie('useBackground');
+    let backgroundSrc = getCookie('backgroundSrc');
+    if (useBackground === 'true') {
+        if (backgroundSrc) {
+            loadImageToCanvas(backgroundSrc);
+        }else {
+            backgroundSrc = '/images/backgrounds/wall.png';
+            loadImageToCanvas(backgroundSrc);
+        }
+    }
+}
+
+addSelfieSegmentation();
 
 },{"socket.io-client":29}]},{},[43]);
