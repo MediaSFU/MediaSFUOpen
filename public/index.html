@@ -30,11 +30,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-  <link rel="manifest" href="/images/site.webmanifest">
-  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="shortcut icon" href="/images/favicon.ico">
   <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="msapplication-config" content="/images/browserconfig.xml">
 
 
 
@@ -44,25 +41,26 @@
 
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   
 
   
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link href="./style.css" rel="stylesheet">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
 
 
 
   
   </head>
   <body>
-    <!-- <video id="mainVideo" autoplay muted></video>
 
-    <div id="mini-videos"></div> -->
 
     <div class="container-fluid m-0 p-0 h-100 w-100 mediasfu" style="overflow-y: hidden;overflow-x: hidden;display: hidden;">
 
@@ -71,7 +69,7 @@
       
 
             <div class="card border-0 m-0 p-0" id="mainAspect"> 
-              <div class="card-body m-0 p-0" style="background-color:#e8eaec;" >
+              <div class="card-body m-0 p-0" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);" >
 
                 <div class="row no-gutters screencontainer" style="height: 100%; overflow-y: hidden;overflow-x: hidden;" >
 
@@ -145,7 +143,7 @@
 
             <div class="card border-0 m-0 p-0" id = "subAspect" style=" display:hidden;"> 
 
-              <div class="card-body p-0 m-0" style="background-color:#e8eaec;" >
+              <div class="card-body p-0 m-0" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);" >
 
                 <div class="row no-gutters p-0 m-0" >
 
@@ -251,7 +249,7 @@
 <!-- Modal -->
 <div class="modal fade" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title">Participants <span class="badge bg-secondary" id="participant-counter"></span></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
@@ -272,7 +270,7 @@
 <!-- Menu Modal -->
 <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md" >
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title" id="menuModalLabel"><i class="fas fa-bars"></i> Menu</h5>
         <button type="button" class="btn-close-menu" data-bs-dismiss="modal"  aria-label="Close"><i class="fas fa-times"></i></button>
@@ -285,6 +283,20 @@
            <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; font-size: medium; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#requestsModal" id="addRequestsID" > <i class="fas fa-users fa-lg border-0 mr-2"  ></i>Requests</button>
            <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; font-size: medium; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#waitingRoomModal" id ="addWaitingID" > <i class="fas fa-clock fa-lg border-0 mr-2"  ></i>Waiting</button>
            <button class="list-group-item list-group-item-action" style="background-color: transparent; border: 0; font-size: medium; padding-left: 0; margin-left: 0" id="addCoHostBtn"   data-toggle="modal" data-target="#cohostModal"   > <i class="fas fa-user-plus fa-lg border-0 mr-2"></i>Co-host</button>
+
+           
+           <button class="list-group-item list-group-item-action"
+              style="background-color: transparent; border: 0; font-size: medium; padding-left: 0; margin-left: 0"
+              id="addPollsBtn" data-toggle="modal" data-target="#pollModal"> <i
+                class="fas fa-poll-h fa-lg border-0 mr-2"></i>Polls</button>
+            <button class="list-group-item list-group-item-action"
+              style="background-color: transparent; border: 0; font-size: medium; padding-left: 0; margin-left: 0"
+              id="addBreakoutBtn" data-toggle="modal" data-target="#breakoutRoomsModal"> <i
+                class="fas fa-random fa-lg border-0 mr-2"></i>Breakout Rooms</button>
+            <button class="list-group-item list-group-item-action"
+              style="background-color: transparent; border: 0; font-size: medium; padding-left: 0; margin-left: 0"
+              id="addBoardBtn" data-toggle="modal" data-target="#whiteboardModal"> <i
+                class="fas fa-chalkboard fa-lg border-0 mr-2"></i>Whiteboard</button>
 
            <hr>
 
@@ -338,7 +350,7 @@
 <!-- Modal for Share Meeting -->
 <div class="modal fade" id="shareMeetingModal" tabindex="-1" role="dialog" aria-labelledby="shareMeetingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title" id="shareMeetingModalLabel">Share Meeting</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -355,6 +367,12 @@
           <button class="list-group-item list-group-item-action" style="background-color: transparent;border: 0; padding-left: 0; margin-left: 0" data-toggle="modal" data-target="#displaySettingsModal" id ="displaySettingsID_2" > <i class="fas fa-desktop fa-lg border-0 mr-2"  > </i>Display</button>
        </div>
 
+          <div class="list-group" style="margin: 0; padding: 0;">
+            <button class="list-group-item list-group-item-action"
+              style="background-color: transparent; border: 0; font-size: medium; padding-left: 0; margin-left: 0"
+              id="addPollsBtn_2" data-toggle="modal" data-target="#pollModal"> <i
+                class="fas fa-poll-h fa-lg border-0 mr-2"></i>Polls</button>
+          </div>
       
        <hr>
      
@@ -392,7 +410,7 @@
 <!--Media Settings Modal mediaSettingsModal-->
 <div class="modal" tabindex="-1" role="dialog" id="mediaSettingsModal">
   <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
-    <div class="modal-content text-dark" style="background-color: #e8eaec;">
+    <div class="modal-content text-dark" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
       <div class="modal-header">
         <h5 class="modal-title">Media Settings</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -422,7 +440,17 @@
               <i class="fas fa-sync-alt"></i> Switch Camera:
             </label>
             <div class="col-lg-12">
-              <button class="btn btn-primary btn-block switchCamera" id="switchCamera"  type="button" >Switch</button>
+                <button class="btn btn-primary btn-block switchCamera" id="switchCamera" type="button">Switch</button>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="changeBackground" class="col-lg-12 col-form-label">
+                <i class="fas fa-image"></i> Virtual Background:
+              </label>
+              <div class="col-lg-12">
+                <button class="btn btn-primary btn-block changeBackground" id="changeBackground" type="button">Virtual
+                  Background
+                </button>
             </div>
           </div>
         </form>
@@ -435,7 +463,7 @@
 <!--Settings Modal-->
 <div class="modal" tabindex="-1" role="dialog" id="settingsModal">
   <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title">Settings</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -497,7 +525,7 @@
 <!-- Requests Modal -->
 <div class="modal fade" id="requestsModal" tabindex="-1" aria-labelledby="requestsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-sm">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title">Requests <span class="badge bg-secondary" id="request-counter"></span></h5>
         <button type="button" class="btn-close-requests" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
@@ -518,7 +546,7 @@
 <!-- Display Settings Modal -->
 <div class="modal fade" id="displaySettingsModal" tabindex="-1" aria-labelledby="displaySettingsLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title">Display Settings</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -574,7 +602,7 @@
 <!-- Add a modal for the spinner -->
 <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" style="background-color: #e8eaec;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
       <div class="modal-body text-center">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
@@ -589,7 +617,7 @@
 <!-- Waiting Modal -->
 <div class="modal fade" id="waitingRoomModal" tabindex="-1" aria-labelledby="waitingRoomLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-sm">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title">Waiting <span class="badge bg-secondary" id="waitings-counter"></span></h5>
         <button type="button" class="btn-close-waitings" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
@@ -622,7 +650,7 @@
 <!-- Exit Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-sm">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-header">
         <h5 class="modal-title" id="confirmModalLabel">Confirm Exit</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -675,7 +703,7 @@
 <!-- Add a modal for confrimhere -->
 <div class="modal fade" id="confirmationHereModal" tabindex="-1" role="dialog" aria-labelledby="confirmationHereModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" style="background-color: #a0aab1;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
       <div class="modal-body text-center">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
@@ -692,7 +720,7 @@
 <!-- Recording Modal -->
 <div class="modal fade" id="recordingModal" tabindex="-1" role="dialog" aria-labelledby="recordingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-    <div class="modal-content" style="background-color: #e8eaec;">
+    <div class="modal-content" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
       <div class="modal-header">
         <ul class="nav nav-tabs" id="recordingTabs" role="tablist">
           <li class="nav-item">
@@ -733,7 +761,7 @@
 <!-- Co-host Modal -->
 <div class="modal fade" id="cohostModal" tabindex="-1" role="dialog" aria-labelledby="cohostModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-    <div class="modal-content text-dark" style="background-color: #e8eaec;">
+    <div class="modal-content text-dark" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2, #ffebcd);">
       <div class="modal-header">
         <h5 class="modal-title" id="cohostModalLabel">Manage Co-host</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -871,6 +899,474 @@
 
 
 
+  <!-- Poll Modal -->
+  <div class="modal fade" id="pollModal" tabindex="-1" role="dialog" aria-labelledby="pollModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+      <div class="modal-content text-dark" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pollModalLabel">Polls</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="max-height: 400px; overflow-y: auto;" id="pollModalBody">
+          <!-- Content will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Background Removal -->
+  <div class="modal fade" id="backgroundRemovalModal" tabindex="-1" aria-labelledby="backgroundRemovalModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="backgroundRemovalModalLabel">Virtual Background</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+              <h6>Default Images</h6>
+              <div id="defaultImages" class="d-flex flex-wrap">
+                <!-- Default images will be dynamically inserted here -->
+              </div>
+              <hr />
+              <h6>Upload Your Image</h6>
+              <input type="file" id="uploadImage" accept="image/*" class="form-control" />
+              <br />
+              <p class="text-muted">Max file size: 2MB
+                <br />
+                Dimensions: 1280x1280
+              </p>
+              <div id="uploadedImagePreview" class="mt-3"></div>
+            </div>
+            <div class="col-md-8">
+              <h6>Preview</h6>
+              <div id="loadingOverlay" class="loading-overlay d-none">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div id="backgroundPreview" class="position-relative"
+                style="width: 100%; max-width: 100%; overflow: auto;">
+                <canvas id="backgroundCanvas" class="d-none"></canvas>
+                <video id="previewVideo" class="d-none" autoplay playsinline
+                  style="transform: rotateY(180deg); width: 100%; max-width: 100%;"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="applyBackgroundButton">Preview Background</button>
+          <button type="button" class="btn btn-secondary" id="saveBackgroundButton" disabled>Save & Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breakout Rooms Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="breakoutRoomsModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-content text-dark" style="background: linear-gradient(285deg, #f5f1fa, #c3cfe2, #c6cfe2);">
+        <div class="modal-header">
+          <h5 class="modal-title">Breakout Rooms</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="breakoutRoomsForm">
+            <div class="form-group row">
+              <label for="numRooms" class="col-lg-4 col-form-label">Number of Rooms:</label>
+              <div class="col-lg-2 mt-2">
+                <input type="number" class="form-control" id="numRooms" name="numRooms" min="1">
+              </div>
+              <div class="col-lg-3 mt-2">
+                <button class="btn btn-primary btn-block" id="randomAssign" type="button">
+                  <i class="fas fa-random"></i> Random
+                </button>
+              </div>
+              <div class="col-lg-3 mt-2">
+                <button class="btn btn-primary btn-block" id="manualAssign" type="button">
+                  <i class="fas fa-hand-pointer"></i> Manual
+                </button>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="newParticipantAction" class="col-lg-4 col-form-label">New Participant Action:</label>
+              <div class="col-lg-8">
+                <select class="form-control" id="newParticipantAction" name="newParticipantAction">
+                  <option value="autoAssignNewRoom">Add to new room</option>
+                  <option value="autoAssignAvailableRoom">Add to open room</option>
+                  <option value="manualAssign">No action</option>
+                </select>
+              </div>
+            </div>
+          </form>
+          <div id="roomsContainer"></div>
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-success" id="addRoom" type="button">
+              <i class="fas fa-plus"></i> Add Room
+            </button>
+            <button class="btn btn-primary" id="saveRooms" type="button">
+              <i class="fas fa-save"></i> Save Rooms
+            </button>
+          </div>
+        </div>
+        <!-- Start and Stop Breakout Rooms -->
+        <div class="d-flex justify-content-between mt-3 mb-3">
+          <button class="btn btn-success mb-2" id="startBreakoutRooms" type="button" style="display: none;" disabled>
+            <i class="fas fa-play"></i> Start Breakout Rooms
+          </button>
+          <button class="btn btn-danger mb-2" id="stopBreakoutRooms" type="button" style="display: none;">
+            <i class="fas fa-stop"></i> Stop Breakout Rooms
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Edit Room Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="editRoomModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-content text-dark" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Room</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3 mt-2">
+              <h6>Assigned Participants</h6>
+              <ul class="list-group" id="roomEditList"></ul>
+            </div>
+            <div class="col-md-6 mt-xs-3 mb-3 mt-2">
+              <h6>Pending Participants</h6>
+              <ul class="list-group" id="unassignedList"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Whiteboard Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="whiteboardModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-content text-dark" style="background: linear-gradient(135deg, #f5f1fa, #c3cfe2, #c6cfe2);">
+        <div class="modal-header">
+          <h5 class="modal-title">Whiteboard</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="whiteboardContainer"></div>
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-primary" id="saveWhiteboard" type="button">
+              <i class="fas fa-save"></i> Save Whiteboard
+            </button>
+          </div>
+        </div>
+        <!-- Start and Stop Whiteboard -->
+        <div class="d-flex justify-content-between mt-3 mb-3 ml-3 mr-3">
+          <button class="btn btn-success mr-3" id="startWhiteboard" type="button" style="display: none;" disabled>
+            <i class="fas fa-play"></i> Start Whiteboard
+          </button>
+          <button class="btn btn-danger" id="stopWhiteboard" type="button" style="display: none;">
+            <i class="fas fa-stop"></i> Stop Whiteboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="whiteboard-interface"
+    style="position: relative; display: none; justify-content: center; align-items: center;border: 2px solid #000;background-color: #f0f0f0;">
+
+    <div id="whiteboardContent"
+      style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; max-width: 100%; max-height: 100%; overflow: auto;">
+      <button id="toolbarToggle" class="btn btnBoard btn-primary"
+        style="position: absolute; top: 7px; left: 5px; z-index: 1000;">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="toolbar mb-3" id="toolbar"
+        style="position: absolute; top: 5px; left: 50px; z-index: 1000; background-color: transparent;">
+        <div class="btn-group" role="group">
+          <button class="btn btnBoard btn-secondary dropdown-toggle" id="drawMode" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="drawMode">
+            <a class="dropdown-item" href="#" data-thickness="3">XX-Small (3px)</a>
+            <a class="dropdown-item" href="#" data-thickness="6">X-Small (6px)</a>
+            <a class="dropdown-item" href="#" data-thickness="12">Small (12px)</a>
+            <a class="dropdown-item" href="#" data-thickness="18">Medium (18px)</a>
+            <a class="dropdown-item" href="#" data-thickness="24">Large (24px)</a>
+            <a class="dropdown-item" href="#" data-thickness="36">X-Large (36px)</a>
+          </div>
+        </div>
+        <div class="btn-group" role="group">
+
+          <button class="btn btnBoard btn-dark dropdown-toggle" id="freehandMode" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-paint-brush"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="freehandMode">
+            <a class="dropdown-item" href="#" data-brush-thickness="5">X-Small (5px)</a>
+            <a class="dropdown-item" href="#" data-brush-thickness="10">Small (10px)</a>
+            <a class="dropdown-item" href="#" data-brush-thickness="20">Medium (20px)</a>
+            <a class="dropdown-item" href="#" data-brush-thickness="40">Large (40px)</a>
+            <a class="dropdown-item" href="#" data-brush-thickness="60">X-Large (60px)</a>
+          </div>
+        </div>
+        <div class="btn-group" role="group">
+          <button class="btn btnBoard btn-dark dropdown-toggle" id="shapeMode" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-shapes"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="shapeMode">
+            <a class="dropdown-item" href="#" data-shape="square">
+              <img src="/images/svg/square.svg" alt="Square" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="rectangle">
+              <img src="/images/svg/rectangle.svg" alt="Rectangle" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="circle">
+              <img src="/images/svg/circle.svg" alt="Circle" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="triangle">
+              <img src="/images/svg/triangle.svg" alt="Triangle" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="hexagon">
+              <img src="/images/svg/hexagon.svg" alt="Hexagon" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="pentagon">
+              <img src="/images/svg/pentagon.svg" alt="Pentagon" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="rhombus">
+              <img src="/images/svg/rhombus.svg" alt="Rhombus" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="octagon">
+              <img src="/images/svg/octagon.svg" alt="Octagon" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="parallelogram">
+              <img src="/images/svg/parallelogram.svg" alt="Parallelogram" class="shape-icon">
+            </a>
+            <a class="dropdown-item" href="#" data-shape="oval">
+              <img src="/images/svg/oval.svg" alt="Oval" class="shape-icon">
+            </a>
+          </div>
+        </div>
+        <button class="btn btnBoard btn-secondary" id="selectMode"><i class="fas fa-mouse-pointer"></i></button>
+        <div class="btn-group" role="group">
+          <button class="btn btnBoard btn-danger dropdown-toggle" id="eraseMode" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-eraser"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="eraseMode">
+            <a class="dropdown-item" href="#" data-thickness="5">X-Small (5px)</a>
+            <a class="dropdown-item" href="#" data-thickness="10">Small (10px)</a>
+            <a class="dropdown-item" href="#" data-thickness="20">Medium (20px)</a>
+            <a class="dropdown-item" href="#" data-thickness="30">Large (30px)</a>
+            <a class="dropdown-item" href="#" data-thickness="60">X-Large (60px)</a>
+          </div>
+        </div>
+        <button class="btn btnBoard btn-info" id="panMode"><i class="fas fa-hand-paper"></i></button>
+        <button class="btn btnBoard btn-success" id="zoomIn"><i class="fas fa-search-plus"></i></button>
+        <button class="btn btnBoard btn-success" id="zoomReset"><i class="fas fa-search"></i></button>
+        <button class="btn btnBoard btn-success" id="zoomOut"><i class="fas fa-search-minus"></i></button>
+        <div class="btn-group" role="group">
+          <button class="btn btnBoard btn-dark dropdown-toggle" id="addText" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            <i class="fas fa-font"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="addText">
+            <a class="dropdown-item" href="#" data-font="Arial">Arial</a>
+            <a class="dropdown-item" href="#" data-font="Times New Roman">Times New Roman</a>
+            <a class="dropdown-item" href="#" data-font="Courier New">Courier New</a>
+            <a class="dropdown-item" href="#" data-font="Verdana">Verdana</a>
+          </div>
+        </div>
+        <div class="btn-group" role="group">
+
+          <button class="btn btnBoard btn-dark dropdown-toggle" id="fontSize" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-text-height"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="fontSize">
+            <a class="dropdown-item" href="#" data-size="5">X-Small (5px)</a>
+            <a class="dropdown-item" href="#" data-size="10">Small (10px)</a>
+            <a class="dropdown-item" href="#" data-size="20">Medium (20px)</a>
+            <a class="dropdown-item" href="#" data-size="40">Large (40px)</a>
+            <a class="dropdown-item" href="#" data-size="60">X-Large (60px)</a>
+          </div>
+        </div>
+        <button class="btn btnBoard btn-secondary" id="undo"><i class="fas fa-undo"></i></button>
+        <button class="btn btnBoard btn-secondary" id="redo"><i class="fas fa-redo"></i></button>
+        <button class="btn btnBoard btn-secondary" id="save"><i class="fas fa-save"></i></button>
+        <button class="btn btnBoard btn-danger" id="delete"><i class="fas fa-trash"></i></button>
+        <button class="btn btnBoard btn-secondary" id="clearCanvas"><i class="fas fa-times"></i></button>
+        <button class="btn-secondary" id="toggleBackground">
+          <img src="/images/svg/graph.jpg" alt="Background" class="toggle-icon" id="backgroundIcon">
+        </button>
+        <input type="file" id="uploadBoardImage" accept="image/*" style="display: none;">
+        <label for="uploadBoardImage" class="btn btnBoard btn-primary">
+          <i class="fas fa-upload"></i>
+        </label>
+
+        <label for="colorPicker"></label>
+        <input type="color" class="btn" id="colorPicker" value="#000000">
+        <label for="lineTypePicker"></label>
+        <select id="lineTypePicker" class="custom-select" style="width: auto;">
+          <option value="solid">Solid</option>
+          <option value="dashed">Dashed</option>
+          <option value="dotted">Dotted</option>
+          <option value="dashDot">Dash-Dot</option>
+        </select>
+      </div>
+      <canvas id="whiteboardCanvas" width="1280" height="720" style="border: 2px solid rgb(234, 63, 63);"></canvas>
+      <textarea id="textInput" class="form-control"></textarea>
+    </div>
+  </div>
+
+  <div id="screenboard-interface"
+  style="position: relative; display: none; justify-content: center; align-items: center;background-color: transparent;z-index: 1000; width: 100%; height: 100%;
+  max-width: 100%; max-height: 100%; overflow: auto;">
+
+  <div id="screenboardContent"
+    style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;overflow: hidden; top: 0; left: 0;">
+    <button id="annotateScreen" class="btn btn-primary btnBoardScreen annotateScreenBtn"
+      style="position: absolute; top: 5px; left: 10px; z-index: 1000;">
+      <i class="fas fa-pencil-alt"></i>
+    </button>
+    <button id="toolbarToggleScreen" class="btn btnBoardScreen btn-primary"
+      style="position: absolute; top: 7px; right: 5px; z-index: 1000; display: none;">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+    <div class="toolbarScreen mb-3" id="toolbarScreen"
+      style="position: absolute; top: 5px; right: 50px; z-index: 1000; background-color: transparent; display: none;">
+      <div class="btn-group" role="group">
+        <button class="btn btnBoardScreen btn-secondary dropdown-toggle" id="drawModeScreen" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-pencil-alt"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="drawModeScreen">
+          <a class="dropdown-item" href="#" data-thickness="3">XX-Small (3px)</a>
+          <a class="dropdown-item" href="#" data-thickness="6">X-Small (6px)</a>
+          <a class="dropdown-item" href="#" data-thickness="12">Small (12px)</a>
+          <a class="dropdown-item" href="#" data-thickness="18">Medium (18px)</a>
+          <a class="dropdown-item" href="#" data-thickness="24">Large (24px)</a>
+          <a class="dropdown-item" href="#" data-thickness="36">X-Large (36px)</a>
+        </div>
+      </div>
+      <div class="btn-group" role="group">
+        <button class="btn btnBoardScreen btn-dark dropdown-toggle" id="freehandModeScreen" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-paint-brush"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="freehandModeScreen">
+          <a class="dropdown-item" href="#" data-brush-thickness="5">X-Small (5px)</a>
+          <a class="dropdown-item" href="#" data-brush-thickness="10">Small (10px)</a>
+          <a class="dropdown-item" href="#" data-brush-thickness="20">Medium (20px)</a>
+          <a class="dropdown-item" href="#" data-brush-thickness="40">Large (40px)</a>
+          <a class="dropdown-item" href="#" data-brush-thickness="60">X-Large (60px)</a>
+        </div>
+      </div>
+      <div class="btn-group" role="group">
+        <button class="btn btnBoardScreen btn-dark dropdown-toggle" id="shapeModeScreen" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-shapes"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="shapeModeScreen">
+          <a class="dropdown-item" href="#" data-shape="square">
+            <img src="/images/svg/square.svg" alt="Square" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="rectangle">
+            <img src="/images/svg/rectangle.svg" alt="Rectangle" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="circle">
+            <img src="/images/svg/circle.svg" alt="Circle" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="triangle">
+            <img src="/images/svg/triangle.svg" alt="Triangle" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="hexagon">
+            <img src="/images/svg/hexagon.svg" alt="Hexagon" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="pentagon">
+            <img src="/images/svg/pentagon.svg" alt="Pentagon" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="rhombus">
+            <img src="/images/svg/rhombus.svg" alt="Rhombus" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="octagon">
+            <img src="/images/svg/octagon.svg" alt="Octagon" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="parallelogram">
+            <img src="/images/svg/parallelogram.svg" alt="Parallelogram" class="shape-icon">
+          </a>
+          <a class="dropdown-item" href="#" data-shape="oval">
+            <img src="/images/svg/oval.svg" alt="Oval" class="shape-icon">
+          </a>
+        </div>
+      </div>
+      <div class="btn-group" role="group">
+        <button class="btn btnBoardScreen btn-danger dropdown-toggle" id="eraseModeScreen" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-eraser"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="eraseModeScreen">
+          <a class="dropdown-item" href="#" data-thickness="5">X-Small (5px)</a>
+          <a class="dropdown-item" href="#" data-thickness="10">Small (10px)</a>
+          <a class="dropdown-item" href="#" data-thickness="20">Medium (20px)</a>
+          <a class="dropdown-item" href="#" data-thickness="30">Large (30px)</a>
+          <a class="dropdown-item" href="#" data-thickness="60">X-Large (60px)</a>
+        </div>
+      </div>
+      <button class="btn btnBoard btn-success" id="zoomResetScreen" style="display: none;"><i class="fas fa-search"></i></button> 
+      <label for="colorPickerScreen"></label>
+      <input type="color" class="btn" id="colorPickerScreen" value="#000000">
+      <label for="lineTypePickerScreen"></label>
+      <select id="lineTypePickerScreen" class="custom-select" style="width: auto;">
+        <option value="solid">Solid</option>
+        <option value="dashed">Dashed</option>
+        <option value="dotted">Dotted</option>
+        <option value="dashDot">Dash-Dot</option>
+      </select>
+    </div>
+    <canvas id="screenboardCanvas" width="50" height="50" style="padding: 0; margin: 0;"></canvas>
+  </div>
+</div>
+
+  <!-- Modal for screen Annotate -->
+  <div class="modal fade" id="screenAnnotateModal" tabindex="-1" aria-labelledby="screenAnnotateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <div class="modal-body">        
+          <div id="screenPreview" class="position-relative"
+            style="width: 1280px; height: 720px; overflow: scroll;">
+            <canvas id="screenCanvas" class="d-none" width="1280" height="720"></canvas>
+            <video id="screenVideo" class="d-none" autoplay playsinline
+              style="width: 100%; height: 100%;"></video>
+          </div>
+         
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 
@@ -913,4 +1409,3 @@
         
   </footer>
 </html>
-

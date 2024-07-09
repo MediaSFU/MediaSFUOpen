@@ -25,11 +25,39 @@ MediaSFU offers a cutting-edge streaming experience that empowers users to custo
 
 ---
 
+# Features <a name="features"></a>
+
+MediaSFU's CE comes with a host of powerful features out of the box:
+
+1. **Screen Sharing with Annotation Support**: Share your screen with participants and annotate in real-time for enhanced presentations and collaborations.
+2. **Collaborative Whiteboards**: Create and share whiteboards for real-time collaborative drawing and brainstorming sessions.
+3. **Breakout Rooms**: Create multiple sub-meetings within a single session to enhance collaboration and focus.
+4. **Pagination**: Efficiently handle large participant lists with seamless pagination.
+5. **Polls**: Conduct real-time polls to gather instant feedback from participants.
+6. **Media Access Requests Management**: Manage media access requests with ease to ensure smooth operations.
+7. **Video Effects**: Apply various video effects, including virtual backgrounds, to enhance the visual experience.
+8. **Chat (Direct & Group)**: Facilitate communication with direct and group chat options.
+9. **Cloud Recording (track-based)**: Customize recordings with track-based options, including watermarks, name tags, background colors, and more.
+10. **Managed Events**: Manage events with features to handle abandoned and inactive participants, as well as enforce time and capacity limits.
+11. **Event Scheduling**: Schedule events with ease, including options for recurring events and reminders.
+12. **Waiting Room**: Utilize a waiting room to manage participant entry, ensuring a smooth start to meetings and events.
+13. **Custom Branding**: Personalize your interface with custom logos, colors, and branding to maintain a consistent corporate identity.
+14. **Security Features**: Ensure secure meetings with features like password protection, end-to-end encryption, and user authentication.
+15. **Performance Analytics**: Access detailed analytics and performance reports to gain insights into participant engagement and meeting effectiveness.
+16. **Integration with Third-party Applications**: Seamlessly integrate with other tools and applications to enhance functionality and streamline workflows.
+17. **Multi-device Support**: Enjoy a consistent experience across desktops, tablets, and smartphones, ensuring flexibility and convenience for all participants.
+ 
+
+---
+
 # Getting Started with [MediaSFU](https://mediasfu.com) Community Edition
 
 Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedom to customize your recordings with unlimited pausing and resuming, ensuring you have complete control over your content. Immerse yourself in simulcasted high-quality streams featuring lightning-fast 30ms latency, providing a seamless and immersive viewing experience for your audience.
 
 [MediaSFU](https://mediasfu.com) Community edition is freely available for use.
+
+
+---
 
 ## Installation on Ubuntu
 
@@ -237,6 +265,23 @@ Follow these steps to install MediaSFU on Ubuntu:
 Once the installation is complete, your MediaSFU application will be running with SSL enabled, providing a secure streaming environment.
 
 
+## Running on Localhost
+
+To run MediaSFU on localhost with SSL, follow these additional steps:
+
+1. **Generate SSL Certificates:**
+
+    Generate SSL certificates and paste them into the `local.com.key` and `local.com.pem` files located in the ssl folder of in the project directory.
+
+2. **Run the Localhost Server:**
+
+    Use the `index_localhost.js` file to run the server on localhost.
+
+    ```bash
+    npm start index_localhost.js
+    ```
+
+    Ensure that you access the application using `https` to utilize the SSL certificates.
 
 # Cloud recording  is provided by [MediaSFU.com](https://mediasfu.com) as a paid feature.
 
