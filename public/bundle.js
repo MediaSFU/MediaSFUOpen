@@ -32488,7 +32488,7 @@ function initializeSocket() {
         }
 
         // Check if the participant has a video ID
-        if (participant.videoID || autoWaveCheck || audioActiveInRoom) {
+        if (participant.videoID || autoWaveCheck || (breakOutRoomStarted && !breakOutRoomEnded && audioActiveInRoom)) {
           // Find the video element by the video ID
           //user allows audio only display as well
 
