@@ -32443,7 +32443,10 @@ function initializeSocket() {
     const dataArray = new Uint8Array(bufferLength);
     source.connect(analyser);
 
+    let consLow = false;
+
     setInterval(() => {
+      
       analyser.getByteTimeDomainData(dataArray);
       let averageLoudness = Array.from(dataArray).reduce((sum, value) => sum + value, 0) / bufferLength;
 
@@ -32511,16 +32514,18 @@ function initializeSocket() {
 
             if (!activeSounds.includes(participant.name)) {
               activeSounds.push(participant.name);
+              consLow = false;
               //reupdate
+              if ((shareScreenStarted || shared) && !participant.videoID) {
+              } else {
+                reUpdateInter(participant.name, true, false, averageLoudness)
+              }
             }
-            if ((shareScreenStarted || shared) && !participant.videoID) {
-            } else {
-              reUpdateInter(participant.name, true, false, averageLoudness)
-            }
+     
           } else {
             waveformOverlay.hide();
             //remove from activeSounds array, the name of the participant, IF it is there
-            if (activeSounds.includes(participant.name)) {
+            if (activeSounds.includes(participant.name) && consLow) {
               activeSounds.splice(activeSounds.indexOf(participant.name), 1);
               //
               if ((shareScreenStarted || shared) && !participant.videoID) {
@@ -32528,6 +32533,8 @@ function initializeSocket() {
                 reUpdateInter(participant.name, false, false, averageLoudness)
               }
 
+            } else {
+              consLow = true;
             }
           }
 
@@ -32550,11 +32557,13 @@ function initializeSocket() {
               // add to activeSounds array, the name of the participant, IF it is not already there
               if (!activeSounds.includes(participant.name)) {
                 activeSounds.push(participant.name);
+
+                if ((shareScreenStarted || shared) && !participant.videoID) {
+                } else {
+                  reUpdateInter(participant.name, true, false, averageLoudness)
+                }
               }
-              if ((shareScreenStarted || shared) && !participant.videoID) {
-              } else {
-                reUpdateInter(participant.name, true, false, averageLoudness)
-              }
+  
 
             } else {
               audioModal.hide(); // Hide the waveform
@@ -32636,7 +32645,7 @@ function initializeSocket() {
 
         }
       }
-    }, 1000);
+    }, 2000);
 
   }
 
