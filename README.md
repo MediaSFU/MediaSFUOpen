@@ -23,36 +23,57 @@
 
 MediaSFU offers a cutting-edge streaming experience that empowers users to customize their recordings and engage their audience with high-quality streams. Whether you're a content creator, educator, or business professional, MediaSFU provides the tools you need to elevate your streaming game.
 
+<div style="text-align: center;">
+
+<img src="https://mediasfu.com/images/header_1.jpg" alt="Preview Page" title="Preview Page" style="max-height: 600px;">
+
+</div>
+
 ---
 
-# Features <a name="features"></a>
+## Features <a name="features"></a>
 
-MediaSFU's CE comes with a host of powerful features out of the box:
+MediaSFU's Community Edition comes packed with a host of powerful features:
 
-1. **Screen Sharing with Annotation Support**: Share your screen with participants and annotate in real-time for enhanced presentations and collaborations.
-2. **Collaborative Whiteboards**: Create and share whiteboards for real-time collaborative drawing and brainstorming sessions.
-3. **Breakout Rooms**: Create multiple sub-meetings within a single session to enhance collaboration and focus.
-4. **Pagination**: Efficiently handle large participant lists with seamless pagination.
-5. **Polls**: Conduct real-time polls to gather instant feedback from participants.
-6. **Media Access Requests Management**: Manage media access requests with ease to ensure smooth operations.
-7. **Video Effects**: Apply various video effects, including virtual backgrounds, to enhance the visual experience.
-8. **Chat (Direct & Group)**: Facilitate communication with direct and group chat options.
-9. **Cloud Recording (track-based)**: Customize recordings with track-based options, including watermarks, name tags, background colors, and more.
-10. **Managed Events**: Manage events with features to handle abandoned and inactive participants, as well as enforce time and capacity limits.
-11. **Event Scheduling**: Schedule events with ease, including options for recurring events and reminders.
-12. **Waiting Room**: Utilize a waiting room to manage participant entry, ensuring a smooth start to meetings and events.
-13. **Custom Branding**: Personalize your interface with custom logos, colors, and branding to maintain a consistent corporate identity.
-14. **Security Features**: Ensure secure meetings with features like password protection, end-to-end encryption, and user authentication.
+1. **Screen Sharing with Annotation Support**: Share your screen and annotate in real-time for enhanced presentations and collaborations.
+2. **Collaborative Whiteboards**: Create and share whiteboards for real-time drawing and brainstorming sessions.
+3. **Breakout Rooms**: Organize multiple sub-meetings within a single session to boost collaboration and focus.
+4. **Pagination**: Efficiently manage large participant lists with seamless pagination.
+5. **Polls**: Conduct real-time polls to gather instant feedback.
+6. **Media Access Requests Management**: Easily handle media access requests to ensure smooth operations.
+7. **Video Effects**: Enhance the visual experience with various video effects, including virtual backgrounds.
+8. **Chat (Direct & Group)**: Facilitate communication with both direct and group chat options.
+9. **Cloud Recording (Track-Based)**: Customize recordings with track-based options like watermarks, name tags, and background colors.
+10. **Managed Events**: Handle abandoned and inactive participants, and enforce time and capacity limits.
+11. **Event Scheduling**: Schedule events effortlessly, including recurring events and reminders.
+12. **Waiting Room**: Manage participant entry to ensure a smooth start to meetings and events.
+13. **Custom Branding**: Personalize your interface with custom logos, colors, and branding for a consistent corporate identity.
+14. **Security Features**: Ensure secure meetings with password protection, end-to-end encryption, and user authentication.
 15. **Performance Analytics**: Access detailed analytics and performance reports to gain insights into participant engagement and meeting effectiveness.
-16. **Integration with Third-party Applications**: Seamlessly integrate with other tools and applications to enhance functionality and streamline workflows.
-17. **Multi-device Support**: Enjoy a consistent experience across desktops, tablets, and smartphones, ensuring flexibility and convenience for all participants.
- 
+16. **Integration with Third-Party Applications**: Seamlessly integrate with other tools and applications to enhance functionality and streamline workflows.
+17. **Multi-Device Support**: Enjoy a consistent experience across desktops, tablets, and smartphones, ensuring flexibility and convenience for all participants.
+
+https://github.com/user-attachments/assets/310cb87c-dade-445d-aee7-dea1889d6dc4
 
 ---
+
 
 # Getting Started with [MediaSFU](https://mediasfu.com) Community Edition
 
 Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedom to customize your recordings with unlimited pausing and resuming, ensuring you have complete control over your content. Immerse yourself in simulcasted high-quality streams featuring lightning-fast 30ms latency, providing a seamless and immersive viewing experience for your audience.
+
+## Installation Guide
+
+### Table of Contents
+1. [Installation on Ubuntu](#installation-on-ubuntu)
+2. [Running on Localhost](#running-on-localhost)
+3. [Cloud Recording](#cloud-recording)
+4. [Additional Resources](#additional-resources)
+
+---
+
+**Note**: If you're setting up MediaSFU for production, follow the [Installation on Ubuntu](#installation-on-ubuntu) steps. For local development or testing, refer directly to the [Running on Localhost](#running-on-localhost) section to bypass production configurations.
+
 
 [MediaSFU](https://mediasfu.com) Community edition is freely available for use.
 
@@ -283,7 +304,10 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
 
     Ensure that you access the application using `https` to utilize the SSL certificates.
 
-# Cloud recording  is provided by [MediaSFU.com](https://mediasfu.com) as a paid feature.
+---
+
+### Cloud Recording <a name="cloud-recording"></a>
+ Cloud recording  is provided by [MediaSFU.com](https://mediasfu.com) as a paid feature.
 
     To enable recording, follow these steps:
 
@@ -327,5 +351,11 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
       Make sure to save the changes after editing the `.env` file and restart.
       
 You can find more information about the available subscription plans at [MediaSFU Subscription Info](https://mediasfu.com/subscription-info).
+
+## Additional Resources <a name="additional-resources"></a>
+
+- [MediaSFU Documentation](https://www.mediasfu.com/docs)
+- [GitHub Repository](https://github.com/MediaSFU)
+- [Community Forums](https://www.mediasfu.com/forums)
 
     
