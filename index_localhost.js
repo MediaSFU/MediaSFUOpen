@@ -167,8 +167,8 @@ const meetingRoomParams_Sandbox = {
   addCoHost: true,
   targetOrientation: "neutral", //landscape or neutral, portrait
   targetOrientationHost: "neutral", //landscape or neutral, portrait
-  targetResolution: "sd", //hd,sd,QnHD
-  targetResolutionHost: "sd", //hd,sd,QnHD
+  targetResolution: "sd", //hd,sd,QnHD,fhd,qhd
+  targetResolutionHost: "sd", //hd,sd,QnHD,fhd,qhd
   type: `conference`, //'broadcast',//webinar,conference,broadcast,chat
   audioSetting: "allow", //approval,disallow,allow
   videoSetting: "allow", //approval,disallow,allow
@@ -204,8 +204,8 @@ const meetingRoomParams_Production = {
   addCoHost: true,
   targetOrientation: "neutral", //landscape or neutral, portrait
   targetOrientationHost: "neutral", //landscape or neutral, portrait
-  targetResolution: "hd", //hd,sd,QnHD
-  targetResolutionHost: "hd", //hd,sd,QnHD
+  targetResolution: "hd", //hd,sd,QnHD,fhd,qhd
+  targetResolutionHost: "hd", //hd,sd,QnHD,fhd,qhd
   type: `conference`, //'broadcast',//webinar,conference,broadcast,chat
   audioSetting: "allow", //approval,disallow,allow
   videoSetting: "allow", //approval,disallow,allow
@@ -252,7 +252,7 @@ const eventTimeRemaining = async (roomName, timeRemaining, toHost = true) => {
     if (roomHost) {
       let host_socket = await peers[roomHost.id].socket;
       if (host_socket) {
-        await host_socket.emit("eventTimeRemaining", { timeRemaining });
+        await host_socket.emit("meetingTimeRemaining", { timeRemaining });
       }
     }
   }
@@ -269,7 +269,7 @@ const eventEndedMain = async (roomName, toHost) => {
       if (roomHost) {
         let host_socket = peers[roomHost.id].socket;
         if (host_socket) {
-          host_socket.emit("eventEnded");
+          host_socket.emit("meetingEnded");
         }
       }
     } else {
@@ -279,7 +279,7 @@ const eventEndedMain = async (roomName, toHost) => {
         try {
           let host_socket = await peers[member.id].socket;
           if (host_socket && member.islevel != "2") {
-            await host_socket.emit("eventEnded");
+            await host_socket.emit("meetingEnded");
           }
         } catch (error) {}
       });
@@ -299,7 +299,7 @@ const eventStillThere = async (roomName, timeRemaining, toHost = true) => {
     if (roomHost) {
       let host_socket = await peers[roomHost.id].socket;
       if (host_socket) {
-        await host_socket.emit("eventStillThere", { timeRemaining });
+        await host_socket.emit("meetingStillThere", { timeRemaining });
       }
     }
   }
@@ -431,7 +431,7 @@ const checkEventStatus = async () => {
           } else if (timeRemaining === 0) {
             let members = room.members;
             //try get the host socket
-            let host = members.find((member) => member.isHost === true);
+            let host = members.find((member) => member.islevel === "2");
 
             if (host) {
               //get the host socket
@@ -3091,7 +3091,7 @@ connections.on("connection", async (socket) => {
 
       callback({
         rtpCapabilities,
-        isHost,
+        isHost: islevel === "2" ? true : false,
         eventStarted,
         isBanned,
         hostNotJoined,
