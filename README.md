@@ -31,7 +31,7 @@ MediaSFU offers a cutting-edge streaming experience that empowers users to custo
 
 ---
 
-## Features <a name="features"></a>
+## Features
 
 MediaSFU's Community Edition comes packed with a host of powerful features:
 
@@ -67,8 +67,9 @@ Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedo
 ### Table of Contents
 1. [Installation on Ubuntu](#installation-on-ubuntu)
 2. [Running on Localhost](#running-on-localhost)
-3. [Cloud Recording](#cloud-recording)
-4. [Additional Resources](#additional-resources)
+3. [Cloud Recording & Egress](#cloud-recording--egress)
+4. [Connecting Your MediaSFU SDKs to the Community Edition Server](#connecting-your-mediasfu-sdks-to-the-community-edition-server)
+5. [Additional Resources](#additional-resources)
 
 ---
 
@@ -79,6 +80,10 @@ Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedo
 
 
 ---
+
+## Assumption: Production Environment on Linux
+
+**Note:** The following instructions assume a production environment running on a Linux server (e.g., Ubuntu). For local development or testing on macOS or Windows, please refer to the additional guides linked at the end of this document. Those guides will help you set up the necessary environment, firewall rules, ports, and SSL configuration for your operating system.
 
 ## Installation on Ubuntu
 
@@ -306,10 +311,95 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
 
 ---
 
-### Cloud Recording <a name="cloud-recording"></a>
- Cloud recording  is provided by [MediaSFU.com](https://mediasfu.com) as a paid feature.
+## Running on macOS or Windows (Local Development)
 
-    To enable recording, follow these steps:
+For local development or testing on macOS or Windows environments, please see the following additional guides:
+
+- [**macOS Setup Guide**](./macOS_SETUP.md)
+- [**Windows Setup Guide**](./WINDOWS_SETUP.md)
+
+These guides will cover:
+
+- Installing Node.js and dependencies on macOS or Windows.
+- Adjusting firewall settings or using system tools to open necessary ports.
+- Obtaining or creating SSL certificates and configuring your application to run securely.
+- Setting up reverse proxies (if needed) and local web servers.
+- Using PM2 or platform-specific process managers.
+- Any platform-specific instructions that differ from the Ubuntu production setup.
+
+## Cloud Recording & Egress
+
+**Cloud Recording and Egress** are powerful features provided by [MediaSFU.com](https://mediasfu.com) as part of their MediaSFU Cloud services. These features enable functionalities such as cloud recording, capturing audio buffers, real-time image processing for machine learning (ML) applications (e.g., Large Language Models), and other egress purposes. 
+
+By default, MediaSFU is configured to support these egress capabilities. However, to utilize these features effectively, you need to perform specific configurations. This section provides detailed instructions on enabling cloud recording and configuring your client applications to connect securely to your MediaSFU server.
+
+### Overview
+
+1. **Enable Cloud Recording:**
+   - Configure environment variables.
+   - Provide necessary API credentials.
+   - Set the operational mode (sandbox or production).
+
+2. **Connect Client Applications to MediaSFU Server:**
+   - Configure `safeOrigins` for each client framework.
+   - Utilize MediaSFU Keys for enhanced security.
+   - Refer to Quickstart Guides for specific frameworks.
+
+3. **Security Best Practices:**
+   - Implement authentication methods.
+   - Restrict cross-origin requests.
+   - Use SSL/TLS for encrypted communication.
+
+---
+
+### 1. Enable Cloud Recording
+
+Cloud recording is a premium feature that allows you to record media streams for later playback, analysis, or processing.
+
+#### Steps to Enable Cloud Recording:
+
+1. **Edit the `.env` File:**
+
+   Open the `.env` file located in the root directory of your MediaSFU installation.
+
+2. **Set `ALLOWRECORD` to `true`:**
+
+   Enable recording by modifying the `ALLOWRECORD` environment variable.
+
+   ```env
+   ALLOWRECORD=true
+   ```
+
+3. **Provide API Credentials:**
+
+   Obtain a valid username and API key from [MediaSFU.com](https://mediasfu.com). These credentials are essential for authenticating recording requests.
+
+   ```env
+   APIUSERNAME=your_mediasfu_username
+   APIKEY=your_mediasfu_apikey
+   ```
+
+4. **Set the Operational Mode:**
+
+   MediaSFU offers different modes to suit your development and production needs.
+
+   - **sandbox:** Ideal for development and testing. It allows requests from non-registered domains but comes with usage limitations.
+   - **production:** Designed for live deployments. It restricts requests to registered domains and offers unlimited usage.
+
+   ```env
+   MODE=sandbox
+   ```
+   
+   or
+
+   ```env
+   MODE=production
+   ```
+
+   **Note:** After editing the `.env` file, save the changes and restart your MediaSFU server to apply the new configurations.
+
+   
+    Sample `.env` file:
 
     - **Edit the `.env` file:**
 
@@ -349,10 +439,27 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
       ```
       
       Make sure to save the changes after editing the `.env` file and restart.
+
+5. **Subscription Plans:**
+
+   For detailed information about available subscription plans, visit [MediaSFU Subscription Info](https://mediasfu.com/subscription-info).
+
       
 You can find more information about the available subscription plans at [MediaSFU Subscription Info](https://mediasfu.com/subscription-info).
 
-## Additional Resources <a name="additional-resources"></a>
+> **Note:**  
+> The majority of subscription fees are designed to support large organizations and institutions that manage numerous users under a single profile. This structure allows for the efficient handling of sub-users, ensuring seamless scalability and robust support. The fees help cover the overhead costs associated with maintaining and servicing extensive client bases, providing reliable performance and dedicated resources to meet the needs of large-scale deployments.
+>
+> **Additional Note:**  
+> If your organization does not require support for a large number of users, please contact our support team. We can credit your account and adjust your subscription to accommodate a reduced number of sub-user limits, ensuring you only pay for the resources you need.
+
+
+## Connecting Your MediaSFU SDKs to the Community Edition Server <a name="connecting-sdk"></a>
+
+To connect your MediaSFU SDKs to the Community Edition server, follow these steps:
+- [**Connecting MediaSFU SDKs to the Community Edition Server**](./CONNECT.md)
+
+## Additional Resources
 
 - [MediaSFU Documentation](https://www.mediasfu.com/docs)
 - [GitHub Repository](https://github.com/MediaSFU)
