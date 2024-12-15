@@ -25660,12 +25660,12 @@
       function (require, module, exports) {
         /////////////////////////////////////////////////////////////////////////////////
         /* UAParser.js v1.0.37
-   Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
-   MIT License */ /*
-   Detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data.
-   Supports browser & node.js environment. 
-   Demo   : https://faisalman.github.io/ua-parser-js
-   Source : https://github.com/faisalman/ua-parser-js */
+     Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
+     MIT License */ /*
+     Detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data.
+     Supports browser & node.js environment. 
+     Demo   : https://faisalman.github.io/ua-parser-js
+     Source : https://github.com/faisalman/ua-parser-js */
         /////////////////////////////////////////////////////////////////////////////////
 
         (function (window, undefined) {
@@ -27592,48 +27592,48 @@
 
                       if (eventType != "broadcast") {
                         rowHTML = await `<div class="row">
-        
-                <div class="col-2">
-                  <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-play-circle fa-lg"></i></button>
-                </div>
-                <div class="col-2">
-                  <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-lg"></i></button>
-                </div>
-                <div class="col-3">
-                  <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
-                </div>
-                <div class="col-2">
-                  <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-lg id="Rec_statusIcon"></i></div>
-                </div>
-                <div class="col-2">
-                <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-lg id="Rec_settingsIcon"></i></div>
-                </div>
-                <div class="col-1">
-                  
-                </div>
-            
-              </div>`;
-                      } else {
-                        rowHTML =
-                          await `<div class="row" style="white-space: nowrap; overflow-x: auto; flex-wrap: nowrap;margin: 0 10%;">
-        
+    
             <div class="col-2">
-              <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-play-circle fa-md"></i></button>
+              <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-play-circle fa-lg"></i></button>
             </div>
             <div class="col-2">
-              <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-md"></i></button>
+              <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-lg"></i></button>
             </div>
-            <div class="col-4">
+            <div class="col-3">
               <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
             </div>
             <div class="col-2">
-              <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-sm id="Rec_statusIcon"></i></div>
+              <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-lg id="Rec_statusIcon"></i></div>
             </div>
             <div class="col-2">
-            <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-md id="Rec_settingsIcon"></i></div>
+            <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-lg id="Rec_settingsIcon"></i></div>
+            </div>
+            <div class="col-1">
+              
             </div>
         
           </div>`;
+                      } else {
+                        rowHTML =
+                          await `<div class="row" style="white-space: nowrap; overflow-x: auto; flex-wrap: nowrap;margin: 0 10%;">
+    
+        <div class="col-2">
+          <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-play-circle fa-md"></i></button>
+        </div>
+        <div class="col-2">
+          <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-md"></i></button>
+        </div>
+        <div class="col-4">
+          <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
+        </div>
+        <div class="col-2">
+          <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-sm id="Rec_statusIcon"></i></div>
+        </div>
+        <div class="col-2">
+        <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-md id="Rec_settingsIcon"></i></div>
+        </div>
+    
+      </div>`;
                       }
 
                       recordStarted = true;
@@ -27900,7 +27900,7 @@
 
           async function joinRoomOnMediaSFU(payload, apiUserName, apiKey) {
             try {
-              const response = await fetch("https://mediasfu.com/v1/rooms/", {
+              const response = await fetch("/joinRoom", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -28284,14 +28284,14 @@
           async function addReactions() {
             // Create a modal element for broadcasting and chat to message participants
             const modalHtml = `
-      <div class="modal fade" id="reactionModal" tabindex="-1" role="dialog" aria-labelledby="reactionModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" >
-              <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
-                  <div class="modal-body text-center" id="reactChatPanel">
-                  </div>
+  <div class="modal fade" id="reactionModal" tabindex="-1" role="dialog" aria-labelledby="reactionModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" >
+          <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
+              <div class="modal-body text-center" id="reactChatPanel">
               </div>
           </div>
       </div>
+  </div>
   `;
 
             // Convert the HTML string into a DOM element
@@ -28306,20 +28306,20 @@
           async function addParticipants() {
             // Create a modal element for broadcasting and chat to show participants
             const modalHtml = `
-      <div class="modal fade" id="reactParticipantsModal" tabindex="-1" role="dialog" aria-labelledby="reactParticipantsModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" >
-              <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
-              <div class="modal-body text-center" id="reactParticipants">
-                <div class="form-group">
-                <input type="text" class="form-control" id="react-participant-filter" placeholder="Search ...">
-                </div>
-                <div id="react-participant-list">
-                  <!-- Participant rows will be dynamically added here -->
-                </div>
-              </div>
-              </div>
+  <div class="modal fade" id="reactParticipantsModal" tabindex="-1" role="dialog" aria-labelledby="reactParticipantsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" >
+          <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
+          <div class="modal-body text-center" id="reactParticipants">
+            <div class="form-group">
+            <input type="text" class="form-control" id="react-participant-filter" placeholder="Search ...">
+            </div>
+            <div id="react-participant-list">
+              <!-- Participant rows will be dynamically added here -->
+            </div>
+          </div>
           </div>
       </div>
+  </div>
   `;
             // Convert the HTML string into a DOM element
             const modalFragment = document
@@ -28342,52 +28342,52 @@
             let checkislevel = islevel == "2" ? true : false;
             // Create a modal element for broadcasting and chat to share event via links
             const modalHtml = `
-      <div class="modal fade" id="shareEventModal" tabindex="-1" role="dialog" aria-labelledby="shareEventModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" >
-              <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
-              <div class="modal-body text-center" id="shareEvent">
-                <div class="form-group">
-                <label for="broadcastIdCopy2">${formatName} ID:</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="broadcastIdCopy2" value="" readonly>
-                  <div class="input-group-append">
-                    <button class="btn btn-secondary" type="button" id="copyBroadcastIdButton2" data-toggle="tooltip" data-placement="bottom" title="Copy ${formatName} ID to clipboard"><i class="fas fa-copy"></i></button>
-                  </div>
-                </div>
-              </div>
-
-              ${
-                checkislevel
-                  ? `
-                <div class="form-group">
-                  <label for="broadcastPasscodeCopy2">${formatName} Passcode (Host):</label>
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="broadcastPasscodeCopy2" value="" readonly>
-                    <div class="input-group-append">
-                      <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-secondary" type="button" id="copyBroadcastPasscodeButton2" data-toggle="tooltip" data-placement="bottom" title="Copy ${formatName} Passcode (Host) to clipboard"><i class="fas fa-copy"></i></button>
-                    </div>
-                  </div>
-                </div>
-                <br>
-              `
-                  : ""
-              }        
-
-              <br>
-
-              <div class="input-group mb-3">
-              <input type="text" id="shareLinkBroadcast2" class="form-control" readonly>
+  <div class="modal fade" id="shareEventModal" tabindex="-1" role="dialog" aria-labelledby="shareEventModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" >
+          <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
+          <div class="modal-body text-center" id="shareEvent">
+            <div class="form-group">
+            <label for="broadcastIdCopy2">${formatName} ID:</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="broadcastIdCopy2" value="" readonly>
               <div class="input-group-append">
-                <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="copyShareLinkBroadcastButton2" data-toggle="tooltip" data-placement="top" title="Copy Link"><i class="far fa-copy"></i></button>
-                <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="shareWhatsappBroadcastButton2"><i class="fab fa-whatsapp"></i></button>
-                <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="shareFacebookBroadcastButton2"><i class="fab fa-facebook"></i></button>
-                <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="shareEmailBroadcastButton2"><i class="far fa-envelope"></i></button>
+                <button class="btn btn-secondary" type="button" id="copyBroadcastIdButton2" data-toggle="tooltip" data-placement="bottom" title="Copy ${formatName} ID to clipboard"><i class="fas fa-copy"></i></button>
               </div>
             </div>
-
-          </div>  
-       </div>
-      </div>
+          </div>
+  
+          ${
+            checkislevel
+              ? `
+            <div class="form-group">
+              <label for="broadcastPasscodeCopy2">${formatName} Passcode (Host):</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="broadcastPasscodeCopy2" value="" readonly>
+                <div class="input-group-append">
+                  <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-secondary" type="button" id="copyBroadcastPasscodeButton2" data-toggle="tooltip" data-placement="bottom" title="Copy ${formatName} Passcode (Host) to clipboard"><i class="fas fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+            <br>
+          `
+              : ""
+          }        
+  
+          <br>
+  
+          <div class="input-group mb-3">
+          <input type="text" id="shareLinkBroadcast2" class="form-control" readonly>
+          <div class="input-group-append">
+            <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="copyShareLinkBroadcastButton2" data-toggle="tooltip" data-placement="top" title="Copy Link"><i class="far fa-copy"></i></button>
+            <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="shareWhatsappBroadcastButton2"><i class="fab fa-whatsapp"></i></button>
+            <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="shareFacebookBroadcastButton2"><i class="fab fa-facebook"></i></button>
+            <button style="background-color: rgba(255, 255, 255, 0.25)" class="btn btn-outline-secondary" type="button" id="shareEmailBroadcastButton2"><i class="far fa-envelope"></i></button>
+          </div>
+        </div>
+  
+      </div>  
+   </div>
+  </div>
   `;
 
             // Convert the HTML string into a DOM element
@@ -28405,26 +28405,26 @@
             $("#recordingModal").empty();
 
             const modalHtml = `
-                    <div class="modal-dialog modal-dialog-centered" >
-                            <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
-                              <div class="modal-body text-center" id="reactParticipants">
-                                <div id="standardReactPanel">
-                                  
-                                </div>
-
-                                <div class="row">
-                                  <div class="col-6">
-                                    <button type="button" class="btn btn-primary btn-block" id="confirmRecButton">Confirm</button>
-                                  </div>
-                                  <div class="col-6">
-                                    <button type="button" class="btn btn-success btn-block" id="startRecButton">Start</button>
-                                  </div>
-                              </div>
-                              </div>
+                <div class="modal-dialog modal-dialog-centered" >
+                        <div class="modal-content" style="background-color: rgba(255, 255, 255, 0.35);max-height: 400px; overflow-y: auto;position: absolute;min-width:300px;top: -1px;right: -1px;">
+                          <div class="modal-body text-center" id="reactParticipants">
+                            <div id="standardReactPanel">
+                              
                             </div>
+  
+                            <div class="row">
+                              <div class="col-6">
+                                <button type="button" class="btn btn-primary btn-block" id="confirmRecButton">Confirm</button>
+                              </div>
+                              <div class="col-6">
+                                <button type="button" class="btn btn-success btn-block" id="startRecButton">Start</button>
+                              </div>
                           </div>
+                          </div>
+                        </div>
                       </div>
-                  `;
+                  </div>
+              `;
 
             // Convert the HTML string into a DOM element
             const modalFragment = document
@@ -36120,10 +36120,10 @@
 
             if (paginatedStreams.length > 1) {
               navHomer = `
-    <li class="nav-item flex-fill" style="margin: 0 auto; padding: 0 auto; border-radius: 0;" >
-      <a class="nav-link custom-link" style="margin: 0 auto; padding: 0 auto;" id="minigrid-home-tab" data-toggle="tab" href="#minigrid-home" role="tab" aria-controls="minigrid-home" aria-selected="true"><i class="fas fa-star fa-lg"></i></a>
-    </li>
-    `;
+  <li class="nav-item flex-fill" style="margin: 0 auto; padding: 0 auto; border-radius: 0;" >
+  <a class="nav-link custom-link" style="margin: 0 auto; padding: 0 auto;" id="minigrid-home-tab" data-toggle="tab" href="#minigrid-home" role="tab" aria-controls="minigrid-home" aria-selected="true"><i class="fas fa-star fa-lg"></i></a>
+  </li>
+  `;
 
               if (shareScreenStarted || shared) {
                 doPaginate = false;
@@ -36142,10 +36142,10 @@
                   isActive = true;
                   showTab = "show active";
                   navHomer = `
-    <li class="nav-item flex-fill" style="margin: 0 auto; padding: 0 auto; border-radius: 0;" >
-                          <a class="nav-link custom-link active" style="margin: 0 auto; padding: 0 auto;" id="minigrid-home-tab" data-toggle="tab" href="#minigrid-home" role="tab" aria-controls="minigrid-home" aria-selected="true"><i class="fas fa-star fa-lg"></i></a>
-    </li>
-    `;
+  <li class="nav-item flex-fill" style="margin: 0 auto; padding: 0 auto; border-radius: 0;" >
+                      <a class="nav-link custom-link active" style="margin: 0 auto; padding: 0 auto;" id="minigrid-home-tab" data-toggle="tab" href="#minigrid-home" role="tab" aria-controls="minigrid-home" aria-selected="true"><i class="fas fa-star fa-lg"></i></a>
+  </li>
+  `;
                 }
               }
 
@@ -37612,18 +37612,18 @@
           function addMainGrid() {
             //function to add the main grid to the screen
             let maingrid = `
-
-        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12 p_dcard maingrid">
-                      
-
-        <div class="maingrid-container" style="height: 100%;">
-
-          <div class="maingrids" style="display: grid; grid-gap: 0px; justify-content: center;width: 100%;margin: 0%;padding: 0%;margin-top: 0%;padding-top:0px">
-
-          </div>
-        </div>
-
-      </div> `;
+  
+    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12 p_dcard maingrid">
+                  
+  
+    <div class="maingrid-container" style="height: 100%;">
+  
+      <div class="maingrids" style="display: grid; grid-gap: 0px; justify-content: center;width: 100%;margin: 0%;padding: 0%;margin-top: 0%;padding-top:0px">
+  
+      </div>
+    </div>
+  
+  </div> `;
 
             //add main grid to screencontainer before othergrid
             let othergrid = $(".othergrid");
@@ -39318,48 +39318,48 @@
 
               if (eventType != "broadcast") {
                 rowHTML = await `<div class="row">
-
+  
   <div class="col-2">
   <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-pause-circle fa-lg"></i></button>
   </div>
   <div class="col-2">
-    <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-lg"></i></button>
+  <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-lg"></i></button>
   </div>
   <div class="col-3">
-    <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
+  <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
   </div>
   <div class="col-2">
-    <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-lg id="Rec_statusIcon"></i></div>
+  <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-lg id="Rec_statusIcon"></i></div>
   </div>
   <div class="col-2">
   <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-lg id="Rec_settingsIcon"></i></div>
   </div>
   <div class="col-1">
-    
+  
   </div>
-
-</div>`;
+  
+  </div>`;
               } else {
                 rowHTML =
                   await `<div class="row" style="white-space: nowrap; overflow-x: auto; flex-wrap: nowrap;margin: 0 10%;">
-
-      <div class="col-2">
-      <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-pause-circle fa-md"></i></button>
-      </div>
-      <div class="col-2">
-        <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-md"></i></button>
-      </div>
-      <div class="col-4">
-        <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
-      </div>
-      <div class="col-2">
-        <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-sm id="Rec_statusIcon"></i></div>
-      </div>
-      <div class="col-2">
-      <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-md id="Rec_settingsIcon"></i></div>
-      </div>
   
-    </div>`;
+  <div class="col-2">
+  <button id="Rec_btnPause" class="btn-pause" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-pause-circle fa-md"></i></button>
+  </div>
+  <div class="col-2">
+    <button id="Rec_btnStop" class="btn-stop" style="background-color: transparent; border: 0; padding: 0;"><i class="fas fa-stop-circle fa-md"></i></button>
+  </div>
+  <div class="col-4">
+    <div id="Rec_progressTimer" class="progress-timer Rec_progressTimer" style="background-color: transparent; border: 0; padding: 0;">00:00:00</div>
+  </div>
+  <div class="col-2">
+    <div id="Rec_statusIndicator" class="status-indicator Rec_statusIndicator"><i class="fas fa-dot-circle-o text-success fa-sm id="Rec_statusIcon"></i></div>
+  </div>
+  <div class="col-2">
+  <div id="Rec_Settings" class="recsettings-indicator Rec_Settings"><i class="fas fa-gear fa-md id="Rec_settingsIcon"></i></div>
+  </div>
+  
+  </div>`;
               }
 
               let start;
@@ -40134,74 +40134,74 @@
             }
 
             $("#standardReactPanel").html(`
-<div class="form-group">
+  <div class="form-group">
   <label for="mediaOptions">Media Options:</label>
   <select class="form-control" id="mediaOptions">
-    <option value="video">Record Video</option>
-    <option value="audio">Record Audio Only</option>
+  <option value="video">Record Video</option>
+  <option value="audio">Record Audio Only</option>
   </select>
-</div>
+  </div>
   
-<br>
-
-<div class="form-group">
-<label for="nameTags">Include Name Tags:</label>
-<select class="form-control" id="nameTags">
+  <br>
+  
+  <div class="form-group">
+  <label for="nameTags">Include Name Tags:</label>
+  <select class="form-control" id="nameTags">
   <option value=true>True</option>
   <option value=false>False</option>
-</select>
-</div>
-
-<br>
-
-<div class="form-group">
-<label for="displayType">Video Type:</label>
-<select class="form-control" id="displayType">
+  </select>
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
+  <label for="displayType">Video Type:</label>
+  <select class="form-control" id="displayType">
   <option value='fullDisplay'>Full Display (no background)</option>
   <option value='bestDisplay'>Full Video</option>
   <option value='all'>All</option>
   </select>
-</div>
-
-<br>
-
-<div class="form-group">
-<label for="backgroundColor">Background Color:</label>
-<input type="color" class="form-control" id="backgroundColor" value="#e8eaec">
-</div>
-
-<br>
-
-<div class="form-group">
-<label for="nameTagsColor">Name Tags Color:</label>
-<input type="color" class="form-control" id="nameTagsColor" value="#ffffff">
-</div>
-
-<br>
-
-<div class="form-group">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
+  <label for="backgroundColor">Background Color:</label>
+  <input type="color" class="form-control" id="backgroundColor" value="#e8eaec">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
+  <label for="nameTagsColor">Name Tags Color:</label>
+  <input type="color" class="form-control" id="nameTagsColor" value="#ffffff">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
   <label for="orientationVideo">Orientation (Video):</label>
   <select class="form-control" id="orientationVideo">
-    <option value='landscape' >Landscape</option>
-    <option value='portrait' >Portrait</option>
-    <option value='all'>All</option>
+  <option value='landscape' >Landscape</option>
+  <option value='portrait' >Portrait</option>
+  <option value='all'>All</option>
   </select>
-</div>
-
-<br>
-
-<div class="form-group" id="addHLSPart">
-<label for="addHLS">Add HLS:</label>
-<select class="form-control" id="addHLS">
+  </div>
+  
+  <br>
+  
+  <div class="form-group" id="addHLSPart">
+  <label for="addHLS">Add HLS:</label>
+  <select class="form-control" id="addHLS">
   <option value=true>True</option>
   <option value=false>False</option>
-</select>
-</div> 
-
-<br>
-<hr>
-
-`);
+  </select>
+  </div> 
+  
+  <br>
+  <hr>
+  
+  `);
 
             let backgroundColorInput =
               document.getElementById("backgroundColor");
@@ -40318,75 +40318,75 @@
             }
 
             $("#standardPanel").html(`
-    <div class="form-group">
-      <label for="mediaOptions">Media Options:</label>
-      <select class="form-control" id="mediaOptions">
-        <option value="video">Record Video</option>
-        <option value="audio">Record Audio Only</option>
-      </select>
-    </div>
-      
-    <br>
-
-    <div class="form-group">
-      <label for="audioOptions">Specific Audios:</label>
-      <select class="form-control" id="audioOptions">
-        <option value="all">Add All</option>
-        <option value="onScreen">Add All On Screen</option>
-        <option value="host">Add Host Only</option>
-      </select>
-    </div>
-
-    <br>
-
-    <div class="form-group" id="conditionalConference">
-      <label for="videoOptions">Specific Videos:</label>
-      <select class="form-control" id="videoOptions">
-      <option value="all">Add All </option>
-        <option value="mainScreen">Big Screen Only (includes screenshare)</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="addHLSPart">
-      <label for="addHLS">Add HLS:</label>
-      <select class="form-control" id="addHLS">
-        <option value=true>True</option>
-        <option value=false>False</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="addTextPart">
-    <label for="addText">Add Custom Text:</label>
-    <select class="form-control" id="addText">
-      <option value=true>True</option>
-      <option value=false>False</option>
-    </select>
+  <div class="form-group">
+  <label for="mediaOptions">Media Options:</label>
+  <select class="form-control" id="mediaOptions">
+    <option value="video">Record Video</option>
+    <option value="audio">Record Audio Only</option>
+  </select>
   </div>
-
+  
+  <br>
+  
+  <div class="form-group">
+  <label for="audioOptions">Specific Audios:</label>
+  <select class="form-control" id="audioOptions">
+    <option value="all">Add All</option>
+    <option value="onScreen">Add All On Screen</option>
+    <option value="host">Add Host Only</option>
+  </select>
+  </div>
+  
+  <br>
+  
+  <div class="form-group" id="conditionalConference">
+  <label for="videoOptions">Specific Videos:</label>
+  <select class="form-control" id="videoOptions">
+  <option value="all">Add All </option>
+    <option value="mainScreen">Big Screen Only (includes screenshare)</option>
+  </select>
+  </div>
+  
+  <div class="form-group" id="addHLSPart">
+  <label for="addHLS">Add HLS:</label>
+  <select class="form-control" id="addHLS">
+    <option value=true>True</option>
+    <option value=false>False</option>
+  </select>
+  </div>
+  
+  <div class="form-group" id="addTextPart">
+  <label for="addText">Add Custom Text:</label>
+  <select class="form-control" id="addText">
+  <option value=true>True</option>
+  <option value=false>False</option>
+  </select>
+  </div>
+  
   <div class="form-group" id="customTextPart">
-    <label for="customText">Custom Text:</label>
-    <input type="text" class="form-control" id="customText" placeholder="Enter custom text">
+  <label for="customText">Custom Text:</label>
+  <input type="text" class="form-control" id="customText" placeholder="Enter custom text">
   </div>
-
+  
   <div class="form-group" id="customTextPositionPart">
-    <label for="customTextPosition">Custom Text Position:</label>
-    <select class="form-control" id="customTextPosition">
-      <option value="top">Top</option>
-      <option value="middle">Middle</option>
-      <option value="bottom">Bottom</option>
-    </select>
+  <label for="customTextPosition">Custom Text Position:</label>
+  <select class="form-control" id="customTextPosition">
+  <option value="top">Top</option>
+  <option value="middle">Middle</option>
+  <option value="bottom">Bottom</option>
+  </select>
   </div>
-
+  
   <br/>
-
+  
   <div class="form-group" id="customTextColorPart">
-    <label for="customTextColor">Custom Text Color:</label>
-    <input type="color" class="form-control" id="customTextColor" value="#ffffff">
+  <label for="customTextColor">Custom Text Color:</label>
+  <input type="color" class="form-control" id="customTextColor" value="#ffffff">
   </div>
-
-    <br>
-    <hr>
-
+  
+  <br>
+  <hr>
+  
   `);
           }
 
@@ -40397,61 +40397,61 @@
   <div class="form-group">
   <label for="displayType">Video Type:</label>
   <select class="form-control" id="displayType">
-    <option value='fullDisplay'>Full Display (no background)</option>
-    <option value='bestDisplay'>Full Video</option>
-    <option value='all'>All</option>
+  <option value='fullDisplay'>Full Display (no background)</option>
+  <option value='bestDisplay'>Full Video</option>
+  <option value='all'>All</option>
   </select>
-</div>
-
-<br>
-
-<div class="form-group">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
   <label for="recordDisplayOptions">Display Type:</label>
   <select class="form-control" id="recordDisplayOptions">
-    <option value="video">Only Video Participants</option>
-    <option value="videoOpt">Only Video Participants (optimized) </option>
-    <option value="media">Participants with media</option>
-    <option value="all">All Participants</option>
+  <option value="video">Only Video Participants</option>
+  <option value="videoOpt">Only Video Participants (optimized) </option>
+  <option value="media">Participants with media</option>
+  <option value="all">All Participants</option>
   </select>
-</div>
-
-<br>
-
-<div class="form-group">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
   <label for="nameTags">Include Name Tags:</label>
   <select class="form-control" id="nameTags">
-    <option value='true'>True</option>
-    <option value='false'>False</option>
+  <option value='true'>True</option>
+  <option value='false'>False</option>
   </select>
-</div>
-
-<br>
-
-<div class="form-group">
-<label for="backgroundColor">Background Color:</label>
-<input type="color" class="form-control" id="backgroundColor" value="#e8eaec">
-</div>
-
-<br>
-
-<div class="form-group">
-<label for="nameTagsColor">Name Tags Color:</label>
-<input type="color" class="form-control" id="nameTagsColor" value="#ffffff">
-</div>
-
-<br>
-
-<div class="form-group">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
+  <label for="backgroundColor">Background Color:</label>
+  <input type="color" class="form-control" id="backgroundColor" value="#e8eaec">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
+  <label for="nameTagsColor">Name Tags Color:</label>
+  <input type="color" class="form-control" id="nameTagsColor" value="#ffffff">
+  </div>
+  
+  <br>
+  
+  <div class="form-group">
   <label for="orientationVideo">Orientation (Video):</label>
   <select class="form-control" id="orientationVideo">
-    <option value='landscape' >Landscape</option>
-    <option value='portrait' >Portrait</option>
-    <option value='all'>All</option>
+  <option value='landscape' >Landscape</option>
+  <option value='portrait' >Portrait</option>
+  <option value='all'>All</option>
   </select>
-</div>
-
-<br>
-<hr>
+  </div>
+  
+  <br>
+  <hr>
   `);
 
             var backgroundColorInput =
@@ -40608,9 +40608,9 @@
             // Generate the content for the current page
             const pageContent = await `
   <div class="tab-pane fade" id="${tabContentId}" role="tabpanel" aria-labelledby="${tabLinkId}" style="height: 100%; width: 100%;">
-    <div class="minigrid" style="display: grid; grid-gap: 3px; justify-content: center; width: 100%; margin: 0; padding: 0; margin-top: 0%; padding-top: 0px;"></div>
+  <div class="minigrid" style="display: grid; grid-gap: 3px; justify-content: center; width: 100%; margin: 0; padding: 0; margin-top: 0%; padding-top: 0px;"></div>
   </div>
-`;
+  `;
 
             await $("#minigrid-tabContent").append(pageContent);
             if (page_ === 0 || page_ === "0") {
@@ -40745,11 +40745,11 @@
               }
 
               await paginationElement.append(`
-          <li class="nav-item flex-fill" style="margin: 0 auto; padding: 0 auto; border-radius: 0;" >
-              <a class="nav-link custom-link ${activeClass}" style="margin: 0 auto; padding: 0 auto"
-               id="${tabLinkId}" data-toggle="tab" href="#${tabContentId}" role="tab" aria-controls="${tabContentId}" aria-selected="false">${page_}</a>
-          </li>
-          `);
+      <li class="nav-item flex-fill" style="margin: 0 auto; padding: 0 auto; border-radius: 0;" >
+          <a class="nav-link custom-link ${activeClass}" style="margin: 0 auto; padding: 0 auto"
+           id="${tabLinkId}" data-toggle="tab" href="#${tabContentId}" role="tab" aria-controls="${tabContentId}" aria-selected="false">${page_}</a>
+      </li>
+      `);
             }
             // Add click or change event listeners to the page links
             await paginationElement
@@ -41193,9 +41193,9 @@
                   ) {
                     // Active poll
                     activePoll.innerHTML = `<h6>Question:</h6>
-                      <textarea class="form-control" id="pollQuestion" rows="3" maxlength="300" required disabled>${polled.question}</textarea>
-                      <br/>
-                  `;
+                  <textarea class="form-control" id="pollQuestion" rows="3" maxlength="300" required disabled>${polled.question}</textarea>
+                  <br/>
+              `;
                     activePoll.innerHTML += "<h6>Options:</h6>";
                     polled.options.forEach((option, i) => {
                       activePoll.innerHTML += `<div>${option}</div>`;
@@ -41210,21 +41210,21 @@
                     activePoll.innerHTML = "";
                     if (poll) {
                       activePoll.innerHTML = `<h6>Question: </h6>
-                      <textarea class="form-control" rows="3" disabled>${polled.question}</textarea>
-                      <br/>
-                      `;
+                  <textarea class="form-control" rows="3" disabled>${polled.question}</textarea>
+                  <br/>
+                  `;
                       activePoll.innerHTML += "<h6>Options:</h6>";
                       polled.options.forEach((option, i) => {
                         const isChecked =
                           polled.voters && polled.voters[member] == i;
                         activePoll.innerHTML += `
-                              <div class="form-check">
-                                  <input class="form-check-input poll-option" type="radio" name="pollOption" value="${i}" data-poll-index="0" id="pollOption${i}" ${
+                          <div class="form-check">
+                              <input class="form-check-input poll-option" type="radio" name="pollOption" value="${i}" data-poll-index="0" id="pollOption${i}" ${
                           isChecked ? "checked" : ""
                         }>
-                                  <label class="form-check-label" for="pollOption${i}">${option}</label>
-                                  <br/>
-                              </div>`;
+                              <label class="form-check-label" for="pollOption${i}">${option}</label>
+                              <br/>
+                          </div>`;
                       });
                       if (polled.status === "active") {
                         activePoll.innerHTML += `<button class="btn btn-danger btn-block end-poll-button" data-poll-id="${polled.id}">End Poll</button>`;
@@ -41235,8 +41235,8 @@
                   } else {
                     // Previous polls
                     let pollHtml = `<h6>Question:</h6>
-                  <textarea class="form-control" rows="3" disabled>${polled.question}</textarea>
-                  `;
+              <textarea class="form-control" rows="3" disabled>${polled.question}</textarea>
+              `;
                     pollHtml += "<h6>Options:</h6>";
                     polled.options.forEach((option, i) => {
                       pollHtml += `<div>${option}</div>`;
@@ -41249,8 +41249,8 @@
 
                     if (polled.status === "active") {
                       pollHtml += `
-                      <br/>
-                      <button class="btn btn-danger btn-block end-poll-button" data-poll-id="${polled.id}">End Poll</button>`;
+                  <br/>
+                  <button class="btn btn-danger btn-block end-poll-button" data-poll-id="${polled.id}">End Poll</button>`;
                     }
                     previousPolls.innerHTML += `<div class="previous-poll">${pollHtml}</div>`;
                   }
@@ -41260,19 +41260,19 @@
                 activePoll.innerHTML = "";
                 if (poll) {
                   activePoll.innerHTML = `<h6>Question: </h6>
-              <textarea class="form-control" rows="3" disabled>${poll.question}</textarea>
-              <br/>
-              `;
+          <textarea class="form-control" rows="3" disabled>${poll.question}</textarea>
+          <br/>
+          `;
                   activePoll.innerHTML += "<h6>Options:</h6>";
                   poll.options.forEach((option, i) => {
                     const isChecked = poll.voters && poll.voters[member] == i;
                     activePoll.innerHTML += `
-                      <div class="form-check">
-                        <input class="form-check-input poll-option" type="radio" name="pollOption" value="${i}" data-poll-index="0" id="pollOption${i}" ${
+                  <div class="form-check">
+                    <input class="form-check-input poll-option" type="radio" name="pollOption" value="${i}" data-poll-index="0" id="pollOption${i}" ${
                       isChecked ? "checked" : ""
                     }>
-                        <label class="form-check-label" for="pollOption${i}">${option}</label>
-                      </div>`;
+                    <label class="form-check-label" for="pollOption${i}">${option}</label>
+                  </div>`;
                   });
                 } else {
                   activePoll.innerHTML = "<div>No active poll</div>";
@@ -41333,41 +41333,41 @@
             function addView() {
               if (islevel == "2") {
                 const hostView = `
-      <div id="hostView">
-        <h5>Previous Polls</h5>
-        <div id="previousPolls"></div>
-        <hr/>
-        <h5>Create a New Poll</h5>
-        <form id="pollForm">
-          <div class="form-group">
-            <label for="pollQuestion">Poll Question</label>
-            <textarea class="form-control" id="pollQuestion" rows="3" maxlength="300" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="pollType">Select Poll Answer Type</label>
-            <select class="form-control" id="pollType" required>
-              <option value="">Choose...</option>
-              <option value="trueFalse">True/False</option>
-              <option value="yesNo">Yes/No</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-          <div id="pollOptions" class="form-group"></div>
-          <button type="submit" class="btn btn-primary btn-block">Create Poll</button>
-        </form>
+  <div id="hostView">
+    <h5>Previous Polls</h5>
+    <div id="previousPolls"></div>
+    <hr/>
+    <h5>Create a New Poll</h5>
+    <form id="pollForm">
+      <div class="form-group">
+        <label for="pollQuestion">Poll Question</label>
+        <textarea class="form-control" id="pollQuestion" rows="3" maxlength="300" required></textarea>
       </div>
-      <hr/>
-      <div id="voterView">
-        <h5>Current Poll</h5>
-        <div id="activePoll"></div>
-      </div>`;
+      <div class="form-group">
+        <label for="pollType">Select Poll Answer Type</label>
+        <select class="form-control" id="pollType" required>
+          <option value="">Choose...</option>
+          <option value="trueFalse">True/False</option>
+          <option value="yesNo">Yes/No</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div id="pollOptions" class="form-group"></div>
+      <button type="submit" class="btn btn-primary btn-block">Create Poll</button>
+    </form>
+  </div>
+  <hr/>
+  <div id="voterView">
+    <h5>Current Poll</h5>
+    <div id="activePoll"></div>
+  </div>`;
                 pollModalBody.innerHTML = hostView;
               } else {
                 const voterView = `
-      <div id="voterView">
-        <h5>Current Poll</h5>
-        <div id="activePoll"></div>
-      </div>`;
+  <div id="voterView">
+    <h5>Current Poll</h5>
+    <div id="activePoll"></div>
+  </div>`;
                 pollModalBody.innerHTML = voterView;
               }
             }
@@ -41385,30 +41385,30 @@
                 pollOptions.innerHTML = ""; // Clear previous options
                 if (type === "trueFalse") {
                   pollOptions.innerHTML = `
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="pollOption" value="true" id="optionTrue">
-          <label class="form-check-label" for="optionTrue">True</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="pollOption" value="false" id="optionFalse">
-          <label class="form-check-label" for="optionFalse">False</label>
-        </div>`;
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="pollOption" value="true" id="optionTrue">
+      <label class="form-check-label" for="optionTrue">True</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="pollOption" value="false" id="optionFalse">
+      <label class="form-check-label" for="optionFalse">False</label>
+    </div>`;
                 } else if (type === "yesNo") {
                   pollOptions.innerHTML = `
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="pollOption" value="yes" id="optionYes">
-          <label class="form-check-label" for="optionYes">Yes</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="pollOption" value="no" id="optionNo">
-          <label class="form-check-label" for="optionNo">No</label>
-        </div>`;
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="pollOption" value="yes" id="optionYes">
+      <label class="form-check-label" for="optionYes">Yes</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="pollOption" value="no" id="optionNo">
+      <label class="form-check-label" for="optionNo">No</label>
+    </div>`;
                 } else if (type === "custom") {
                   for (let i = 1; i <= 5; i++) {
                     pollOptions.innerHTML += `
-                  <div class="form-group">
-                  <input type="text" class="form-control" id="customOption${i}" placeholder="Option ${i}" maxlength="50">
-                  </div>`;
+              <div class="form-group">
+              <input type="text" class="form-control" id="customOption${i}" placeholder="Option ${i}" maxlength="50">
+              </div>`;
                   }
                 }
               });
@@ -42292,21 +42292,21 @@
                 const roomDiv = document.createElement("div");
                 roomDiv.classList.add("card", "mb-3", "text-dark");
                 roomDiv.innerHTML = `
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        Room ${roomIndex + 1}
-                        <div>
-                            <button class="btn btn-secondary btn-sm" onclick="editRoom(${roomIndex})">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteRoom(${roomIndex})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    Room ${roomIndex + 1}
+                    <div>
+                        <button class="btn btn-secondary btn-sm" onclick="editRoom(${roomIndex})">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRoom(${roomIndex})">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <ul class="list-group" id="room${roomIndex}List"></ul>
-                    </div>
-                `;
+                </div>
+                <div class="card-body">
+                    <ul class="list-group" id="room${roomIndex}List"></ul>
+                </div>
+            `;
 
                 roomsContainer.appendChild(roomDiv);
 
@@ -42930,20 +42930,20 @@
               const userDiv = document.createElement("div");
               userDiv.classList.add("card", "mb-3", "text-dark");
               userDiv.innerHTML = `
-                <div class="card-header">Whiteboard Participants</div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <h6>Assigned</h6>
-                            <ul class="list-group" id="assignedListBoard" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc;"></ul>
-                        </div>
-                        <div class="col-md-6 mt-xs-3 mb-3">
-                            <h6>Pending</h6>
-                            <ul class="list-group" id="unassignedListBoard" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc;"></ul>
-                        </div>
+            <div class="card-header">Whiteboard Participants</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6>Assigned</h6>
+                        <ul class="list-group" id="assignedListBoard" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc;"></ul>
+                    </div>
+                    <div class="col-md-6 mt-xs-3 mb-3">
+                        <h6>Pending</h6>
+                        <ul class="list-group" id="unassignedListBoard" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc;"></ul>
                     </div>
                 </div>
-            `;
+            </div>
+        `;
 
               whiteboardContainer.appendChild(userDiv);
 
