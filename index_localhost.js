@@ -2,6 +2,7 @@ import mediasoup from "mediasoup";
 import express from "express";
 import cors from "cors";
 import crypto from "crypto";
+import fetch from "node-fetch";
 const app = express();
 const ip = "111.222.222.111";
 const PORT = 3000;
@@ -13,6 +14,7 @@ const safeOrigins = [
 ];
 
 app.use(cors());
+app.use(express.json());
 
 import https from "httpolyglot";
 import fs from "fs";
@@ -22,7 +24,124 @@ const _dirname = path.resolve();
 import dotenv from "dotenv";
 dotenv.config();
 
+const activeCredentials = {};
+
+const mode = process.env.MODE;
+const actualApiUserName = process.env.APIUSERNAME;
+const actualApiKey = process.env.APIKEY;
+const allowRecord = process.env.ALLOWRECORD;
+
 import { Server } from "socket.io";
+
+function generateRandomString(length) {
+  return crypto
+    .randomBytes(Math.ceil(length / 2))
+    .toString("hex")
+    .slice(0, length);
+}
+
+function generateTemporaryCredentials() {
+  const apiUserName = generateRandomString(8);
+  const apiKey = generateRandomString(64);
+  const expiry = Date.now() + 15 * 60 * 1000;
+
+  const hashedApiKey = crypto.createHash("sha256").update(apiKey).digest("hex");
+
+  activeCredentials[apiUserName] = { hashedApiKey, expiry };
+
+  return { apiUserName, apiKey };
+}
+
+function verifyCredentials(apiUserName, apiKey) {
+  const credential = activeCredentials[apiUserName];
+  if (!credential) return false;
+
+  const { hashedApiKey, expiry } = credential;
+
+  if (Date.now() > expiry) {
+    delete activeCredentials[apiUserName];
+    return false;
+  }
+
+  const hashedProvidedKey = crypto
+    .createHash("sha256")
+    .update(apiKey)
+    .digest("hex");
+  if (hashedProvidedKey !== hashedApiKey) {
+    return false;
+  }
+
+  return true;
+}
+
+app.post("/createRoom", async (req, res) => {
+  try {
+    const payload = req.body;
+    const [apiUserName, apiKey] = req.headers.authorization
+      .replace("Bearer ", "")
+      .split(":");
+
+    // Verify temporary credentials
+    if (!apiUserName || !apiKey || !verifyCredentials(apiUserName, apiKey)) {
+      return res.status(401).json({ error: "Invalid or expired credentials" });
+    }
+
+    try {
+      const response = await fetch("https://mediasfu.com/v1/rooms/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${actualApiUserName}:${actualApiKey}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      res.status(response.status).json(result);
+    } catch (error) {
+      console.error("Error creating room:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  } catch (error) {
+    console.error("Error creating room:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint for `joinRoom`
+app.post("/joinRoom", async (req, res) => {
+  try {
+    const payload = req.body;
+    const [apiUserName, apiKey] = req.headers.authorization
+      .replace("Bearer ", "")
+      .split(":");
+
+    // Verify temporary credentials
+    if (!apiUserName || !apiKey || !verifyCredentials(apiUserName, apiKey)) {
+      return res.status(401).json({ error: "Invalid or expired credentials" });
+    }
+
+    try {
+      const response = await fetch("https://mediasfu.com/v1/rooms/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${actualApiUserName}:${actualApiKey}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      res.status(response.status).json(result);
+    } catch (error) {
+      console.error("Error joining room:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  } catch (error) {
+    console.error("Error joining room:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.get("*", (req, res, next) => {
   const knownPaths = ["/meet/", "/meeting/", "/images/"];
@@ -63,11 +182,6 @@ let screenProducers = [];
 let consumers = [];
 let tempEventRooms = {};
 let tempEventPeers = {};
-
-const mode = process.env.MODE;
-const apiUserName = process.env.APIUSERNAME;
-const apiKey = process.env.APIKEY;
-const allowRecord = process.env.ALLOWRECORD;
 
 const createWorker = async () => {
   worker = await mediasoup.createWorker({
@@ -161,6 +275,7 @@ const mediaCodecs = [
   },
 ];
 
+// If not syncing with mediasfu for egress; adjust as you see fit
 const meetingRoomParams_Sandbox = {
   itemPageLimit: 8,
   mediaType: "video", //video,audio
@@ -238,6 +353,15 @@ const recordingParams_Production = {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [username, cred] of Object.entries(activeCredentials)) {
+    if (now > cred.expiry) {
+      delete activeCredentials[username];
+    }
+  }
+}, 60 * 1000);
 
 const eventTimeRemaining = async (roomName, timeRemaining, toHost = true) => {
   if (rooms[roomName]) {
@@ -529,8 +653,9 @@ connections.on("connection", async (socket) => {
 
   // Check if the origin is safe and add the API credentials to the response data
   if (safeOrigins.includes(origin)) {
-    responseData.apiUserName = apiUserName;
-    responseData.apiKey = apiKey;
+    const tempCredentials = generateTemporaryCredentials();
+    responseData.apiUserName = tempCredentials.apiUserName;
+    responseData.apiKey = tempCredentials.apiKey;
   }
 
   socket.emit("connection-success", responseData);
@@ -3078,11 +3203,17 @@ connections.on("connection", async (socket) => {
 
       let recordingParams = tempEventRooms[roomName].recordingParams;
       let allowRecord_ = allowRecord;
+      let apiKey = "";
+      let apiUserName = "";
       if (!recordingParams) {
         recordingParams = recordingParams_Sandbox;
         recordingParams.recordingAudioSupport = false;
         recordingParams.recordingVideoSupport = false;
         allowRecord_ = false;
+      }else{
+        const tempCredentials = generateTemporaryCredentials();
+        apiUserName = tempCredentials.apiUserName;
+        apiKey = tempCredentials.apiKey;    
       }
 
       let mediasfuURL = tempEventRooms[roomName].members.find(
