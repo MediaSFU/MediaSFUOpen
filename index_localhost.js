@@ -3150,8 +3150,19 @@ connections.on("connection", async (socket) => {
         let members = rooms[roomName].members;
         if (members) {
           members.forEach((member_info) => {
-            if (member_info.isHost) {
+            if (member_info.isHost && member_info.name === member) {
               isHost = true;
+              islevel = "2";
+            }
+          });
+        }
+      }else{
+        //check tempRooms for member is host or not
+        if (tempEventRooms[roomName]) {
+          tempEventRooms[roomName].members.forEach((member_info) => {
+            if (member_info.pem === '2' && member_info.name === member) {
+              isHost = true;
+              islevel = "2";
             }
           });
         }
@@ -3416,11 +3427,13 @@ connections.on("connection", async (socket) => {
       await updateMembersMain(roomName);
       await updateMembersHost(roomName);
     } catch (error) {
+      console.error("Error joining room:", error);
       try {
         callback({ rtpCapabilities: null, success: false });
       } catch (error) {}
     }
   });
+
 
   socket.on("getProducersAlt", async ({}, callback) => {
     try {
