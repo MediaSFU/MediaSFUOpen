@@ -61,7 +61,7 @@
 5. **Running MediaSFU on localhost**:
    
    ```bash
-   npm start index_localhost.js
+   npm run dev:local
    ```
    
    Go to: `https://localhost:3000/meeting/start` and accept the self-signed certificate warning.
