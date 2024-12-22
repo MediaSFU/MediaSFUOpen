@@ -183,14 +183,17 @@ Follow these steps to install MediaSFU on Ubuntu:
         }
     }
     ```
+
+    You can find the Nginx configuration file at `/etc/nginx/sites-available/default`. Replace the existing configuration with the new configuration.
+
 12. **Obtain SSL certificates using Certbot:**
 
     ```bash
     sudo certbot --nginx -d example.mediasfu.com
     ```
-13. **Set up Nginx configuration for SSL:**
+13. **Final Nginx configuration:**
 
-    Create a new Nginx configuration file with the following content. Replace `example.com` and `demo.example.com` with your domain details.
+    The final Nginx configuration should look like this:
 
     ```nginx
     server {
@@ -225,6 +228,11 @@ Follow these steps to install MediaSFU on Ubuntu:
         server_name example.com demo.example.com;
         return 404; # managed by Certbot
     }
+    ```
+    
+    Restart Nginx:
+    ```bash
+    sudo systemctl restart nginx
     ```
 
 14. **Install PM2 globally:**
@@ -297,15 +305,42 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
 
 1. **Generate SSL Certificates:**
 
-    Generate SSL certificates and paste them into the `local.com.key` and `local.com.pem` files located in the ssl folder of in the project directory.
+   Generate self-signed SSL certificates for `localhost`. This is required for WebRTC and HTTPS.
+   You can create a bash script or use `openssl` commands to generate the certificates.
+   To create a script, create a file named `localssl.sh`(in the root directory) with the following content:
+   
+   ```bash
+   openssl genrsa -out local.com.key 2048
+   openssl req -new -x509 -key local.com.key -out local.com.pem -days 365 \
+   -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
+   
+   mkdir -p ssl
+   mv local.com.key local.com.pem ssl/
+   ```
+
+   You may need to change the file permissions to make the script executable:
+   
+   ```bash
+   chmod +x localssl.sh
+   ```
+
+   Run the script:
+   
+   ```bash
+   ./localssl.sh
+   ```
+
+   The script generates `local.com.key` and `local.com.pem` files in the `ssl` directory. These files are used for HTTPS.
 
 2. **Run the Localhost Server:**
 
-    Use the `index_localhost.js` file to run the server on localhost.
+    Use the following command to run the MediaSFU application on localhost:
 
     ```bash
     npm run dev:local
     ```
+
+    **Note:** this runs the 'index_localhost.js' file instead of 'index.js' to use the local SSL certificates. You must therefore make any changes like the IP address in 'index_localhost.js' instead of 'index.js'.
 
     Ensure that you access the application using `https` to utilize the SSL certificates.
 

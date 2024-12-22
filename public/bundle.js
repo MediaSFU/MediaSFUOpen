@@ -30562,7 +30562,7 @@
 
                         //media display and ui update to prioritize audio/video
                         let nStream = new MediaStream([track]);
-                        addMiniAudio(nStream, remoteProducerId);
+                        addMiniAudio(nStream, remoteProducerId, consumer);
 
                         //add to allaudiostreams array; add producerId, stream
                         allAudioStreams = await [
@@ -38390,7 +38390,7 @@
             },
           });
 
-          function addMiniAudio(stream, remoteProducerId) {
+          function addMiniAudio(stream, remoteProducerId, consumer) {
             // Function to add the audio element and monitor audio loudness
 
             // Create new audio element for the new user
@@ -38405,21 +38405,26 @@
             }
 
             // Create AnalyserNode to monitor audio loudness
-            const audioContext = new AudioContext();
-            const source = audioContext.createMediaStreamSource(stream);
-            const analyser = audioContext.createAnalyser();
-            analyser.fftSize = 32;
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            source.connect(analyser);
-
             let consLow = false;
+            let averageLoudness = 128;
 
             setInterval(() => {
-              analyser.getByteTimeDomainData(dataArray);
-              let averageLoudness =
-                Array.from(dataArray).reduce((sum, value) => sum + value, 0) /
-                bufferLength;
+              try {
+                const receiver = consumer.rtpReceiver;
+                receiver?.getStats().then((stats) => {
+                  stats.forEach((report) => {
+                    if (
+                      report.type === "inbound-rtp" &&
+                      report.kind === "audio" &&
+                      report.audioLevel
+                    ) {
+                      averageLoudness = 127.5 + report.audioLevel * 127.5;
+                    }
+                  });
+                });
+              } catch {
+                console.error("Error getting audio level", error);
+              }
 
               // Find the participant with the audio ID matching the given ID
               let participant = participants.find(

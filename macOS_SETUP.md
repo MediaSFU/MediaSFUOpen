@@ -39,7 +39,9 @@
 
 4. **Local SSL Certificates**:
    
-   Generate self-signed SSL certificates:
+   Generate self-signed SSL certificates for `localhost`. This is required for WebRTC and HTTPS.
+   You can create a bash script or use `openssl` commands to generate the certificates.
+   To create a script, create a file named `localssl.sh`(in the root directory) with the following content:
    
    ```bash
    openssl genrsa -out local.com.key 2048
@@ -49,6 +51,20 @@
    mkdir -p ssl
    mv local.com.key local.com.pem ssl/
    ```
+
+   You may need to change the file permissions to make the script executable:
+   
+   ```bash
+   chmod +x localssl.sh
+   ```
+
+   Run the script:
+   
+   ```bash
+   ./localssl.sh
+   ```
+
+   The script generates `local.com.key` and `local.com.pem` files in the `ssl` directory. These files are used for HTTPS.
 
 5. **Running MediaSFU on localhost**:
    
