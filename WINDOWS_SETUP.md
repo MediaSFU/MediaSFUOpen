@@ -48,15 +48,22 @@
 4. **Generate SSL Certificates**:
    
    If OpenSSL is installed on Windows:
+
+   Generate self-signed SSL certificates for `localhost`. This is required for WebRTC and HTTPS.
    
    ```bash
    openssl genrsa -out local.com.key 2048
    openssl req -new -x509 -key local.com.key -out local.com.pem -days 365 -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
    
-   mkdir ssl
+   mkdir -p ssl
    move local.com.key ssl\
    move local.com.pem ssl\
    ```
+
+   If OpenSSL is not installed, use a tool like [Win32 OpenSSL](https://slproweb.com/products/Win32OpenSSL.html) or [Git Bash](https://git-scm.com/).
+
+   You may have issues with Git Bash with the leading `./` in the `openssl` commands. Use Command Prompt or PowerShell instead. 
+   You finally need to move the generated files to the `ssl` directory (in the root of the project).
 
 5. **Running MediaSFU on localhost**:
    
