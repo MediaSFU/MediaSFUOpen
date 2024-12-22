@@ -53,7 +53,7 @@
 5. **Running MediaSFU on localhost**:
    
    ```bash
-   npm start index_localhost.js
+   npm run dev:local
    ```
    
    Access: `https://localhost:3000/meeting/start`  

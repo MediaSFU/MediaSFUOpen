@@ -304,7 +304,7 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
     Use the `index_localhost.js` file to run the server on localhost.
 
     ```bash
-    npm start index_localhost.js
+    npm run dev:local
     ```
 
     Ensure that you access the application using `https` to utilize the SSL certificates.
