@@ -29,6 +29,20 @@ To integrate your client applications with the MediaSFU Community Edition server
 
 ---
 
+### Video Guides for Connecting SDKs
+
+For an interactive walkthrough, refer to the video guides for the frameworks currently supported:
+
+- **ReactJS SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)
+- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)
+
+For other frameworks, stay tuned as video guides are **coming soon** for:
+- **Angular SDK Setup**
+- **React Native (Expo) SDK Setup**
+- **React Native (CLI) SDK Setup**
+
+---
+
 ### 1. Angular
 
 #### Steps to Connect Angular Application
@@ -284,11 +298,11 @@ If you need to change the default port for any application, update the `safeOrig
 
 | Framework              | Default Port | Quickstart Guide URL                                                                 | `safeOrigins` Example                           |
 |------------------------|--------------|---------------------------------------------------------------------------------------|-------------------------------------------------|
-| **Angular**            | `4200`       | [Angular Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/angular) | `['https://example.com', 'http://localhost:4200']` |
-| **ReactJS**            | `3000`       | [ReactJS Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/react)     | `['https://example.com', 'http://localhost:3000']` |
-| **Flutter**            | `5000`       | [Flutter Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/flutter)   | `['https://example.com', 'http://localhost:5000']` |
-| **React Native (Expo)**| `19006`      | [Expo Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/expo)        | `['https://example.com', 'http://localhost:19006']` |
-| **React Native (CLI)** | `8081`       | [React Native CLI Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/react-native-cli) | `['https://example.com', 'http://localhost:8081']` |
+| **Angular**            | `4200`       | [Angular Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/mediasfu_angular) | `['https://example.com', 'http://localhost:4200']` |
+| **ReactJS**            | `3000`       | [ReactJS Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/mediasfu_reactjs)     | `['https://example.com', 'http://localhost:3000']` |
+| **Flutter**            | `5000`       | [Flutter Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/mediasfu_flutter)   | `['https://example.com', 'http://localhost:5000']` |
+| **React Native (Expo)**| `19006`      | [Expo Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/mediasfu_react_native_expo)        | `['https://example.com', 'http://localhost:19006']` |
+| **React Native (CLI)** | `8081`       | [React Native CLI Quickstart App](https://github.com/mediasfu/mediasfu-quickstart-apps/tree/main/mediasfu_react_native) | `['https://example.com', 'http://localhost:8081']` |
 
 ---
 
