@@ -20,13 +20,10 @@
   </a>
 </p>
 
-
 MediaSFU offers a cutting-edge streaming experience that empowers users to customize their recordings and engage their audience with high-quality streams. Whether you're a content creator, educator, or business professional, MediaSFU provides the tools you need to elevate your streaming game.
 
 <div style="text-align: center;">
-
-<img src="https://mediasfu.com/images/header_1.jpg" alt="Preview Page" title="Preview Page" style="max-height: 600px;">
-
+  <img src="https://mediasfu.com/images/header_1.jpg" alt="Preview Page" title="Preview Page" style="max-height: 600px;">
 </div>
 
 ---
@@ -57,7 +54,6 @@ https://github.com/user-attachments/assets/310cb87c-dade-445d-aee7-dea1889d6dc4
 
 ---
 
-
 # Getting Started with [MediaSFU](https://mediasfu.com) Community Edition
 
 Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedom to customize your recordings with unlimited pausing and resuming, ensuring you have complete control over your content. Immerse yourself in simulcasted high-quality streams featuring lightning-fast 30ms latency, providing a seamless and immersive viewing experience for your audience.
@@ -75,15 +71,24 @@ Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedo
 
 **Note**: If you're setting up MediaSFU for production, follow the [Installation on Ubuntu](#installation-on-ubuntu) steps. For local development or testing, refer directly to the [Running on Localhost](#running-on-localhost) section to bypass production configurations.
 
-
-[MediaSFU](https://mediasfu.com) Community edition is freely available for use.
-
+[MediaSFU](https://mediasfu.com) Community Edition is freely available for use.
 
 ---
 
 ## Assumption: Production Environment on Linux
 
 **Note:** The following instructions assume a production environment running on a Linux server (e.g., Ubuntu). For local development or testing on macOS or Windows, please refer to the additional guides linked at the end of this document. Those guides will help you set up the necessary environment, firewall rules, ports, and SSL configuration for your operating system.
+
+### 🚀 Guide to Install MediaSFUOpen
+
+For a **detailed step-by-step guide** on how to install **MediaSFUOpen**, check out our **installation video**:  
+🎥 [**Watch the MediaSFUOpen Installation Guide**](https://youtu.be/DbByUrOO_WA)  
+
+This video covers everything from **server setup** to **SSL configuration**, ensuring you can get MediaSFU up and running with ease.
+
+
+[![YouTube](http://i.ytimg.com/vi/DbByUrOO_WA/hqdefault.jpg)](https://www.youtube.com/watch?v=DbByUrOO_WA)
+
 
 ## Installation on Ubuntu
 
@@ -232,7 +237,13 @@ Follow these steps to install MediaSFU on Ubuntu:
     
     Restart Nginx:
     ```bash
-    sudo systemctl restart nginx
+      sudo systemctl restart nginx
+    ```
+    
+    **Note:** Replace `example.com` with your domain details. You may need to enable the Nginx service to start on boot:
+
+    ```bash
+     sudo systemctl enable nginx
     ```
 
 14. **Install PM2 globally:**
@@ -262,7 +273,6 @@ Follow these steps to install MediaSFU on Ubuntu:
 
     To restrict Socket.IO connections to specific origins for enhanced security, follow these steps:
 
-
     Open the `index.js` file located in your Node.js application's directory.
 
     Find the section of code where the safe origins are specified.
@@ -275,29 +285,34 @@ Follow these steps to install MediaSFU on Ubuntu:
     // Example: Define safe origins
     const safeOrigins = [`https://localhost:${PORT}`];
     ```
+    
+    Replace with the origins you want to allow. You can add as many origins as needed to the array. Example:
+    
+    ```javascript
+    const safeOrigins = ['https://example.com', 'http://localhost:3000'];
+    ```
 
-    Replace with the origins you want to allow. You can add as many origins as needed to the array. Example const safeOrigins = ['https://subdomain.example.com']; 
-
-16. **Start the MediaSFU application using PM2:**
+17. **Start the MediaSFU application using PM2:**
 
     ```bash
     sudo pm2 start index.js
     ```
 
-17. **Access the application:**
+18. **Access the application:**
 
     You can access your MediaSFU application at `/meeting/start` on your domain. Starting a meeting is straightforward and easy. If you need help, refer to the [documentation](https://www.mediasfu.com/docs) for a guide and full feature access.
 
-18. **Replace images and HTML files:**
+19. **Replace images and HTML files:**
 
     If needed, you can replace the images located in the `public` and `public_alt` folders with your own images. Additionally, update the HTML files in the project to match your brand.
 
-19. **Maximum Participants:**
+20. **Maximum Participants:**
 
     MediaSFU recommends a maximum of 100 participants on HD or 200 on SD video.
 
 Once the installation is complete, your MediaSFU application will be running with SSL enabled, providing a secure streaming environment.
 
+---
 
 ## Running on Localhost
 
@@ -307,7 +322,7 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
 
    Generate self-signed SSL certificates for `localhost`. This is required for WebRTC and HTTPS.
    You can create a bash script or use `openssl` commands to generate the certificates.
-   To create a script, create a file named `localssl.sh`(in the root directory) with the following content:
+   To create a script, create a file named `localssl.sh` (in the root directory) with the following content:
    
    ```bash
    openssl genrsa -out local.com.key 2048
@@ -340,7 +355,7 @@ To run MediaSFU on localhost with SSL, follow these additional steps:
     npm run dev:local
     ```
 
-    **Note:** this runs the 'index_localhost.js' file instead of 'index.js' to use the local SSL certificates. You must therefore make any changes like the IP address in 'index_localhost.js' instead of 'index.js'.
+    **Note:** This runs the `index_localhost.js` file instead of `index.js` to use the local SSL certificates. You must therefore make any changes like the IP address in `index_localhost.js` instead of `index.js`.
 
     Ensure that you access the application using `https` to utilize the SSL certificates.
 
@@ -362,9 +377,11 @@ These guides will cover:
 - Using PM2 or platform-specific process managers.
 - Any platform-specific instructions that differ from the Ubuntu production setup.
 
+---
+
 ## Cloud Recording & Egress
 
-**Cloud Recording and Egress** are powerful features provided by [MediaSFU.com](https://mediasfu.com) as part of their MediaSFU Cloud services. These features enable functionalities such as cloud recording, capturing audio buffers, real-time image processing for machine learning (ML) applications (e.g., Large Language Models), and other egress purposes. 
+**Cloud Recording and Egress** are powerful features provided by [MediaSFU.com](https://mediasfu.com) as part of their MediaSFU Cloud services. These features enable functionalities such as cloud recording, capturing audio buffers, real-time image processing for machine learning (ML) applications (e.g., Large Language Models), and other egress purposes.
 
 By default, MediaSFU is configured to support these egress capabilities. However, to utilize these features effectively, you need to perform specific configurations. This section provides detailed instructions on enabling cloud recording and configuring your client applications to connect securely to your MediaSFU server.
 
@@ -479,20 +496,20 @@ Cloud recording is a premium feature that allows you to record media streams for
 
    For detailed information about available subscription plans, visit [MediaSFU Subscription Info](https://mediasfu.com/subscription-info).
 
-      
-You can find more information about the available subscription plans at [MediaSFU Subscription Info](https://mediasfu.com/subscription-info).
-
 > **Note:**  
 > The majority of subscription fees are designed to support large organizations and institutions that manage numerous users under a single profile. This structure allows for the efficient handling of sub-users, ensuring seamless scalability and robust support. The fees help cover the overhead costs associated with maintaining and servicing extensive client bases, providing reliable performance and dedicated resources to meet the needs of large-scale deployments.
 >
 > **Additional Note:**  
 > If your organization does not require support for a large number of users, please contact our support team. We can credit your account and adjust your subscription to accommodate a reduced number of sub-user limits, ensuring you only pay for the resources you need.
 
+---
 
-## Connecting Your MediaSFU SDKs to the Community Edition Server <a name="connecting-sdk"></a>
+## Connecting Your MediaSFU SDKs to the Community Edition Server
 
 To connect your MediaSFU SDKs to the Community Edition server, follow these steps:
 - [**Connecting MediaSFU SDKs to the Community Edition Server**](./CONNECT.md)
+
+---
 
 ## Additional Resources
 
@@ -500,4 +517,26 @@ To connect your MediaSFU SDKs to the Community Edition server, follow these step
 - [GitHub Repository](https://github.com/MediaSFU)
 - [Community Forums](https://www.mediasfu.com/forums)
 
-    
+---
+
+## 📡 Connecting Your MediaSFU SDKs to the Community Edition Server
+
+To connect your MediaSFU SDKs to the Community Edition server, follow the guides below based on your preferred framework:
+
+### ✅ Video Guides Available:
+- **React SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)
+
+  [![YouTube](http://i.ytimg.com/vi/VvulSNB_AYg/hqdefault.jpg)](https://www.youtube.com/watch?v=VvulSNB_AYg)
+  
+- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)
+ 
+  [![YouTube](http://i.ytimg.com/vi/IzwVEMBQ3p0/hqdefault.jpg)](https://www.youtube.com/watch?v=IzwVEMBQ3p0)
+
+### 🚧 Coming Soon:
+- **Angular SDK Setup** *(Coming Soon)*
+- **React Native SDK Setup** *(Coming Soon)*
+- **React Native Expo SDK Setup** *(Coming Soon)*
+
+For additional instructions, refer to the [**Connecting SDKs Documentation**](./CONNECT.md).
+
+---
