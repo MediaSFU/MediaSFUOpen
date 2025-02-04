@@ -29,17 +29,21 @@ To integrate your client applications with the MediaSFU Community Edition server
 
 ---
 
-### Video Guides for Connecting SDKs
+### 🎥 Video Guides for Connecting SDKs
 
 For an interactive walkthrough, refer to the video guides for the frameworks currently supported:
 
-- **ReactJS SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)
-- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)
+- **ReactJS SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)  
+  [![React SDK Guide](http://i.ytimg.com/vi/VvulSNB_AYg/hqdefault.jpg)](https://www.youtube.com/watch?v=VvulSNB_AYg)
 
-For other frameworks, stay tuned as video guides are **coming soon** for:
+- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)  
+  [![Flutter SDK Guide](http://i.ytimg.com/vi/IzwVEMBQ3p0/hqdefault.jpg)](https://www.youtube.com/watch?v=IzwVEMBQ3p0)
+
+- **React Native SDK Setup (Expo & CLI):** [Watch the React Native SDK Setup Guide](https://youtu.be/uJkI7H26jq4)  
+  [![React Native SDK Guide](http://i.ytimg.com/vi/uJkI7H26jq4/hqdefault.jpg)](https://www.youtube.com/watch?v=uJkI7H26jq4)
+
+### 🚧 Coming Soon:
 - **Angular SDK Setup**
-- **React Native (Expo) SDK Setup**
-- **React Native (CLI) SDK Setup**
 
 ---
 
