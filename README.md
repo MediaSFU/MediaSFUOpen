@@ -524,18 +524,17 @@ To connect your MediaSFU SDKs to the Community Edition server, follow these step
 To connect your MediaSFU SDKs to the Community Edition server, follow the guides below based on your preferred framework:
 
 ### ✅ Video Guides Available:
-- **React SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)
+- **React SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)  
+  [![YouTube](http://i.ytimg.com/vi/VvulSNB_AYg/hqdefault.jpg)](https://www.youtube.com/watch?v=VvulSNB_AYg)  
 
-  [![YouTube](http://i.ytimg.com/vi/VvulSNB_AYg/hqdefault.jpg)](https://www.youtube.com/watch?v=VvulSNB_AYg)
-  
-- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)
- 
-  [![YouTube](http://i.ytimg.com/vi/IzwVEMBQ3p0/hqdefault.jpg)](https://www.youtube.com/watch?v=IzwVEMBQ3p0)
+- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)  
+  [![YouTube](http://i.ytimg.com/vi/IzwVEMBQ3p0/hqdefault.jpg)](https://www.youtube.com/watch?v=IzwVEMBQ3p0)  
+
+- **React Native SDK Setup (Expo & CLI):** [Watch the React Native SDK Setup Guide](https://youtu.be/uJkI7H26jq4)  
+  [![YouTube](http://i.ytimg.com/vi/uJkI7H26jq4/hqdefault.jpg)](https://www.youtube.com/watch?v=uJkI7H26jq4)  
 
 ### 🚧 Coming Soon:
-- **Angular SDK Setup** *(Coming Soon)*
-- **React Native SDK Setup** *(Coming Soon)*
-- **React Native Expo SDK Setup** *(Coming Soon)*
+- **Angular SDK Setup** *(Coming Soon)*  
 
 For additional instructions, refer to the [**Connecting SDKs Documentation**](./CONNECT.md).
 
