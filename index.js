@@ -352,7 +352,7 @@ function sleep(ms) {
 setInterval(() => {
   const now = Date.now();
   for (const [username, cred] of Object.entries(activeCredentials)) {
-    if (now > cred.expiry) {
+    if (now > cred?.expiry) {
       delete activeCredentials[username];
     }
   }
@@ -406,8 +406,8 @@ const eventEndedMain = async (roomName, toHost) => {
 
     if (toHost) {
       await sleep(500);
-      await delete rooms[roomName];
-      await delete tempEventRooms[roomName];
+      delete rooms[roomName];
+      delete tempEventRooms[roomName];
     }
   }
 };
@@ -637,7 +637,7 @@ connections.on("connection", async (socket) => {
   let responseData = {
     socketId: socket.id,
     mode: mode,
-    allowRecord: allowRecord == "true" || allowRecord == true ? true : false,
+    allowRecord: allowRecord == "true" ? true : false,
     meetingRoomParams_:
       mode == "sandbox"
         ? meetingRoomParams_Sandbox
@@ -740,9 +740,9 @@ connections.on("connection", async (socket) => {
       let members = [];
       let waiting = [];
       let waitedRoom = false;
-      let proceed = false;
+      let res = { proceed: false, remainingCapacity: 0 };
       //create a secret key for the userName
-      const secret = await crypto.randomBytes(16).toString("hex");
+      const secret = crypto.randomBytes(16).toString("hex");
 
       if (tempEventRooms[eventID]) {
         //add the member to the members array with pem '1'
@@ -750,11 +750,10 @@ connections.on("connection", async (socket) => {
         let member = await tempEventRooms[eventID].members.find(
           (member) => member.name === userName
         );
-        let waiting = await tempEventRooms[eventID].waiting;
+
         waitedRoom = await tempEventRooms[eventID].waitRoom;
 
         if (!member) {
-          let res;
           let remainingCapacity = await tempEventRooms[eventID]
             .remainingCapacity;
 
@@ -768,7 +767,7 @@ connections.on("connection", async (socket) => {
             res = { proceed: true, remainingCapacity: remainingCapacity };
           }
 
-          tempEventRooms[eventID].members = await [
+          tempEventRooms[eventID].members = [
             ...tempEventRooms[eventID].members,
             {
               name: userName,
@@ -782,22 +781,21 @@ connections.on("connection", async (socket) => {
               mediasfuURL,
             },
           ];
-          tempEventRooms[eventID].remainingCapacity =
-            await res.remainingCapacity;
+          tempEventRooms[eventID].remainingCapacity = res.remainingCapacity;
           // if waitRoom is true, add the member to the waiting array
           if (waitedRoom) {
             let member_detail = await tempEventRooms[eventID].waiting.find(
               (member) => member.name === userName
             );
             if (!member_detail) {
-              tempEventRooms[eventID].waiting = await [
+              tempEventRooms[eventID].waiting = [
                 ...tempEventRooms[eventID].waiting,
                 { name: userName, id: socket.id },
               ];
 
               // find the room in the rooms array and add the member to the waiting array
               if (rooms[eventID]) {
-                rooms[eventID].waiting = await [
+                rooms[eventID].waiting = [
                   ...rooms[eventID].waiting,
                   { name: userName, id: socket.id },
                 ];
@@ -807,10 +805,7 @@ connections.on("connection", async (socket) => {
                 );
 
                 if (host) {
-                  let hostSocket = await host.id;
-                  //get the socket from peers array
                   try {
-                    let hostPeer = await peers[hostSocket];
                     // let us check if coHost exists in the room
                     let coHost = await rooms[eventID].coHost;
                     if (coHost) {
@@ -836,8 +831,6 @@ connections.on("connection", async (socket) => {
                         let coHost_info = await rooms[eventID].members.find(
                           (member) => member.name === coHost
                         );
-                        let coHostSocket = await coHost_info.id;
-                        let coHostPeer = await peers[coHostSocket];
 
                         await alertCoHostOfWaiting({
                           roomName: eventID,
@@ -880,7 +873,7 @@ connections.on("connection", async (socket) => {
             }
           }
         } else {
-          tempEventRooms[eventID].members = await [
+          tempEventRooms[eventID].members = [
             ...tempEventRooms[eventID].members,
             {
               name: userName,
@@ -901,19 +894,17 @@ connections.on("connection", async (socket) => {
         let scheduledDate_ = new Date(scheduledDate);
         let diff = scheduledDate_ - currentDate;
         let minutes = Math.floor(diff / 1000 / 60);
-        let res;
         let remainingCapacity = parseInt(capacity);
-        let audioOrVideo = await eventRoomParams.mediaType;
+
         if (minutes < 5) {
           res = { proceed: true, remainingCapacity: remainingCapacity - 1 };
         } else {
           res = { proceed: false, remainingCapacity: remainingCapacity };
         }
 
-        proceed = res.proceed;
         remainingCapacity = res.remainingCapacity;
 
-        tempEventRooms[eventID] = await {
+        tempEventRooms[eventID] = {
           eventID: eventID,
           capacity: capacity,
           remainingCapacity: remainingCapacity,
@@ -948,7 +939,7 @@ connections.on("connection", async (socket) => {
 
       let url;
 
-      if (proceed !== "scheduled") {
+      if (res.proceed) {
         url = `/meet/${eventID}/${secret}`;
       } else {
         url = false;
@@ -1007,7 +998,6 @@ connections.on("connection", async (socket) => {
           let host_name = tempEventRooms[eventID].members.find(
             (member) => member.pem == "2"
           );
-          let host_nameAlt;
 
           if (host_name) {
             hostName = host_name.name;
@@ -1350,7 +1340,7 @@ connections.on("connection", async (socket) => {
         producers = await removeItems(producers, member_info.id, "producer");
         transports = await removeItems(transports, member_info.id, "transport");
 
-        await delete peers[member_info.id];
+        delete peers[member_info.id];
       }
     } catch (error) {}
   };
@@ -1411,12 +1401,12 @@ connections.on("connection", async (socket) => {
         rooms[roomName].allowScreenShare = true;
       }
 
-      let producerIds = await [
+      let producerIds = [
         member_info.videoID,
         member_info.ScreenID,
         member_info.audioID,
       ];
-      producerIds = await producerIds.filter((producerId) => producerId);
+      producerIds = producerIds.filter((producerId) => producerId);
 
       await socketDisconnect({
         socketId,
@@ -1426,28 +1416,24 @@ connections.on("connection", async (socket) => {
       });
 
       if (member_info.islevel === "2") {
-        clearInterval(eventTimers[roomName]);
-
-        delete eventTimers[roomName];
-
         try {
           delete tempEventRooms[roomName];
           delete rooms[roomName];
 
           try {
-            await Object.keys(tempEventPeers).forEach(async (key) => {
+            Object.keys(tempEventPeers).forEach(async (key) => {
               let tempEventPeer = await tempEventPeers[key];
               if (tempEventPeer.roomName === roomName) {
-                await delete tempEventPeers[key];
+                delete tempEventPeers[key];
               }
             });
           } catch (error) {}
 
           try {
-            await Object.keys(peers).forEach(async (key) => {
+            Object.keys(peers).forEach(async (key) => {
               let tempEventPeer = await peers[key];
               if (tempEventPeer.roomName === roomName) {
-                await delete peers[key];
+                delete peers[key];
               }
             });
           } catch (error) {}
@@ -1605,7 +1591,7 @@ connections.on("connection", async (socket) => {
         } else {
           if (kind == "audio") {
             let userAudios = await rooms[roomName].userAudios;
-            userAudios = await [
+            userAudios = [
               ...userAudios,
               { name: member.name, audioID: oldMediaID },
             ];
@@ -1616,7 +1602,7 @@ connections.on("connection", async (socket) => {
         members = await members.filter(
           (member) => member.id !== socketId && member.name !== name
         );
-        members = await [...members, member];
+        members = [...members, member];
         rooms[roomName].members = await members;
 
         try {
@@ -1625,27 +1611,27 @@ connections.on("connection", async (socket) => {
             (force == false && kind != "audio")
           ) {
             try {
-              await producers.forEach((producer) => {
+              producers.forEach((producer) => {
                 if (producer.producer.id === oldMediaID) {
                   producer.producer.close();
                 }
               });
 
-              producers = await producers.filter(
+              producers = producers.filter(
                 (producer) => producer.producer.id !== oldMediaID
               );
             } catch (error) {}
 
             try {
               try {
-                await producers.forEach((producer) => {
+                producers.forEach((producer) => {
                   if (producer.producer.id === oldMediaID) {
                     producer.producer.close();
                   }
                 });
               } catch (error) {}
 
-              producers = await producers.filter(
+              producers = producers.filter(
                 (producer) => producer.producer.id !== oldMediaID
               );
             } catch (error) {}
@@ -1772,7 +1758,7 @@ connections.on("connection", async (socket) => {
     socketId,
     serverConsumerTransportId
   ) => {
-    const [consumerTransport] = await transports.filter(
+    const [consumerTransport] = transports.filter(
       (transport) =>
         transport.consumer === true &&
         transport.transport.id === serverConsumerTransportId &&
@@ -1869,7 +1855,7 @@ connections.on("connection", async (socket) => {
       screenProducerId = null;
       members = [];
 
-      settings = await [
+      settings = [
         tempEventRooms[roomName].eventRoomParams.audioSetting,
         tempEventRooms[roomName].eventRoomParams.videoSetting,
         tempEventRooms[roomName].eventRoomParams.screenshareSetting,
@@ -1881,9 +1867,9 @@ connections.on("connection", async (socket) => {
         capacity = await room_.capacity;
         waitRoom = await room_.waitRoom;
       }
-      eventStartedAt = await new Date();
-      eventStarted = await true;
-      eventEnded = await false;
+      eventStartedAt = new Date();
+      eventStarted = true;
+      eventEnded = false;
       secureCode = await tempEventRooms[roomName].secureCode;
     }
 
@@ -1934,24 +1920,6 @@ connections.on("connection", async (socket) => {
       ...screenProducers,
       { socketId: socket.id, producer, roomName, islevel },
     ];
-  };
-
-  const updateWaitingAdminMain = async ({
-    roomName,
-    forCoHost = false,
-    coHost = "",
-  }) => {
-    try {
-      await rooms[roomName].producingSockets.forEach(async (socket) => {
-        socket.emit("updateWaitingAdminMain", {
-          roomName,
-          forCoHost,
-          coHost,
-          token: accessToken,
-          tokenSecret: accessTokenSecret,
-        });
-      });
-    } catch (error) {}
   };
 
   const getTransport = (socketId) => {
@@ -2202,7 +2170,7 @@ connections.on("connection", async (socket) => {
             break;
           }
         }
-
+        const MAX_BREAKOUT_ROOMS = 50;
         if (!assigned && breakoutRooms.length < MAX_BREAKOUT_ROOMS) {
           const newRoom = [member];
           member.breakRoom = breakoutRooms.length;
@@ -2316,7 +2284,7 @@ connections.on("connection", async (socket) => {
 
     for (let participant of whiteboardUsers) {
       if (!participant.name || participant.useBoard === undefined) {
-        return false;
+        return { success: false, reason: "Invalid whiteboard users" };
       }
 
       if (
@@ -2324,14 +2292,14 @@ connections.on("connection", async (socket) => {
         participant.name.length < 2 ||
         participant.name.length > 10
       ) {
-        return false;
+        return { success: false, reason: "Invalid whiteboard users" };
       }
 
       if (
         typeof participant.useBoard !== "boolean" ||
         participant.useBoard === undefined
       ) {
-        return false;
+        return { success: false, reason: "Invalid whiteboard users" };
       }
     }
 
@@ -2339,7 +2307,7 @@ connections.on("connection", async (socket) => {
 
     for (let participant of whiteboardUsers) {
       if (!participants.find((p) => p.name == participant.name)) {
-        return false;
+        return { success: false, reason: "Invalid whiteboard users" };
       }
     }
 
@@ -2358,7 +2326,7 @@ connections.on("connection", async (socket) => {
     rooms[roomName].whiteboardEnded = false;
 
     tempEventRooms[roomName].tempWhiteboardUsers = whiteboardUsers;
-    return { success: true };
+    return { success: true, reason: "Whiteboard users updated" };
   };
 
   const updateWhiteboardUsers = async ({ roomName, ended = false }) => {
@@ -2712,7 +2680,7 @@ connections.on("connection", async (socket) => {
 
   socket.on("closeScreenProducer", async () => {
     try {
-      let socketId = await socket.id;
+      let socketId = socket.id;
 
       const roomName = await peers[socket.id].roomName;
       const name = await rooms[roomName].members.find(
@@ -2736,10 +2704,10 @@ connections.on("connection", async (socket) => {
             rooms[roomName].allowScreenShare = true;
           } catch (error) {}
 
-          const [producerTransport] = await screenProducers.filter(
+          const [producerTransport] = screenProducers.filter(
             (transport) => transport.socketId === socketId
           );
-          const [producer] = await producers.filter(
+          const [producer] = producers.filter(
             (producer) => producer.producer.id === producerTransport.producer.id
           );
 
@@ -2758,6 +2726,7 @@ connections.on("connection", async (socket) => {
 
   socket.on("startScreenShare", async () => {
     try {
+      const roomName = await peers[socket.id].roomName;
       if (rooms[roomName]) {
         const room = await rooms[roomName];
         room.allowScreenShare = false;
@@ -2781,7 +2750,7 @@ connections.on("connection", async (socket) => {
     try {
       if (rooms[roomName]) {
         try {
-          let socketId = await socket.id;
+          let socketId = socket.id;
           let name = await rooms[roomName].members.find(
             (member) => member.id === socketId
           ).name;
@@ -2814,7 +2783,7 @@ connections.on("connection", async (socket) => {
             }
           });
 
-          rooms[roomName].requests = await requests;
+          rooms[roomName].requests = requests;
 
           await updateMembersHost(roomName);
 
@@ -2945,10 +2914,6 @@ connections.on("connection", async (socket) => {
             return;
           }
 
-          let kind = await mediaTag;
-          let isShare = (await mediaTag) === "screen" ? true : false;
-          let oldMediaID;
-
           let members = rooms[roomName].members;
           const [member] = await members.filter(
             (member) => member.id === socket.id
@@ -2980,7 +2945,7 @@ connections.on("connection", async (socket) => {
               return;
             }
 
-            let socketId = await socket.id;
+            let socketId = socket.id;
             let name = await rooms[roomName].members.find(
               (member) => member.id === socketId
             ).name;
@@ -3068,7 +3033,10 @@ connections.on("connection", async (socket) => {
           rooms[roomName].allowScreenShare = true;
         }
 
-        if (breakoutRoomStarted && !breakoutRoomEnded) {
+        if (
+          rooms[roomName].breakoutRoomStarted &&
+          !rooms[roomName].breakoutRoomEnded
+        ) {
           try {
             tempEventRooms[roomName].tempBreakoutRooms =
               rooms[roomName].breakoutRooms;
@@ -3151,11 +3119,11 @@ connections.on("connection", async (socket) => {
             }
           });
         }
-      }else{
+      } else {
         //check tempRooms for member is host or not
         if (tempEventRooms[roomName]) {
           tempEventRooms[roomName].members.forEach((member_info) => {
-            if (member_info.pem === '2' && member_info.name === member) {
+            if (member_info.pem === "2" && member_info.name === member) {
               isHost = true;
               islevel = "2";
             }
@@ -3215,11 +3183,11 @@ connections.on("connection", async (socket) => {
         recordingParams = recordingParams_Sandbox;
         recordingParams.recordingAudioSupport = false;
         recordingParams.recordingVideoSupport = false;
-        allowRecord_ = false;
-      }else{
+        allowRecord_ = "false";
+      } else {
         const tempCredentials = generateTemporaryCredentials();
         apiUserName = tempCredentials.apiUserName;
-        apiKey = tempCredentials.apiKey;    
+        apiKey = tempCredentials.apiKey;
       }
 
       let mediasfuURL = tempEventRooms[roomName].members.find(
@@ -3243,7 +3211,7 @@ connections.on("connection", async (socket) => {
 
       if (screenProducerId) {
         await sleep(50);
-        await socket.emit("screenProducerId", { producerId: screenProducerId });
+        socket.emit("screenProducerId", { producerId: screenProducerId });
       }
 
       if (islevel == "2") {
@@ -3252,7 +3220,7 @@ connections.on("connection", async (socket) => {
           await getRoomSummary(roomName);
 
         await sleep(50);
-        await socket.emit("allMembers", {
+        socket.emit("allMembers", {
           members,
           settings,
           requests,
@@ -3261,7 +3229,7 @@ connections.on("connection", async (socket) => {
         });
 
         await sleep(50);
-        await socket.emit("allWaitingRoomMembers", {
+        socket.emit("allWaitingRoomMembers", {
           waitingParticipants: rooms[roomName].waiting,
         });
 
@@ -3270,7 +3238,7 @@ connections.on("connection", async (socket) => {
         await sleep(50);
         let { members, settings, requests, coHost, coHostResponsibilities } =
           await getRoomSummary(roomName);
-        await socket.emit("allMembersRest", {
+        socket.emit("allMembersRest", {
           members,
           settings,
           requests,
@@ -3290,13 +3258,13 @@ connections.on("connection", async (socket) => {
         let polls = rooms[roomName].roomPolls;
 
         if (islevel == "2") {
-          await socket.emit("pollUpdated", {
+          socket.emit("pollUpdated", {
             poll: convertPolls([poll])[0],
             polls: convertPolls(polls),
             status: "started",
           });
         } else {
-          await socket.emit("pollUpdated", {
+          socket.emit("pollUpdated", {
             poll: convertPolls([poll])[0],
             status: "started",
           });
@@ -3308,12 +3276,12 @@ connections.on("connection", async (socket) => {
       if (rooms[roomName]) {
         members = await rooms[roomName].members;
         if (members) {
-          let member_Index = await members.findIndex(
+          let member_Index = members.findIndex(
             (memberData) => memberData.name == member
           );
           if (member_Index === -1) {
             if (islevel == "2") {
-              let host_ = await members.find((member) => member.islevel == "2");
+              let host_ = members.find((member) => member.islevel == "2");
               if (host_) {
                 if (host_.name !== member) {
                   callback({
@@ -3322,13 +3290,13 @@ connections.on("connection", async (socket) => {
                     reason:
                       "Only one member with islevel '2' is allowed in the room",
                   });
-                  await socket.disconnect(true);
+                  socket.disconnect(true);
                   return;
                 }
               }
             }
 
-            members = await [
+            members = [
               ...members,
               {
                 name: member,
@@ -3380,9 +3348,9 @@ connections.on("connection", async (socket) => {
           !rooms[roomName].breakoutRoomEnded
         ) {
           if (islevel != "2") {
-            await assignBreakRoomParticipant({ name: member, roomName });
+            assignBreakRoomParticipant({ name: member, roomName });
           }
-          await socket.emit("breakoutRoomUpdated", {
+          socket.emit("breakoutRoomUpdated", {
             breakoutRooms: rooms[roomName].breakoutRooms,
             status: "started",
           });
@@ -3395,22 +3363,22 @@ connections.on("connection", async (socket) => {
           !rooms[roomName].whiteboardEnded
         ) {
           if (islevel != "2") {
-            await assignWhiteBoardParticipant({ name: member, roomName });
+            assignWhiteBoardParticipant({ name: member, roomName });
           }
-          await socket.emit("whiteboardUpdated", {
+          socket.emit("whiteboardUpdated", {
             whiteboardUsers: rooms[roomName].whiteboardUsers,
             status: "started",
             whiteboardData: rooms[roomName].whiteboardData,
           });
         } else {
           if (islevel != "2") {
-            await assignWhiteBoardParticipant({ name: member, roomName });
+            assignWhiteBoardParticipant({ name: member, roomName });
           }
           if (
             rooms[roomName].whiteboardData &&
             Object.keys(rooms[roomName].whiteboardData).length > 0
           ) {
-            await socket.emit("whiteboardUpdated", {
+            socket.emit("whiteboardUpdated", {
               whiteboardUsers: rooms[roomName].whiteboardUsers,
               status: "ended",
               whiteboardData: rooms[roomName].whiteboardData,
@@ -3429,13 +3397,12 @@ connections.on("connection", async (socket) => {
     }
   });
 
-
   socket.on("getProducersAlt", async ({}, callback) => {
     try {
       const { roomName } = peers[socket.id];
 
       let producerList = [];
-      await producers.forEach((producerData) => {
+      producers.forEach((producerData) => {
         if (
           producerData.socketId !== socket.id &&
           producerData.roomName === roomName
@@ -3454,7 +3421,7 @@ connections.on("connection", async (socket) => {
       const { roomName } = peers[socket.id];
 
       let producerList = [];
-      await producers.forEach((producerData) => {
+      producers.forEach((producerData) => {
         if (
           producerData.socketId !== socket.id &&
           producerData.roomName === roomName
@@ -3561,7 +3528,7 @@ connections.on("connection", async (socket) => {
           isShare = true;
 
           let producer_id = await producer.id;
-          await addScreenProducer(producer_id, roomName, islevel);
+          addScreenProducer(producer_id, roomName, islevel);
 
           if (rooms[roomName]) {
             try {
@@ -3628,11 +3595,11 @@ connections.on("connection", async (socket) => {
     "transport-recv-connect",
     async ({ dtlsParameters, serverConsumerTransportId }) => {
       try {
-        const consumerTransport = transports.find(
+        const consumerTransport = transports?.find(
           (transportData) =>
             transportData.consumer &&
             transportData.transport.id == serverConsumerTransportId
-        ).transport;
+        )?.transport;
 
         await consumerTransport.connect({ dtlsParameters });
       } catch (error) {}
@@ -3681,9 +3648,9 @@ connections.on("connection", async (socket) => {
                     );
                   });
 
-                  await addConsumer(consumer, roomName);
+                  addConsumer(consumer, roomName);
 
-                  const params = await {
+                  const params = {
                     id: consumer.id,
                     producerId: remoteProducerId,
                     kind: consumer.kind,
@@ -3696,7 +3663,7 @@ connections.on("connection", async (socket) => {
                 .catch((err) => {
                   callback({
                     params: {
-                      error: error,
+                      error: err,
                     },
                   });
                 });
@@ -3723,9 +3690,9 @@ connections.on("connection", async (socket) => {
 
   socket.on("consumer-resume", async ({ serverConsumerId }, callback) => {
     try {
-      let consumer = await consumers.find(
+      let consumer = await consumers?.find(
         (consumerInfo) => consumerInfo.consumer.id === serverConsumerId
-      ).consumer;
+      )?.consumer;
 
       await consumer.resume();
 
@@ -3739,9 +3706,9 @@ connections.on("connection", async (socket) => {
 
   socket.on("consumer-pause", async ({ serverConsumerId }, callback) => {
     try {
-      let consumer = await consumers.find(
+      let consumer = await consumers?.find(
         (consumerInfo) => consumerInfo.consumer.id === serverConsumerId
-      ).consumer;
+      )?.consumer;
 
       await consumer.pause();
       callback({ paused: true });
@@ -3816,7 +3783,6 @@ connections.on("connection", async (socket) => {
           audioPreference,
           audioOutputPreference,
           recordingParams,
-          eventRoomParams,
           mediasfuURL,
         });
 
@@ -3975,7 +3941,7 @@ connections.on("connection", async (socket) => {
           }
 
           if (hostStartedEvent) {
-            if (named != hostNamed) {
+            if (name != hostName) {
               callback({
                 success: false,
                 secret: null,
@@ -3987,7 +3953,7 @@ connections.on("connection", async (socket) => {
           }
 
           if (
-            res.names.some(
+            res?.names.some(
               (existingName) =>
                 existingName.toLowerCase() === userName.toLowerCase()
             )
@@ -4139,7 +4105,7 @@ connections.on("connection", async (socket) => {
     }
   });
 
-  socket.on("endPoll", ({ roomName, poll_id }) => {
+  socket.on("endPoll", ({ roomName, poll_id }, callback) => {
     try {
       if (!rooms[roomName]) {
         return callback({ success: false, reason: "Room does not exist" });
@@ -4430,8 +4396,8 @@ connections.on("connection", async (socket) => {
 
         const valid = validateWhiteboardUsers({ roomName, whiteboardUsers });
 
-        if (!valid.success) {
-          return callback({ success: false, reason: valid.reason });
+        if (!valid || !valid.success) {
+          return callback({ success: false, reason: valid?.reason });
         }
 
         callback({ success: true, reason: "success" });
@@ -4459,8 +4425,8 @@ connections.on("connection", async (socket) => {
 
         const valid = validateWhiteboardUsers({ roomName, whiteboardUsers });
 
-        if (!valid.success) {
-          return callback({ success: false, reason: valid.reason });
+        if (!valid || !valid.success) {
+          return callback({ success: false, reason: valid?.reason });
         }
 
         callback({ success: true, reason: "success" });
