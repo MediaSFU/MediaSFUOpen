@@ -537,5 +537,3 @@ To connect your MediaSFU SDKs to the Community Edition server, follow the guides
 - **Angular SDK Setup** *(Coming Soon)*  
 
 For additional instructions, refer to the [**Connecting SDKs Documentation**](./CONNECT.md).
-
----
