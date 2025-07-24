@@ -3,6 +3,27 @@ import express from "express";
 import cors from "cors";
 import crypto from "crypto";
 import fetch from "node-fetch";
+import http from "http";
+import https from "httpolyglot";
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
+import { Server } from "socket.io";
+import pino from "pino";
+
+// Initialize logger
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true,
+      translateTime: 'SYS:standard',
+      ignore: 'pid,hostname'
+    }
+  }
+});
+
 const app = express();
 const ip = "111.222.222.111";
 const PORT = 3000;
@@ -16,12 +37,8 @@ const safeOrigins = [
 app.use(cors());
 app.use(express.json());
 
-import http from "http";
-import fs from "fs";
-import path from "path";
 const _dirname = path.resolve();
 
-import dotenv from "dotenv";
 dotenv.config();
 
 const activeCredentials = {};
@@ -30,9 +47,10 @@ const mode = process.env.MODE;
 const actualApiUserName = process.env.APIUSERNAME;
 const actualApiKey = process.env.APIKEY;
 const allowRecord = process.env.ALLOWRECORD;
-console.log("mode: ", mode, allowRecord, process.env.ALLOWRECORD);
+const useSelfSignedCert = process.env.USESELFSIGNEDCERT === "true" || false;
+let options; //SSL options
 
-import { Server } from "socket.io";
+logger.info({ mode, allowRecord, useSelfSignedCert }, "Server configuration loaded");
 
 function generateRandomString(length) {
   return crypto
@@ -84,6 +102,7 @@ app.post("/createRoom", async (req, res) => {
 
     // Verify temporary credentials
     if (!apiUserName || !apiKey || !verifyCredentials(apiUserName, apiKey)) {
+      logger.warn({ apiUserName }, "Invalid or expired credentials for createRoom");
       return res.status(401).json({ error: "Invalid or expired credentials" });
     }
 
@@ -98,13 +117,14 @@ app.post("/createRoom", async (req, res) => {
       });
 
       const result = await response.json();
+      logger.info({ status: response.status }, "Room created successfully");
       res.status(response.status).json(result);
     } catch (error) {
-      console.error("Error creating room:", error);
+      logger.error({ error: error.message }, "Error creating room");
       res.status(500).json({ error: "Internal server error" });
     }
   } catch (error) {
-    console.error("Error creating room:", error);
+    logger.error({ error: error.message }, "Error in createRoom endpoint");
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -119,6 +139,7 @@ app.post("/joinRoom", async (req, res) => {
 
     // Verify temporary credentials
     if (!apiUserName || !apiKey || !verifyCredentials(apiUserName, apiKey)) {
+      logger.warn({ apiUserName }, "Invalid or expired credentials for joinRoom");
       return res.status(401).json({ error: "Invalid or expired credentials" });
     }
 
@@ -133,13 +154,14 @@ app.post("/joinRoom", async (req, res) => {
       });
 
       const result = await response.json();
+      logger.info({ status: response.status }, "Room joined successfully");
       res.status(response.status).json(result);
     } catch (error) {
-      console.error("Error joining room:", error);
+      logger.error({ error: error.message }, "Error joining room");
       res.status(500).json({ error: "Internal server error" });
     }
   } catch (error) {
-    console.error("Error joining room:", error);
+    logger.error({ error: error.message }, "Error in joinRoom endpoint");
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -159,9 +181,31 @@ app.use("/meeting/:name", express.static(path.join(_dirname, "public_alt")));
 app.use("/meet/:room/:pem", express.static(path.join(_dirname, "public")));
 app.use("/images", express.static(path.join(_dirname, "public/images")));
 
-const httpServer = http.createServer(app);
+let httpServer; 
+// SSL cert for HTTPS access
+if (useSelfSignedCert) {
+  try {
+    options = {
+      key: fs.readFileSync("./ssl/local.com.key", "utf-8"),
+      cert: fs.readFileSync("./ssl/local.com.pem", "utf-8"),
+    };
+  } catch (error) {
+    logger.error({ error: error.message }, "Error reading SSL certificate files");
+    throw new Error("SSL certificate files not found or invalid");
+  }
+
+}
+
+if (useSelfSignedCert && options) {
+  httpServer = https.createServer(options, app);
+  logger.info("HTTPS server created with self-signed certificate");
+} else {
+  httpServer = http.createServer(app);
+  logger.info("HTTP server created");
+}
+
 httpServer.listen(PORT, () => {
-  console.log("listening on port: " + PORT);
+  logger.info({ port: PORT }, "Server listening on port");
 });
 
 const io = new Server(httpServer, { cors: { origin: "*" } });
@@ -199,11 +243,10 @@ const createWorker = async () => {
     ],
   });
 
-  console.log(`worker pid ${worker.pid}`);
+  logger.info({ pid: worker.pid }, "MediaSoup worker created");
 
   worker.on("died", (error) => {
-    // Something serious happened, so kill the application
-    console.error("mediasoup worker has died");
+    logger.fatal({ error }, "MediaSoup worker has died");
     setTimeout(() => process.exit(1), 2000); // exit in 2 seconds
   });
 
@@ -362,16 +405,16 @@ const eventTimeRemaining = async (roomName, timeRemaining, toHost = true) => {
   if (rooms[roomName]) {
     let roomHost;
     if (toHost) {
-      roomHost = await rooms[roomName].members.find(
+      roomHost = rooms[roomName].members.find(
         (member) => member.islevel == "2"
       );
     } else {
-      roomHost = await rooms[roomName].members[0];
+      roomHost = rooms[roomName].members[0];
     }
     if (roomHost) {
-      let host_socket = await peers[roomHost.id].socket;
+      let host_socket = peers[roomHost.id].socket;
       if (host_socket) {
-        await host_socket.emit("meetingTimeRemaining", { timeRemaining });
+        host_socket.emit("meetingTimeRemaining", { timeRemaining });
       }
     }
   }
@@ -392,15 +435,17 @@ const eventEndedMain = async (roomName, toHost) => {
         }
       }
     } else {
-      roomHost = await rooms[roomName].members;
+      roomHost = rooms[roomName].members;
 
-      await roomHost.forEach(async (member) => {
+      roomHost.forEach(async (member) => {
         try {
-          let host_socket = await peers[member.id].socket;
+          let host_socket = peers[member.id].socket;
           if (host_socket && member.islevel != "2") {
-            await host_socket.emit("meetingEnded");
+            host_socket.emit("meetingEnded");
           }
-        } catch (error) {}
+        } catch (error) {
+          logger.error({ error: error.message }, "Error ending meeting for member");
+        }
       });
     }
 
@@ -414,11 +459,11 @@ const eventEndedMain = async (roomName, toHost) => {
 
 const eventStillThere = async (roomName, timeRemaining, toHost = true) => {
   if (rooms[roomName]) {
-    let roomHost = await rooms[roomName].members[0];
+    let roomHost = rooms[roomName].members[0];
     if (roomHost) {
-      let host_socket = await peers[roomHost.id].socket;
+      let host_socket = peers[roomHost.id].socket;
       if (host_socket) {
-        await host_socket.emit("meetingStillThere", { timeRemaining });
+        host_socket.emit("meetingStillThere", { timeRemaining });
       }
     }
   }
@@ -467,7 +512,7 @@ const checkEventStatus = async () => {
             let elapsedTime_ = timedNow - lastCheckTimeLeftMessageSentAt;
             if (elapsedTime_ > 300000) {
               if (roomHost) {
-                await eventTimeRemaining(room.name, timeRemaining);
+                eventTimeRemaining(room.name, timeRemaining);
                 rooms[room.name].lastCheckTimeLeftMessageSentAt = new Date();
               } else {
                 //check if there is anyone in the room
@@ -475,7 +520,7 @@ const checkEventStatus = async () => {
                   let member = room.members[0];
 
                   if (member) {
-                    await eventTimeRemaining(room.name, timeRemaining, false);
+                    eventTimeRemaining(room.name, timeRemaining, false);
                     rooms[room.name].lastCheckTimeLeftMessageSentAt =
                       new Date();
                   } else {
@@ -539,7 +584,7 @@ const checkEventStatus = async () => {
                     let member = room.members[0];
 
                     if (member) {
-                      await eventStillThere(room.name, timeRemaining, false);
+                      eventStillThere(room.name, timeRemaining, false);
                     }
                     rooms[room.name].lastCheckHereMessageSentAt = new Date();
                   }
@@ -555,12 +600,16 @@ const checkEventStatus = async () => {
             if (host) {
               //get the host socket
               try {
-                await eventEndedMain(room.name, false);
-              } catch (error) {}
+                eventEndedMain(room.name, false);
+              } catch (error) {
+                logger.error({ error: error.message }, "Error ending event for non-host");
+              }
 
               try {
-                await eventEndedMain(room.name, true);
-              } catch (error) {}
+                eventEndedMain(room.name, true);
+              } catch (error) {
+                logger.error({ error: error.message }, "Error ending event for host");
+              }
 
               if (!room.eventEnded) {
                 room.eventEnded = true;
@@ -585,12 +634,16 @@ const checkEventStatus = async () => {
               });
             } else {
               try {
-                await eventEndedMain(room.name, false);
-              } catch (error) {}
+                eventEndedMain(room.name, false);
+              } catch (error) {
+                logger.error({ error: error.message }, "Error ending event for non-host");
+              }
 
               try {
-                await eventEndedMain(room.name, true);
-              } catch (error) {}
+                eventEndedMain(room.name, true);
+              } catch (error) {
+                logger.error({ error: error.message }, "Error ending event for host");
+              }
 
               if (!room.eventEnded) {
                 room.eventEnded = true;
@@ -616,9 +669,13 @@ const checkEventStatus = async () => {
             }
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error in event status check");
+      }
     });
-  } catch (error) {}
+  } catch (error) {
+    logger.error({ error: error.message }, "Error checking event status");
+  }
 };
 
 const intervalForEventsCheck = 90000;
@@ -626,7 +683,9 @@ const intervalForEventsCheck = 90000;
 async function monitorEventsInterval() {
   try {
     setInterval(checkEventStatus, intervalForEventsCheck);
-  } catch (error) {}
+  } catch (error) {
+    logger.error({ error: error.message }, "Error starting event monitor");
+  }
 }
 
 monitorEventsInterval();
@@ -654,6 +713,7 @@ connections.on("connection", async (socket) => {
   }
 
   socket.emit("connection-success", responseData);
+  logger.info({ socketId: socket.id, origin }, "New socket connection");
 
   const removeItems = (items, socketId, type) => {
     items.forEach((item) => {
@@ -686,12 +746,12 @@ connections.on("connection", async (socket) => {
 
   const alertHostOfWaiting = async ({ roomName, userName, sendAlert }) => {
     try {
-      const [host] = await rooms[roomName].members.filter(
+      const [host] = rooms[roomName].members.filter(
         (member) => member.islevel === "2"
       );
 
       if (host) {
-        let host_socket = await peers[host.id].socket;
+        let host_socket = peers[host.id].socket;
 
         host_socket.emit("allWaitingRoomMembers", {
           waitingParticipants: rooms[roomName].waiting,
@@ -701,24 +761,28 @@ connections.on("connection", async (socket) => {
           host_socket.emit("userWaiting", { name: userName });
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error alerting host of waiting");
+    }
   };
 
   const alertCoHostOfWaiting = async ({ roomName, userName, coHost_info }) => {
     try {
-      let coHost = await rooms[roomName].members.find(
+      let coHost = rooms[roomName].members.find(
         (member) => member.name === coHost_info.name
       );
 
       if (coHost) {
-        let coHost_socket = await peers[coHost.id].socket;
+        let coHost_socket = peers[coHost.id].socket;
 
         coHost_socket.emit("allWaitingRoomMembers", {
           waitingParticipants: rooms[roomName].waiting,
         });
         coHost_socket.emit("userWaiting", { name: userName });
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error alerting co-host of waiting");
+    }
   };
 
   const createEventRoom = async ({
@@ -747,14 +811,14 @@ connections.on("connection", async (socket) => {
       if (tempEventRooms[eventID]) {
         //add the member to the members array with pem '1'
         // check if the member is already in the members array, use the userName to check
-        let member = await tempEventRooms[eventID].members.find(
+        let member = tempEventRooms[eventID].members.find(
           (member) => member.name === userName
         );
 
-        waitedRoom = await tempEventRooms[eventID].waitRoom;
+        waitedRoom = tempEventRooms[eventID].waitRoom;
 
         if (!member) {
-          let remainingCapacity = await tempEventRooms[eventID]
+          let remainingCapacity = tempEventRooms[eventID]
             .remainingCapacity;
 
           if (!waitedRoom) {
@@ -784,7 +848,7 @@ connections.on("connection", async (socket) => {
           tempEventRooms[eventID].remainingCapacity = res.remainingCapacity;
           // if waitRoom is true, add the member to the waiting array
           if (waitedRoom) {
-            let member_detail = await tempEventRooms[eventID].waiting.find(
+            let member_detail = tempEventRooms[eventID].waiting.find(
               (member) => member.name === userName
             );
             if (!member_detail) {
@@ -800,14 +864,14 @@ connections.on("connection", async (socket) => {
                   { name: userName, id: socket.id },
                 ];
                 //find the host in rooms array and send the waiting array
-                let host = await rooms[eventID].members.find(
+                let host = rooms[eventID].members.find(
                   (member) => member.isHost === true
                 );
 
                 if (host) {
                   try {
                     // let us check if coHost exists in the room
-                    let coHost = await rooms[eventID].coHost;
+                    let coHost = rooms[eventID].coHost;
                     if (coHost) {
                       //let us check coHostResponsibilities
                       let participantsDedicatedValue = false;
@@ -828,11 +892,11 @@ connections.on("connection", async (socket) => {
 
                       if (participantsValue) {
                         //find in members array member with name of coHost and get id and socket
-                        let coHost_info = await rooms[eventID].members.find(
+                        let coHost_info = rooms[eventID].members.find(
                           (member) => member.name === coHost
                         );
 
-                        await alertCoHostOfWaiting({
+                        alertCoHostOfWaiting({
                           roomName: eventID,
                           userName: userName,
                           coHost_info,
@@ -840,34 +904,36 @@ connections.on("connection", async (socket) => {
 
                         if (participantsDedicatedValue) {
                           //send the waiting array to the coHost
-                          await alertHostOfWaiting({
+                          alertHostOfWaiting({
                             roomName: eventID,
                             userName: userName,
                             sendAlert: false,
                           });
                         } else {
                           //send the waiting array to the host
-                          await alertHostOfWaiting({
+                          alertHostOfWaiting({
                             roomName: eventID,
                             userName: userName,
                             sendAlert: true,
                           });
                         }
                       } else {
-                        await alertHostOfWaiting({
+                        alertHostOfWaiting({
                           roomName: eventID,
                           userName: userName,
                           sendAlert: true,
                         });
                       }
                     } else {
-                      await alertHostOfWaiting({
+                      alertHostOfWaiting({
                         roomName: eventID,
                         userName: userName,
                         sendAlert: true,
                       });
                     }
-                  } catch (error) {}
+                  } catch (error) {
+                    logger.error({ error: error.message }, "Error handling waiting room");
+                  }
                 }
               }
             }
@@ -947,12 +1013,13 @@ connections.on("connection", async (socket) => {
 
       return { success: true, secret: secret, url: url };
     } catch (error) {
+      logger.error({ error: error.message }, "Error creating event room");
       return { success: false, reason: error, url: false };
     }
   };
 
   const joinRoom = async ({ roomName, islevel }) => {
-    const router = await createRoom(roomName, socket.id);
+    const router = createRoom(roomName, socket.id);
 
     peers[socket.id] = {
       socket,
@@ -1043,7 +1110,9 @@ connections.on("connection", async (socket) => {
             }
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error getting room info");
+      }
 
       return {
         exists: exists,
@@ -1061,40 +1130,48 @@ connections.on("connection", async (socket) => {
         waitRoom: waitRoom,
         checkHost: checkHost,
       };
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in getRoomInfo");
+    }
   };
 
   const exitWaitRoom = async (roomName) => {
     try {
       if (rooms[roomName]) {
-        let tempEventMembers = await tempEventRooms[roomName].members;
-        await tempEventMembers.forEach((member_info) => {
+        let tempEventMembers = tempEventRooms[roomName].members;
+        tempEventMembers.forEach((member_info) => {
           try {
             let member_socket = tempEventPeers[member_info.id].socket;
             member_socket.emit("exitWaitRoom", { name: member_info.name });
-          } catch (error) {}
+          } catch (error) {
+            logger.error({ error: error.message }, "Error exiting wait room");
+          }
         });
 
         await sleep(2000);
 
-        tempEventMembers = await tempEventRooms[roomName].members;
-        await tempEventMembers.forEach(async (member_info) => {
+        tempEventMembers = tempEventRooms[roomName].members;
+        tempEventMembers.forEach(async (member_info) => {
           try {
             let member_socket = tempEventPeers[member_info.id].socket;
-            await member_socket.emit("exitWaitRoom", {
+            member_socket.emit("exitWaitRoom", {
               name: member_info.name,
             });
-          } catch (error) {}
+          } catch (error) {
+            logger.error({ error: error.message }, "Error exiting wait room (second attempt)");
+          }
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in exitWaitRoom");
+    }
   };
 
   const getRoomSummary = async (roomName) => {
-    let members = await rooms[roomName].members;
-    let settings = await rooms[roomName].settings;
-    let coHost = await rooms[roomName].coHost;
-    let coHostResponsibilities = await rooms[roomName].coHostResponsibilities;
+    let members = rooms[roomName].members;
+    let settings = rooms[roomName].settings;
+    let coHost = rooms[roomName].coHost;
+    let coHostResponsibilities = rooms[roomName].coHostResponsibilities;
     let requests = [];
     members.forEach((member_info) => {
       if (member_info.requests) {
@@ -1134,13 +1211,13 @@ connections.on("connection", async (socket) => {
           webRtcTransport_options
         );
 
-        await transport.on("dtlsstatechange", (dtlsState) => {
+        transport.on("dtlsstatechange", (dtlsState) => {
           if (dtlsState === "closed") {
             transport.close();
           }
         });
 
-        await transport.on("close", () => {});
+        transport.on("close", () => {});
 
         resolve(transport);
       } catch (error) {
@@ -1150,9 +1227,9 @@ connections.on("connection", async (socket) => {
   };
 
   const alertConsumers = async (roomName, socketId, id, islevel, isShare) => {
-    let members = await rooms[roomName].members;
+    let members = rooms[roomName].members;
 
-    await members.forEach((member) => {
+    members.forEach((member) => {
       if (member && member.id !== socket.id && !member.ban) {
         try {
           const producerSocket = peers[member.id].socket;
@@ -1164,7 +1241,9 @@ connections.on("connection", async (socket) => {
           if (isShare == true) {
             producerSocket.emit("screenProducerId", { producerId: id });
           }
-        } catch (error) {}
+        } catch (error) {
+          logger.error({ error: error.message }, "Error alerting consumer");
+        }
       }
     });
   };
@@ -1175,16 +1254,22 @@ connections.on("connection", async (socket) => {
         let name = member;
 
         try {
-          await rooms[roomName].members.forEach(async (member_info) => {
+          rooms[roomName].members.forEach(async (member_info) => {
             try {
-              let member_socket = await peers[member_info.id].socket;
+              let member_socket = peers[member_info.id].socket;
               if (member_socket && member_info.name != name) {
-                await member_socket.emit("ban", { name });
+                member_socket.emit("ban", { name });
               }
-            } catch (error) {}
+            } catch (error) {
+              logger.error({ error: error.message }, "Error banning member");
+            }
           });
-        } catch (error) {}
-      } catch (error) {}
+        } catch (error) {
+          logger.error({ error: error.message }, "Error in banMember");
+        }
+      } catch (error) {
+        logger.error({ error: error.message }, "Error in banMember");
+      }
     }
   };
 
@@ -1199,39 +1284,43 @@ connections.on("connection", async (socket) => {
   }) => {
     if (coHost && coHost == member.name) {
       try {
-        const member_socket = await peers[member.id].socket;
+        const member_socket = peers[member.id].socket;
 
-        await member_socket.emit("allMembers", {
+        member_socket.emit("allMembers", {
           members,
           requests,
           coHost,
           coHostResponsibilities,
         });
 
-        await member_socket.emit("allMembersRest", {
+        member_socket.emit("allMembersRest", {
           members,
           settings,
           coHost,
           coHostResponsibilities,
         });
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error updating member (co-host)");
+      }
     } else {
       try {
-        const member_socket = await peers[member.id].socket;
+        const member_socket = peers[member.id].socket;
 
-        await member_socket.emit("allMembersRest", {
+        member_socket.emit("allMembersRest", {
           members,
           settings,
           coHost,
           coHostResponsibilities,
         });
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error updating member");
+      }
     }
   };
 
   const updateMembersMain = async (roomName) => {
     try {
-      await rooms[roomName].members.forEach(async (member) => {
+      rooms[roomName].members.forEach(async (member) => {
         if (member.islevel !== "2") {
           try {
             let {
@@ -1241,7 +1330,7 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            await updateMembers({
+            updateMembers({
               roomName,
               member,
               coHost,
@@ -1250,15 +1339,19 @@ connections.on("connection", async (socket) => {
               settings,
               members,
             });
-          } catch (error) {}
+          } catch (error) {
+            logger.error({ error: error.message }, "Error updating main members");
+          }
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in updateMembersMain");
+    }
   };
 
   const updateMembersHost = async (roomName) => {
     try {
-      const [host] = await rooms[roomName].members.filter(
+      const [host] = rooms[roomName].members.filter(
         (member) => member.islevel === "2"
       );
 
@@ -1274,16 +1367,20 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            await host_socket.emit("allMembersRest", {
+            host_socket.emit("allMembersRest", {
               members,
               settings,
               coHost,
               coHostResponsibilities,
             });
           }
-        } catch (error) {}
+        } catch (error) {
+          logger.error({ error: error.message }, "Error updating host");
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in updateMembersHost");
+    }
   };
 
   const updateMembersCoHost = async (roomName, coHost) => {
@@ -1298,14 +1395,16 @@ connections.on("connection", async (socket) => {
         if (coHost_socket) {
           let { members, settings, requests, coHost, coHostResponsibilities } =
             await getRoomSummary(roomName);
-          await coHost_socket.emit("allMembers", {
+          coHost_socket.emit("allMembers", {
             members,
             requests,
             coHost,
             coHostResponsibilities,
           });
         }
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error updating co-host");
+      }
     }
   };
 
@@ -1316,7 +1415,7 @@ connections.on("connection", async (socket) => {
     ban = false,
   }) => {
     try {
-      let member_info = await rooms[roomName].members.find(
+      let member_info = rooms[roomName].members.find(
         (member_info) => member_info.name == member
       );
 
@@ -1327,22 +1426,26 @@ connections.on("connection", async (socket) => {
       if (member_info) {
         if (peers[member_info.id]) {
           try {
-            let member_socket = await peers[member_info.id].socket;
-            await member_socket.disconnect(true);
+            let member_socket = peers[member_info.id].socket;
+            member_socket.disconnect(true);
 
-            rooms[roomName].members = await rooms[roomName].members.filter(
+            rooms[roomName].members = rooms[roomName].members.filter(
               (member) => member.id !== member_info.id
             );
-          } catch (error) {}
+          } catch (error) {
+            logger.error({ error: error.message }, "Error disconnecting socket");
+          }
         }
 
-        consumers = await removeItems(consumers, member_info.id, "consumer");
-        producers = await removeItems(producers, member_info.id, "producer");
-        transports = await removeItems(transports, member_info.id, "transport");
+        consumers = removeItems(consumers, member_info.id, "consumer");
+        producers = removeItems(producers, member_info.id, "producer");
+        transports = removeItems(transports, member_info.id, "transport");
 
         delete peers[member_info.id];
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in socketDisconnect");
+    }
   };
 
   const disconnectUser = async ({ member, roomName, ban = false }) => {
@@ -1365,8 +1468,8 @@ connections.on("connection", async (socket) => {
       );
 
       if (member_info.islevel == "2") {
-        await eventEndedMain(roomName, false);
-        await eventEndedMain(roomName, true);
+        eventEndedMain(roomName, false);
+        eventEndedMain(roomName, true);
       }
 
       if (ban) {
@@ -1377,7 +1480,7 @@ connections.on("connection", async (socket) => {
       }
 
       if (ban) {
-        await banMember({ roomName, member });
+        banMember({ roomName, member });
       } else {
         try {
           rooms[roomName].members = rooms[roomName].members.filter(
@@ -1386,9 +1489,9 @@ connections.on("connection", async (socket) => {
         } catch (error) {}
       }
 
-      await updateMembersMain(roomName);
+      updateMembersMain(roomName);
 
-      await updateMembersHost(roomName);
+      updateMembersHost(roomName);
 
       if (
         rooms[roomName].screenProducerName === member &&
@@ -1408,7 +1511,7 @@ connections.on("connection", async (socket) => {
       ];
       producerIds = producerIds.filter((producerId) => producerId);
 
-      await socketDisconnect({
+      socketDisconnect({
         socketId,
         roomName,
         member: member_info.name,
@@ -1422,7 +1525,7 @@ connections.on("connection", async (socket) => {
 
           try {
             Object.keys(tempEventPeers).forEach(async (key) => {
-              let tempEventPeer = await tempEventPeers[key];
+              let tempEventPeer = tempEventPeers[key];
               if (tempEventPeer.roomName === roomName) {
                 delete tempEventPeers[key];
               }
@@ -1431,7 +1534,7 @@ connections.on("connection", async (socket) => {
 
           try {
             Object.keys(peers).forEach(async (key) => {
-              let tempEventPeer = await peers[key];
+              let tempEventPeer = peers[key];
               if (tempEventPeer.roomName === roomName) {
                 delete peers[key];
               }
@@ -1439,7 +1542,9 @@ connections.on("connection", async (socket) => {
           } catch (error) {}
         } catch (error) {}
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error disconnecting user");
+    }
   };
 
   const updateMembersOfChange = async (
@@ -1450,7 +1555,7 @@ connections.on("connection", async (socket) => {
     name
   ) => {
     try {
-      const [host] = await rooms[roomName].members.filter(
+      const [host] = rooms[roomName].members.filter(
         (member) => member.islevel === "2"
       );
 
@@ -1467,7 +1572,7 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            await host_socket.emit("allMembers", {
+            host_socket.emit("allMembers", {
               members,
               requests,
               coHost,
@@ -1475,7 +1580,7 @@ connections.on("connection", async (socket) => {
             });
 
             if (kind !== "audio" && member.name !== name) {
-              await member_socket.emit("producer-media-closed", {
+              member_socket.emit("producer-media-closed", {
                 producerId: oldMediaID,
                 kind: kind,
                 name: name,
@@ -1485,23 +1590,25 @@ connections.on("connection", async (socket) => {
               force == true &&
               member.name !== name
             ) {
-              await member_socket.emit("producer-media-paused", {
+              member_socket.emit("producer-media-paused", {
                 producerId: oldMediaID,
                 kind: kind,
                 name: name,
               });
             } else if (kind == "audio" && member.name !== name) {
-              await member_socket.emit("producer-media-paused", {
+              member_socket.emit("producer-media-paused", {
                 producerId: oldMediaID,
                 kind: kind,
                 name: name,
               });
             }
           }
-        } catch (error) {}
+        } catch (error) {
+          logger.error({ error: error.message }, "Error updating host of change");
+        }
       }
 
-      await rooms[roomName].members.forEach(async (member) => {
+      rooms[roomName].members.forEach(async (member) => {
         if (member.islevel !== "2") {
           try {
             let {
@@ -1511,7 +1618,7 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            await updateMembers({
+            updateMembers({
               roomName,
               member,
               coHost,
@@ -1520,9 +1627,9 @@ connections.on("connection", async (socket) => {
               settings,
               members,
             });
-            let member_socket = await peers[member.id].socket;
+            let member_socket = peers[member.id].socket;
             if (kind !== "audio" && member.name !== name) {
-              await member_socket.emit("producer-media-closed", {
+              member_socket.emit("producer-media-closed", {
                 producerId: oldMediaID,
                 kind: kind,
                 name: name,
@@ -1532,22 +1639,28 @@ connections.on("connection", async (socket) => {
               force == true &&
               member.name !== name
             ) {
-              await member_socket.emit("producer-media-paused", {
+              member_socket.emit("producer-media-paused", {
                 producerId: oldMediaID,
                 kind: kind,
                 name: name,
               });
             } else if (kind == "audio" && member.name !== name) {
-              await member_socket.emit("producer-media-paused", {
+              member_socket.emit("producer-media-paused", {
                 producerId: oldMediaID,
                 kind: kind,
                 name: name,
               });
             }
-          } catch (error) {}
+          
+          } catch (error) {
+            logger.error({ error: error.message }, "Error updating member of change");
+          }
         }
       });
-    } catch (error) {}
+    } catch (error) {
+
+      logger.error({ error: error.message }, "Error in updateMembersOfChange");
+    }
   };
 
   const pauseProducerMedia = async ({ mediaTag, roomName, name, force }) => {
@@ -1555,32 +1668,32 @@ connections.on("connection", async (socket) => {
       let socketId = socket.id;
 
       if (rooms[roomName]) {
-        let kind = await mediaTag;
-        let isShare = (await mediaTag) === "screen" ? true : false;
+        let kind = mediaTag;
+        let isShare = (mediaTag) === "screen" ? true : false;
         let oldMediaID;
 
         let members = rooms[roomName].members;
-        const [member] = await members.filter(
+        const [member] = members.filter(
           (member) => member.id === socketId && member.name === name
         );
 
         if (kind === "video") {
           if (isShare) {
             member.ScreenOn = false;
-            oldMediaID = await member.ScreenID;
+            oldMediaID = member.ScreenID;
             member.ScreenID = "";
           } else {
             member.videoOn = false;
-            oldMediaID = await member.videoID;
+            oldMediaID = member.videoID;
             member.videoID = "";
           }
         } else if (kind === "screen") {
           member.ScreenOn = false;
-          oldMediaID = await member.ScreenID;
+          oldMediaID = member.ScreenID;
           member.ScreenID = "";
         } else if (kind === "audio") {
-          member.muted = true;
-          oldMediaID = await member.audioID;
+          member.audioOn = false;
+          oldMediaID = member.audioID;
           member.audioID = "";
         }
 
@@ -1590,7 +1703,7 @@ connections.on("connection", async (socket) => {
         ) {
         } else {
           if (kind == "audio") {
-            let userAudios = await rooms[roomName].userAudios;
+            let userAudios = rooms[roomName].userAudios;
             userAudios = [
               ...userAudios,
               { name: member.name, audioID: oldMediaID },
@@ -1599,11 +1712,11 @@ connections.on("connection", async (socket) => {
           }
         }
 
-        members = await members.filter(
+        members = members.filter(
           (member) => member.id !== socketId && member.name !== name
         );
         members = [...members, member];
-        rooms[roomName].members = await members;
+        rooms[roomName].members = members;
 
         try {
           if (
@@ -1861,16 +1974,16 @@ connections.on("connection", async (socket) => {
         tempEventRooms[roomName].eventRoomParams.screenshareSetting,
         tempEventRooms[roomName].eventRoomParams.chatSetting,
       ];
-      let room_ = await tempEventRooms[roomName];
+      let room_ = tempEventRooms[roomName];
       if (room_) {
-        eventDuration = await room_.duration;
-        capacity = await room_.capacity;
-        waitRoom = await room_.waitRoom;
+        eventDuration = room_.duration;
+        capacity = room_.capacity;
+        waitRoom = room_.waitRoom;
       }
       eventStartedAt = new Date();
       eventStarted = true;
       eventEnded = false;
-      secureCode = await tempEventRooms[roomName].secureCode;
+      secureCode = tempEventRooms[roomName].secureCode;
     }
 
     rooms[roomName] = {
@@ -2189,6 +2302,7 @@ connections.on("connection", async (socket) => {
 
       return { success: true };
     } catch (error) {
+      logger.error({ error: error.message }, "Error in addBreakRoomParticipant");
       return { success: false, reason: "An error occurred" };
     }
   };
@@ -2225,6 +2339,7 @@ connections.on("connection", async (socket) => {
         };
       }
     } catch (error) {
+      logger.error({ error: error.message }, "Error in removeBreakRoomParticipant");
       return { success: false, reason: "An error occurred" };
     }
   };
@@ -2257,9 +2372,19 @@ connections.on("connection", async (socket) => {
               forHost,
             });
           }
-        } catch (error) {}
+        } catch (error) {
+          logger.error(
+            { error: error.message },
+            "Error updating breakout room members"
+          );
+        }
       });
-    } catch (error) {}
+    } catch (error) {
+      logger.error(
+        { error: error.message },
+        "Error in updateBreakoutMembers"
+      );
+    }
   };
 
   const validateWhiteboardUsers = ({ roomName, whiteboardUsers }) => {
@@ -2348,9 +2473,16 @@ connections.on("connection", async (socket) => {
               members: rooms[roomName].members,
             });
           }
-        } catch (error) {}
+        } catch (error) {
+          logger.error(
+            { error: error.message },
+            "Error updating whiteboard users"
+          );
+        }
       });
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in updateWhiteboardUsers");
+    }
   };
 
   const assignWhiteBoardParticipant = ({ name, roomName }) => {
@@ -2412,14 +2544,17 @@ connections.on("connection", async (socket) => {
               await member_socket.emit(emitName, { action, payload, name });
             }
           } catch (error) {
-            console.error("Error emitting to member:", error);
+            logger.error(
+              { error: error.message },
+              "Error updating whiteboard action"
+            );
           }
         })
       );
     } catch (error) {}
   };
 
-  //socket events
+   //socket events
   socket.on("updateMediasfuURL", async ({ eventID, mediasfuURL }, callback) => {
     try {
       let userName = rooms[eventID].members.find(
@@ -2431,14 +2566,17 @@ connections.on("connection", async (socket) => {
           (member) => member.name === userName
         );
         if (memberIndex !== -1) {
-          tempEventRooms[eventID].members[memberIndex].mediasfuURL =
-            mediasfuURL;
+          tempEventRooms[eventID].members[memberIndex].mediasfuURL = mediasfuURL;
+          callback({ success: true });
+        } else {
+          callback({ success: false, reason: "Member not found" });
         }
+      } else {
+        callback({ success: false, reason: "Temporary event room not found" });
       }
-
-      callback({ success: true });
     } catch (error) {
-      callback({ success: false });
+      logger.error({ error: error.message }, "Error updating mediasfuURL");
+      callback({ success: false, reason: "Internal server error" });
     }
   });
 
@@ -2455,9 +2593,7 @@ connections.on("connection", async (socket) => {
       }
 
       if (member && member.token == true) {
-        tempEventRooms[roomName].members = await tempEventRooms[
-          roomName
-        ].members.map((member) =>
+        tempEventRooms[roomName].members = tempEventRooms[roomName].members.map((member) =>
           member.socketId === sec ? (member = member) : member
         );
         callback({
@@ -2909,13 +3045,13 @@ connections.on("connection", async (socket) => {
     try {
       if (rooms[roomName]) {
         try {
-          mediaTag = await mediaTag.toLowerCase();
+          mediaTag = mediaTag.toLowerCase();
           if (mediaTag != "audio") {
             return;
           }
 
           let members = rooms[roomName].members;
-          const [member] = await members.filter(
+          const [member] = members.filter(
             (member) => member.id === socket.id
           );
 
@@ -2925,7 +3061,9 @@ connections.on("connection", async (socket) => {
             name: member.name,
             force: false,
           });
-        } catch (error) {}
+        } catch (error) {
+          logger.error({ error: error.message }, "Error resuming audio");
+        }
       }
     } catch (error) {}
   });
@@ -2936,7 +3074,7 @@ connections.on("connection", async (socket) => {
       try {
         if (rooms[roomName]) {
           try {
-            mediaTag = await mediaTag.toLowerCase();
+            mediaTag = mediaTag.toLowerCase();
             if (
               mediaTag != "audio" &&
               mediaTag != "video" &&
@@ -2946,7 +3084,7 @@ connections.on("connection", async (socket) => {
             }
 
             let socketId = socket.id;
-            let name = await rooms[roomName].members.find(
+            let name = rooms[roomName].members.find(
               (member) => member.id === socketId
             ).name;
 
@@ -3054,35 +3192,35 @@ connections.on("connection", async (socket) => {
       let validIslevel = ["0", "1", "2"];
 
       if (!roomName) {
-        await callback({ error: "room not defined" });
+        callback({ error: "room not defined" });
         return;
       }
 
       if (!islevel) {
-        await callback({ error: "islevel not defined" });
+        callback({ error: "islevel not defined" });
         return;
       }
 
       if (!member) {
-        await callback({ error: "member not defined" });
+        callback({ error: "member not defined" });
         return;
       }
 
       if (!validIslevel.includes(islevel)) {
-        await callback({ error: "islevel not valid" });
+        callback({ error: "islevel not valid" });
         return;
       }
 
       let isBanned = false;
 
       if (rooms[roomName]) {
-        let members = await rooms[roomName].members;
+        let members = rooms[roomName].members;
         if (members) {
-          let member_info = await members.find(
+          let member_info = members.find(
             (member_info) => member_info.name === member
           );
           if (member_info) {
-            let member_info = await members.find(
+            let member_info = members.find(
               (member_info) => member_info.name === member
             );
             if (member_info) {
@@ -3142,10 +3280,10 @@ connections.on("connection", async (socket) => {
       }
 
       if (rooms[roomName]) {
-        let capacity = await rooms[roomName].capacity;
+        let capacity = rooms[roomName].capacity;
 
-        let roomMembers = await rooms[roomName].members;
-        let membersCount = await roomMembers.length;
+        let roomMembers = rooms[roomName].members;
+        let membersCount = roomMembers.length;
 
         if (membersCount >= capacity && islevel != "2") {
           await callback({
@@ -3156,7 +3294,7 @@ connections.on("connection", async (socket) => {
           return;
         }
 
-        let eventEnded = await rooms[roomName].eventEnded;
+        let eventEnded = rooms[roomName].eventEnded;
 
         if (eventEnded) {
           await callback({
@@ -3316,25 +3454,25 @@ connections.on("connection", async (socket) => {
               },
             ];
 
-            rooms[roomName] = await {
+            rooms[roomName] = {
               ...rooms[roomName],
               members: members,
             };
           } else {
-            let members = await rooms[roomName].members;
-            let member_Index = await members.findIndex(
+            let members = rooms[roomName].members;
+            let member_Index = members.findIndex(
               (memberData) => memberData.name == member
             );
 
-            let prev_SocketId = await members[member_Index].id;
+            let prev_SocketId = members[member_Index].id;
             if (prev_SocketId) {
               try {
-                await peers[prev_SocketId].socket.disconnect(true);
+                peers[prev_SocketId].socket.disconnect(true);
               } catch (error) {}
             }
 
             members[member_Index].id = socket.id;
-            rooms[roomName] = await {
+            rooms[roomName] = {
               ...rooms[roomName],
               members: members,
             };
@@ -3387,10 +3525,10 @@ connections.on("connection", async (socket) => {
         }
       } catch (error) {}
 
-      await updateMembersMain(roomName);
-      await updateMembersHost(roomName);
+      updateMembersMain(roomName);
+      updateMembersHost(roomName);
     } catch (error) {
-      console.error("Error joining room:", error);
+      logger.error({ error: error.message }, "Error joining room");
       try {
         callback({ rtpCapabilities: null, success: false });
       } catch (error) {}
@@ -3413,7 +3551,9 @@ connections.on("connection", async (socket) => {
 
       // return the producer list back to the client
       callback(producerList);
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error getting producers alt");
+    }
   });
 
   socket.on("createReceiveAllTransports", async ({ islevel }, callback) => {
@@ -3432,7 +3572,9 @@ connections.on("connection", async (socket) => {
 
       // return the producer list back to the client
       callback({ producersExist: producerList.length > 0 ? true : false });
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error creating receive all transports");
+    }
   });
 
   socket.on(
@@ -3466,7 +3608,9 @@ connections.on("connection", async (socket) => {
             });
           }
         );
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error creating WebRTC transport");
+      }
     }
   );
 
@@ -3487,13 +3631,17 @@ connections.on("connection", async (socket) => {
 
       // return the producer list back to the client
       callback(producerList);
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error getting producers");
+    }
   });
 
   socket.on("transport-connect", ({ dtlsParameters }) => {
     try {
       getTransport(socket.id).connect({ dtlsParameters });
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error connecting transport");
+    }
   });
 
   socket.on(
@@ -3527,21 +3675,23 @@ connections.on("connection", async (socket) => {
           rooms[roomName] = room;
           isShare = true;
 
-          let producer_id = await producer.id;
+          let producer_id = producer.id;
           addScreenProducer(producer_id, roomName, islevel);
 
           if (rooms[roomName]) {
             try {
-              let members = await rooms[roomName].members;
+              let members = rooms[roomName].members;
 
-              await members.forEach(async (member) => {
+              members.forEach(async (member) => {
                 if (member.id !== socketId) {
                   try {
                     const member_socket = peers[member.id].socket;
-                    await member_socket.emit("screenProducerId", {
+                    member_socket.emit("screenProducerId", {
                       producerId,
                     });
-                  } catch (error) {}
+                  } catch (error) {
+                    logger.error({ error: error.message }, "Error emitting screen producer ID");
+                  }
                 }
               });
             } catch (error) {}
@@ -3567,10 +3717,10 @@ connections.on("connection", async (socket) => {
         members_info = [...members_info, member_info];
         rooms[roomName].members = members_info;
 
-        await updateMembersMain(roomName);
-        await updateMembersHost(roomName);
+        updateMembersMain(roomName);
+        updateMembersHost(roomName);
 
-        await alertConsumers(
+        alertConsumers(
           roomName,
           socket.id,
           producer.id,
@@ -3587,7 +3737,9 @@ connections.on("connection", async (socket) => {
           id: producer.id,
           producersExist: producers.length > 0 ? true : false,
         });
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error in transport-produce");
+      }
     }
   );
 
@@ -3601,8 +3753,10 @@ connections.on("connection", async (socket) => {
             transportData.transport.id == serverConsumerTransportId
         )?.transport;
 
-        await consumerTransport.connect({ dtlsParameters });
-      } catch (error) {}
+        consumerTransport.connect({ dtlsParameters });
+      } catch (error) {
+        logger.error({ error: error.message }, "Error in transport-recv-connect");
+      }
     }
   );
 
@@ -3613,10 +3767,10 @@ connections.on("connection", async (socket) => {
       callback
     ) => {
       try {
-        const { roomName } = await peers[socket.id];
-        const router = await rooms[roomName].router;
+        const { roomName } = peers[socket.id];
+        const router = rooms[roomName].router;
 
-        await getConsumerTransport(
+        getConsumerTransport(
           roomName,
           socket.id,
           serverConsumerTransportId
@@ -3628,14 +3782,14 @@ connections.on("connection", async (socket) => {
                 rtpCapabilities,
               })
             ) {
-              await consumerTransport
+              consumerTransport
                 .consume({
                   producerId: remoteProducerId,
                   rtpCapabilities,
                   paused: true,
                 })
                 .then(async (consumer) => {
-                  await consumer.on("producerclose", () => {
+                  consumer.on("producerclose", () => {
                     socket.emit("producer-closed", { remoteProducerId });
                     consumerTransport.close();
                     transports = transports.filter(
@@ -3677,6 +3831,7 @@ connections.on("connection", async (socket) => {
             });
           });
       } catch (error) {
+        logger.error({ error: error.message }, "Error in consume");
         try {
           callback({
             params: {
@@ -3690,14 +3845,15 @@ connections.on("connection", async (socket) => {
 
   socket.on("consumer-resume", async ({ serverConsumerId }, callback) => {
     try {
-      let consumer = await consumers?.find(
+      let consumer = consumers?.find(
         (consumerInfo) => consumerInfo.consumer.id === serverConsumerId
       )?.consumer;
 
-      await consumer.resume();
+      consumer.resume();
 
       callback({ resumed: true });
     } catch (error) {
+      logger.error({ error: error.message }, "Error resuming consumer");
       try {
         callback({ resumed: false });
       } catch (error) {}
@@ -3706,13 +3862,14 @@ connections.on("connection", async (socket) => {
 
   socket.on("consumer-pause", async ({ serverConsumerId }, callback) => {
     try {
-      let consumer = await consumers?.find(
+      let consumer = consumers?.find(
         (consumerInfo) => consumerInfo.consumer.id === serverConsumerId
       )?.consumer;
 
-      await consumer.pause();
+      consumer.pause();
       callback({ paused: true });
     } catch (error) {
+      logger.error({ error: error.message }, "Error pausing consumer");
       try {
         callback({ paused: false });
       } catch (error) {}
@@ -3721,7 +3878,7 @@ connections.on("connection", async (socket) => {
 
   socket.on("getRoomInfo", async ({ eventID }, callback) => {
     try {
-      let res = await getRoomInfo({ eventID });
+      let res = getRoomInfo({ eventID });
       callback({
         exists: res.exists,
         names: res.names,
@@ -3738,7 +3895,9 @@ connections.on("connection", async (socket) => {
         waitRoom: res.waitRoom,
         checkHost: res.checkHost,
       });
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error getting room info");
+    }
   });
 
   socket.on(
@@ -3770,7 +3929,7 @@ connections.on("connection", async (socket) => {
 
         eventID = eventID.toLowerCase();
 
-        let res = await createEventRoom({
+        let res = createEventRoom({
           eventID,
           capacity,
           duration,
@@ -3802,6 +3961,7 @@ connections.on("connection", async (socket) => {
           });
         }
       } catch (error) {
+        logger.error({ error: error.message }, "Error creating room");
         callback({
           success: false,
           reason: "Invalid credentials",
@@ -3833,7 +3993,7 @@ connections.on("connection", async (socket) => {
         }
 
         //validate the userName against the pem in the tempEventRooms array
-        let res = await getRoomInfo({ eventID });
+        let res = getRoomInfo({ eventID });
 
         //username must have no spaces
         userName = userName.replace(/\s/g, "");
@@ -3941,7 +4101,7 @@ connections.on("connection", async (socket) => {
           }
 
           if (hostStartedEvent) {
-            if (name != hostName) {
+            if (userName != hostName) {
               callback({
                 success: false,
                 secret: null,
@@ -3980,7 +4140,7 @@ connections.on("connection", async (socket) => {
           }
         }
 
-        let ress = await createEventRoom({
+        let ress = createEventRoom({
           eventID,
           userName,
           secureCode,
@@ -3996,6 +4156,7 @@ connections.on("connection", async (socket) => {
           reason: "success",
         });
       } catch (error) {
+        logger.error({ error: error.message }, "Error joining event room");
         callback({ success: false, secret: null, url: null, reason: "Error" });
       }
     }
@@ -4004,18 +4165,20 @@ connections.on("connection", async (socket) => {
   socket.on("disconnectUserInitiate", async ({ member, roomName, id }) => {
     try {
       if (rooms[roomName]) {
-        let member_info = await rooms[roomName].members.find(
+        let member_info = rooms[roomName].members.find(
           (member_info) => member_info.id == id && member_info.name == member
         );
 
         if (peers[id]) {
           let member_socket = peers[id].socket;
           if (member_socket && member_info) {
-            await member_socket.emit("disconnectUserSelf");
+            member_socket.emit("disconnectUserSelf");
           }
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error disconnecting user initiate");
+    }
   });
 
   socket.on("disconnectUser", async ({ member, roomName, ban = false }) => {
@@ -4023,17 +4186,20 @@ connections.on("connection", async (socket) => {
       let id = socket.id;
 
       if (rooms[roomName]) {
-        let member_info = await rooms[roomName].members.find(
+        let member_info = rooms[roomName].members.find(
           (member_info) => member_info.name == member
         );
 
         if (peers[member_info.id]) {
-          await disconnectUser({ member, roomName, ban });
+          disconnectUser({ member, roomName, ban });
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error disconnecting user");
+    }
   });
 
+  // Poll functions
   socket.on("createPoll", ({ roomName, poll }, callback) => {
     try {
       if (
@@ -4099,6 +4265,7 @@ connections.on("connection", async (socket) => {
 
       updatePollMembers({ poll, polls, roomName });
     } catch (error) {
+      logger.error({ error: error.message }, "Error creating poll");
       try {
         callback({ success: false, reason: "Poll Error" });
       } catch (error) {}
@@ -4145,7 +4312,9 @@ connections.on("connection", async (socket) => {
         rooms[roomName].currentPoll = null;
         updatePollMembers({ poll, polls, roomName, ended: true });
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error ending poll");
+    }
   });
 
   socket.on(
@@ -4213,6 +4382,7 @@ connections.on("connection", async (socket) => {
           });
         }
       } catch (error) {
+        logger.error({ error: error.message }, "Error voting poll");
         try {
           callback({ success: false, reason: "Poll Error" });
         } catch (error) {}
@@ -4220,6 +4390,7 @@ connections.on("connection", async (socket) => {
     }
   );
 
+  // Breakout room functions
   socket.on(
     "startBreakout",
     async ({ breakoutRooms, newParticipantAction, roomName }, callback) => {
@@ -4250,9 +4421,10 @@ connections.on("connection", async (socket) => {
           callback({ success: true });
           rooms[roomName].breakoutRoomStarted = true;
           rooms[roomName].breakoutRoomEnded = false;
-          await updateBreakoutMembers({ roomName: roomName });
+          updateBreakoutMembers({ roomName: roomName });
         }
       } catch (error) {
+        logger.error({ error: error.message }, "Error starting breakout");
         try {
           callback({ success: false, reason: "Error" });
         } catch (error) {}
@@ -4298,10 +4470,12 @@ connections.on("connection", async (socket) => {
 
         rooms[roomName].hostBreakoutRoom = newRoom;
 
-        await updateBreakoutMembers({ roomName: roomName, forHost: true });
+        updateBreakoutMembers({ roomName: roomName, forHost: true });
 
         callback({ success: true });
-      } catch (error) {}
+      } catch (error) {
+        logger.error({ error: error.message }, "Error updating host breakout");
+      }
     }
   );
 
@@ -4340,9 +4514,10 @@ connections.on("connection", async (socket) => {
           return callback({ success: false, reason: checkBreak.reason });
         } else {
           callback({ success: true });
-          await updateBreakoutMembers({ roomName: roomName });
+          updateBreakoutMembers({ roomName: roomName });
         }
       } catch (error) {
+        logger.error({ error: error.message }, "Error updating breakout");
         try {
           callback({ success: false, reason: "Error" });
         } catch (error) {}
@@ -4369,16 +4544,18 @@ connections.on("connection", async (socket) => {
       rooms[roomName].breakoutRoomEnded = true;
 
       callback({ success: true });
-      await updateBreakoutMembers({ roomName: roomName, ended: true });
+      updateBreakoutMembers({ roomName: roomName, ended: true });
 
       tempEventRooms[roomName].tempBreakoutRooms = [];
     } catch (error) {
+      logger.error({ error: error.message }, "Error stopping breakout");
       try {
         callback({ success: false, reason: "Error" });
       } catch (error) {}
     }
   });
 
+  // Whiteboard functions
   socket.on(
     "startWhiteboard",
     async ({ roomName, whiteboardUsers }, callback) => {
@@ -4402,8 +4579,10 @@ connections.on("connection", async (socket) => {
 
         callback({ success: true, reason: "success" });
 
-        await updateWhiteboardUsers({ roomName });
-      } catch (error) {}
+        updateWhiteboardUsers({ roomName });
+      } catch (error) {
+        logger.error({ error: error.message }, "Error starting whiteboard");
+      }
     }
   );
 
@@ -4430,8 +4609,10 @@ connections.on("connection", async (socket) => {
         }
 
         callback({ success: true, reason: "success" });
-        await updateWhiteboardUsers({ roomName });
-      } catch (error) {}
+        updateWhiteboardUsers({ roomName });
+      } catch (error) {
+        logger.error({ error: error.message }, "Error updating whiteboard");
+      }
     }
   );
 
@@ -4449,8 +4630,10 @@ connections.on("connection", async (socket) => {
       rooms[roomName].whiteboardEnded = true;
 
       callback({ success: true, reason: "success" });
-      await updateWhiteboardUsers({ roomName, ended: true });
-    } catch (error) {}
+      updateWhiteboardUsers({ roomName, ended: true });
+    } catch (error) {
+      logger.error({ error: error.message }, "Error stopping whiteboard");
+    }
   });
 
   socket.on("updateBoardAction", async (data, callback) => {
@@ -4498,10 +4681,10 @@ connections.on("connection", async (socket) => {
         });
       }
 
-      const roomName = await peers[socket.id].roomName;
+      const roomName = peers[socket.id].roomName;
 
       if (rooms[roomName]) {
-        const room = await rooms[roomName];
+        const room = rooms[roomName];
 
         if (!room.whiteboardStarted || room.whiteboardEnded) {
           return callback({
@@ -4510,11 +4693,11 @@ connections.on("connection", async (socket) => {
           });
         }
 
-        const whiteboardUsers = await room.whiteboardUsers;
-        const name = await room.members.find((member) => member.id == socket.id)
+        const whiteboardUsers = room.whiteboardUsers;
+        const name = room.members.find((member) => member.id == socket.id)
           .name;
         const user = whiteboardUsers.find((user) => user.name == name);
-        const host = await room.members.find((member) => member.isHost);
+        const host = room.members.find((member) => member.isHost);
         if (!user && name !== host.name) {
           return callback({
             success: false,
@@ -4522,7 +4705,7 @@ connections.on("connection", async (socket) => {
           });
         }
 
-        const whiteboardData = await room.whiteboardData;
+        const whiteboardData = room.whiteboardData;
         whiteboardData.shapes = whiteboardData.shapes || [];
         whiteboardData.redoStack = whiteboardData.redoStack || [];
         whiteboardData.useImageBackground =
@@ -4620,11 +4803,18 @@ connections.on("connection", async (socket) => {
 
         rooms[roomName].whiteboardData = whiteboardData;
 
-        await updateWhiteboardAction({ roomName, action, payload, name });
+        updateWhiteboardAction({ roomName, action, payload, name });
         callback({ success: true, reason: "success" });
       } else {
         callback({ success: false, reason: "Room not found" });
       }
-    } catch (error) {}
+    } catch (error) {
+      logger.error({ error: error.message }, "Error updating board action");
+    }
   });
+
+  logger.info({ socketId: socket.id }, "Socket connection handlers registered");
 });
+
+logger.info("MediaSoup server initialized successfully");
+ 
