@@ -999,7 +999,7 @@ connections.on("connection", async (socket) => {
   };
 
   const joinRoom = async ({ roomName, islevel }) => {
-    const router = createRoom(roomName, socket.id);
+    const router = await createRoom(roomName, socket.id);
 
     peers[socket.id] = {
       socket,
@@ -1310,7 +1310,7 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            updateMembers({
+            await updateMembers({
               roomName,
               member,
               coHost,
@@ -1469,9 +1469,9 @@ connections.on("connection", async (socket) => {
         } catch (error) {}
       }
 
-      updateMembersMain(roomName);
+      await updateMembersMain(roomName);
 
-      updateMembersHost(roomName);
+      await updateMembersHost(roomName);
 
       if (
         rooms[roomName].screenProducerName === member &&
@@ -1598,7 +1598,7 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            updateMembers({
+            await updateMembers({
               roomName,
               member,
               coHost,
@@ -3505,8 +3505,8 @@ connections.on("connection", async (socket) => {
         }
       } catch (error) {}
 
-      updateMembersMain(roomName);
-      updateMembersHost(roomName);
+      await updateMembersMain(roomName);
+      await updateMembersHost(roomName);
     } catch (error) {
       logger.error({ error: error.message }, "Error joining room");
       try {
@@ -3697,8 +3697,8 @@ connections.on("connection", async (socket) => {
         members_info = [...members_info, member_info];
         rooms[roomName].members = members_info;
 
-        updateMembersMain(roomName);
-        updateMembersHost(roomName);
+        await updateMembersMain(roomName);
+        await updateMembersHost(roomName);
 
         alertConsumers(
           roomName,
@@ -3909,7 +3909,7 @@ connections.on("connection", async (socket) => {
 
         eventID = eventID.toLowerCase();
 
-        let res = createEventRoom({
+        let res = await createEventRoom({
           eventID,
           capacity,
           duration,
@@ -4120,7 +4120,7 @@ connections.on("connection", async (socket) => {
           }
         }
 
-        let ress = createEventRoom({
+        let ress = await createEventRoom({
           eventID,
           userName,
           secureCode,
@@ -4401,7 +4401,7 @@ connections.on("connection", async (socket) => {
           callback({ success: true });
           rooms[roomName].breakoutRoomStarted = true;
           rooms[roomName].breakoutRoomEnded = false;
-          updateBreakoutMembers({ roomName: roomName });
+          await updateBreakoutMembers({ roomName: roomName });
         }
       } catch (error) {
         logger.error({ error: error.message }, "Error starting breakout");
@@ -4450,7 +4450,7 @@ connections.on("connection", async (socket) => {
 
         rooms[roomName].hostBreakoutRoom = newRoom;
 
-        updateBreakoutMembers({ roomName: roomName, forHost: true });
+        await updateBreakoutMembers({ roomName: roomName, forHost: true });
 
         callback({ success: true });
       } catch (error) {
@@ -4494,7 +4494,7 @@ connections.on("connection", async (socket) => {
           return callback({ success: false, reason: checkBreak.reason });
         } else {
           callback({ success: true });
-          updateBreakoutMembers({ roomName: roomName });
+          await updateBreakoutMembers({ roomName: roomName });
         }
       } catch (error) {
         logger.error({ error: error.message }, "Error updating breakout");
@@ -4524,7 +4524,7 @@ connections.on("connection", async (socket) => {
       rooms[roomName].breakoutRoomEnded = true;
 
       callback({ success: true });
-      updateBreakoutMembers({ roomName: roomName, ended: true });
+      await updateBreakoutMembers({ roomName: roomName, ended: true });
 
       tempEventRooms[roomName].tempBreakoutRooms = [];
     } catch (error) {
