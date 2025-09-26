@@ -1,30 +1,41 @@
-<p align="center">
-  <img src="https://www.mediasfu.com/logo192.png" width="100" alt="MediaSFU Logo">
-</p>
+# MediaSFUOpen — Community Edition Meeting Server
 
-<p align="center">
-  <a href="https://twitter.com/media_sfu">
-    <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt="Twitter" style="margin-right: 10px;">
-  </a>
-  <a href="https://www.mediasfu.com/forums">
-    <img src="https://img.icons8.com/color/48/000000/communication--v1.png" alt="Community Forum" style="margin-right: 10px;">
-  </a>
-  <a href="https://github.com/MediaSFU">
-    <img src="https://img.icons8.com/fluent/48/000000/github.png" alt="Github" style="margin-right: 10px;">
-  </a>
-  <a href="https://www.mediasfu.com/">
-    <img src="https://img.icons8.com/color/48/000000/domain--v1.png" alt="Website" style="margin-right: 10px;">
-  </a>
-  <a href="https://www.youtube.com/channel/UCELghZRPKMgjih5qrmXLtqw">
-    <img src="https://img.icons8.com/color/48/000000/youtube--v1.png" alt="Youtube" style="margin-right: 10px;">
-  </a>
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Built with MediaSFU](https://img.shields.io/badge/Built%20with-MediaSFU-blue)](https://mediasfu.com)
+[![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?logo=socketdotio&logoColor=white)](https://socket.io/)
+[![mediasoup 3](https://img.shields.io/badge/mediasoup-3.x-8A2BE2)](https://mediasoup.org/)
+
+[![Twitter](https://img.shields.io/badge/Twitter-@media__sfu-1DA1F2?logo=twitter&logoColor=white)](https://twitter.com/media_sfu)
+[![Forum](https://img.shields.io/badge/Community-Forum-5865F2?logo=discourse&logoColor=white)](https://www.mediasfu.com/forums)
+[![GitHub](https://img.shields.io/badge/GitHub-MediaSFU-181717?logo=github&logoColor=white)](https://github.com/MediaSFU)
+[![Website](https://img.shields.io/badge/Website-mediasfu.com-0A66C2?logo=google-chrome&logoColor=white)](https://www.mediasfu.com/)
+[![YouTube](https://img.shields.io/badge/YouTube-Channel-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCELghZRPKMgjih5qrmXLtqw)
+
+## MediaSFU ecosystem
+
+A unified real‑time stack for telephony and multimodal agents with production SDKs across mobile and web.
+
+- Telephony agents and apps/SDKs: VOIP reference suite → [github.com/MediaSFU/VOIP](https://github.com/MediaSFU/VOIP)
+- Multimodal (vision, audio, text) non‑telephony agents and apps/SDKs → [github.com/MediaSFU/Agents](https://github.com/MediaSFU/Agents)
+- Agents workspace (bring your own API keys) → [agents.mediasfu.com/playground](https://agents.mediasfu.com/playground)
+- Agents workspace (MediaSFU keys, limited) → [agentsmediasfu.com](https://agentsmediasfu.com)
+
+### SDKs at a glance
+
+- React Native Expo: npm [mediasfu-reactnative-expo](https://www.npmjs.com/package/mediasfu-reactnative-expo) • GitHub [MediaSFU-ReactNative-Expo](https://github.com/MediaSFU/MediaSFU-ReactNative-Expo)
+- React Native CLI: npm [mediasfu-reactnative](https://www.npmjs.com/package/mediasfu-reactnative) • GitHub [MediaSFU-ReactNative](https://github.com/MediaSFU/MediaSFU-ReactNative)
+- Flutter: pub.dev [mediasfu_sdk](https://pub.dev/packages/mediasfu_sdk) • GitHub [MediaSFU_SDK_Flutter](https://github.com/MediaSFU/MediaSFU_SDK_Flutter)
+- React.js: npm [mediasfu-reactjs](https://www.npmjs.com/package/mediasfu-reactjs) • GitHub [MediaSFU-ReactJS](https://github.com/MediaSFU/MediaSFU-ReactJS)
+- Angular: npm [mediasfu-angular](https://www.npmjs.com/package/mediasfu-angular) • GitHub [MediaSFU-Angular](https://github.com/MediaSFU/MediaSFU-Angular)
 
 ---
 
 ## 🚨 **BREAKING: AI Phone Agents at $0.10 per 1,000 minutes**
 
 📞 **Call our live AI demos right now:**
+
 - 🇺🇸 **+1 (785) 369-1724** - Mixed Support Demo  
 - 🇬🇧 **+44 7445 146575** - AI Conversation Demo  
 - 🇨🇦 **+1 (587) 407-1990** - Technical Support Demo  
@@ -38,6 +49,38 @@
 ✅ **Real-time call analytics & transcription**  
 
 📖 **[Complete SIP/PSTN Documentation →](https://mediasfu.com/telephony)**
+
+---
+
+## 🔴 Critical note: If create/join room fails or behavior is unexpected
+
+![Action Required](https://img.shields.io/badge/CRITICAL-Action%20Required-red)
+![Safer Path](https://img.shields.io/badge/Safer-Fully%20tested%20backups-orange)
+![Note](https://img.shields.io/badge/Note-Extra%20awaits%20kept%20by%20design-blue)
+
+If you experience any issue creating or joining a meeting, or notice unexpected behavior:
+
+- If you run `index.js` (production), switch to the fully tested backup: `index_backup.js`.
+- If you run `index_localhost.js` (local SSL), switch to: `index_localhost_backup.js`.
+
+Why this matters: the backup files intentionally keep some additional `await` statements. While they may look redundant, they have been fully validated in production flows and are safer than the cleaned non-`_backup` variants, which could have missed awaits in rare paths.
+
+Quick ways to run backups (non-destructive):
+
+```bash
+# Production
+node index_backup.js
+
+# With PM2 (recommended on servers)
+pm2 start index_backup.js --name mediasfu
+
+# Localhost (SSL)
+nodemon index_localhost_backup.js
+# or
+node index_localhost_backup.js
+```
+
+You can revert to the non-`_backup` files anytime. The backups are provided as the safe default if you hit any instability.
 
 ---
 
@@ -75,18 +118,51 @@ https://github.com/user-attachments/assets/310cb87c-dade-445d-aee7-dea1889d6dc4
 
 ---
 
-# Getting Started with [MediaSFU](https://mediasfu.com) Community Edition
+## Getting Started with [MediaSFU](https://mediasfu.com) Community Edition
 
 Elevate your streaming experience to new heights with MediaSFU. Enjoy the freedom to customize your recordings with unlimited pausing and resuming, ensuring you have complete control over your content. Immerse yourself in simulcasted high-quality streams featuring lightning-fast 30ms latency, providing a seamless and immersive viewing experience for your audience.
 
 ## Installation Guide
 
 ### Table of Contents
+
 1. [Installation on Ubuntu](#installation-on-ubuntu)
 2. [Running on Localhost](#running-on-localhost)
 3. [Cloud Recording & Egress](#cloud-recording--egress)
 4. [Connecting Your MediaSFU SDKs to the Community Edition Server](#connecting-your-mediasfu-sdks-to-the-community-edition-server)
 5. [Additional Resources](#additional-resources)
+
+---
+
+## 🔴 Critical note: If create/join room actions fail or behavior is unexpected
+
+![Action Required](https://img.shields.io/badge/CRITICAL-Action%20Required-red)
+![Safer Path](https://img.shields.io/badge/Safer-Fully%20tested%20backups-orange)
+![Note](https://img.shields.io/badge/Note-Extra%20awaits%20kept%20by%20design-blue)
+
+If you experience any issue creating or joining a meeting, or notice unexpected behavior:
+
+- If you run `index.js` (production), switch to the fully tested backup: `index_backup.js`.
+- If you run `index_localhost.js` (local SSL), switch to: `index_localhost_backup.js`.
+
+Why this matters: the backup files intentionally keep some additional `await` statements. While they may look redundant, they have been fully validated in production flows and are safer than the cleaned non-`_backup` variants, which could have missed awaits in rare paths.
+
+Quick ways to run backups (non-destructive):
+
+```bash
+# Production
+node index_backup.js
+
+# With PM2 (recommended on servers)
+pm2 start index_backup.js --name mediasfu
+
+# Localhost (SSL)
+nodemon index_localhost_backup.js
+# or
+node index_localhost_backup.js
+```
+
+You can revert to the non-`_backup` files anytime. The backups are provided as the safe default if you hit any instability.
 
 ---
 

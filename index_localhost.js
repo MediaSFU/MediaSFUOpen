@@ -3700,7 +3700,7 @@ connections.on("connection", async (socket) => {
         await updateMembersMain(roomName);
         await updateMembersHost(roomName);
 
-        alertConsumers(
+        await alertConsumers(
           roomName,
           socket.id,
           producer.id,
@@ -3858,7 +3858,7 @@ connections.on("connection", async (socket) => {
 
   socket.on("getRoomInfo", async ({ eventID }, callback) => {
     try {
-      let res = getRoomInfo({ eventID });
+      let res = await getRoomInfo({ eventID });
       callback({
         exists: res.exists,
         names: res.names,
@@ -3973,7 +3973,7 @@ connections.on("connection", async (socket) => {
         }
 
         //validate the userName against the pem in the tempEventRooms array
-        let res = getRoomInfo({ eventID });
+        let res = await getRoomInfo({ eventID });
 
         //username must have no spaces
         userName = userName.replace(/\s/g, "");
@@ -4559,7 +4559,7 @@ connections.on("connection", async (socket) => {
 
         callback({ success: true, reason: "success" });
 
-        updateWhiteboardUsers({ roomName });
+        await updateWhiteboardUsers({ roomName });
       } catch (error) {
         logger.error({ error: error.message }, "Error starting whiteboard");
       }
@@ -4589,7 +4589,7 @@ connections.on("connection", async (socket) => {
         }
 
         callback({ success: true, reason: "success" });
-        updateWhiteboardUsers({ roomName });
+        await updateWhiteboardUsers({ roomName });
       } catch (error) {
         logger.error({ error: error.message }, "Error updating whiteboard");
       }
@@ -4610,7 +4610,7 @@ connections.on("connection", async (socket) => {
       rooms[roomName].whiteboardEnded = true;
 
       callback({ success: true, reason: "success" });
-      updateWhiteboardUsers({ roomName, ended: true });
+      await updateWhiteboardUsers({ roomName, ended: true });
     } catch (error) {
       logger.error({ error: error.message }, "Error stopping whiteboard");
     }
