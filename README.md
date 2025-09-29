@@ -82,6 +82,8 @@ node index_localhost_backup.js
 
 You can revert to the non-`_backup` files anytime. The backups are provided as the safe default if you hit any instability.
 
+> Cloud/NAT users (AWS/GCP/Azure): After setting your public `ip`, ensure mediasoup transports advertise it by setting `announcedIp` in `listenIps` (see the installation step for the exact before/after snippet).
+
 ---
 
 MediaSFU offers a cutting-edge streaming experience that empowers users to customize their recordings and engage their audience with high-quality streams. Whether you're a content creator, educator, or business professional, MediaSFU provides the tools you need to elevate your streaming game.
@@ -361,10 +363,31 @@ Follow these steps to install MediaSFU on Ubuntu:
 
     ```javascript
     // Example: Change this line to your server's public IP address
+    // If on AWS/GCP/Azure behind NAT, use your Elastic/Public IP (not a private 10.x/172.31.x)
     const ip = 'your_server_public_ip';
     ```
 
-    Updating the IP address ensures that MediaSFUOpen binds to the correct network interface and listens on the appropriate IP address.
+    If you're deploying on AWS/GCP/Azure (NAT/Elastic IP), also update your mediasoup transport config so the announced public IP is used by clients:
+
+        ```javascript
+        // BEFORE
+        listenIps: [
+            {
+                ip: ip,
+                announcedIp: null,
+            },
+        ],
+
+        // AFTER (cloud/NAT)
+        listenIps: [
+            {
+                ip: '0.0.0.0',
+                announcedIp: ip, // your Elastic/Public IP here
+            },
+        ],
+        ```
+
+        Updating the IP address ensures that MediaSFUOpen binds to the correct network interface and listens on the appropriate IP address.
     
 16. **🛡️ Edit the `index.js` file to specify safe origins for secure Socket.IO Connections**
 
