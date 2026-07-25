@@ -24,9 +24,13 @@ const logger = pino({
   }
 });
 
+dotenv.config();
+
 const app = express();
-const ip = "111.222.222.111";
-const PORT = 3000;
+const listenIp = process.env.LISTEN_IP || "0.0.0.0";
+const announcedIp = process.env.ANNOUNCED_IP || "127.0.0.1";
+const ip = process.env.IP || announcedIp;
+const PORT = process.env.PORT || 3000;
 const safeOrigins = [
   `https://localhost:${PORT}`,
   `https://${ip}:${PORT}`,
@@ -38,8 +42,6 @@ app.use(cors());
 app.use(express.json());
 
 const _dirname = path.resolve();
-
-dotenv.config();
 
 const activeCredentials = {};
 
@@ -204,14 +206,6 @@ if (useSelfSignedCert && options) {
   logger.info("HTTP server created");
 }
 
-httpServer.listen(PORT, () => {
-  logger.info({ port: PORT }, "Server listening on port");
-});
-
-const io = new Server(httpServer, { cors: { origin: "*" } });
-
-const connections = io.of("/media");
-
 let worker;
 let rooms = {};
 let peers = {};
@@ -254,7 +248,15 @@ const createWorker = async () => {
 };
 
 // We create a Worker as soon as our application starts
-worker = createWorker();
+worker = await createWorker();
+
+httpServer.listen(PORT, () => {
+  logger.info({ port: PORT }, "Server listening on port");
+});
+
+const io = new Server(httpServer, { cors: { origin: "*" } });
+
+const connections = io.of("/media");
 
 // This is an Array of RtpCapabilities
 const mediaCodecs = [
@@ -437,7 +439,7 @@ const eventEndedMain = async (roomName, toHost) => {
     } else {
       roomHost = rooms[roomName].members;
 
-      roomHost.forEach(async (member) => {
+      roomHost.forEach((member) => {
         try {
           let host_socket = peers[member.id].socket;
           if (host_socket && member.islevel != "2") {
@@ -471,7 +473,7 @@ const eventStillThere = async (roomName, timeRemaining, toHost = true) => {
 
 const checkEventStatus = async () => {
   try {
-    Object.values(rooms).forEach(async (room) => {
+    Object.values(rooms).forEach((room) => {
       try {
         let timeRemaining;
 
@@ -527,14 +529,14 @@ const checkEventStatus = async () => {
                     delete rooms[room.name];
                     delete tempEventRooms[room.name];
 
-                    Object.keys(tempEventPeers).forEach(async (key) => {
+                    Object.keys(tempEventPeers).forEach((key) => {
                       let tempEventPeer = tempEventPeers[key];
                       if (tempEventPeer.roomName === room.name) {
                         delete tempEventPeers[key];
                       }
                     });
 
-                    Object.keys(peers).forEach(async (key) => {
+                    Object.keys(peers).forEach((key) => {
                       let tempEventPeer = peers[key];
                       if (tempEventPeer.roomName === room.name) {
                         delete peers[key];
@@ -550,14 +552,14 @@ const checkEventStatus = async () => {
                   delete rooms[room.name];
                   delete tempEventRooms[room.name];
 
-                  Object.keys(tempEventPeers).forEach(async (key) => {
+                  Object.keys(tempEventPeers).forEach((key) => {
                     let tempEventPeer = tempEventPeers[key];
                     if (tempEventPeer.roomName === room.name) {
                       delete tempEventPeers[key];
                     }
                   });
 
-                  Object.keys(peers).forEach(async (key) => {
+                  Object.keys(peers).forEach((key) => {
                     let tempEventPeer = peers[key];
                     if (tempEventPeer.roomName === room.name) {
                       delete peers[key];
@@ -619,14 +621,14 @@ const checkEventStatus = async () => {
               delete rooms[room.name];
               delete tempEventRooms[room.name];
 
-              Object.keys(tempEventPeers).forEach(async (key) => {
+              Object.keys(tempEventPeers).forEach((key) => {
                 let tempEventPeer = tempEventPeers[key];
                 if (tempEventPeer.roomName === room.name) {
                   delete tempEventPeers[key];
                 }
               });
 
-              Object.keys(peers).forEach(async (key) => {
+              Object.keys(peers).forEach((key) => {
                 let tempEventPeer = peers[key];
                 if (tempEventPeer.roomName === room.name) {
                   delete peers[key];
@@ -653,14 +655,14 @@ const checkEventStatus = async () => {
               delete rooms[room.name];
               delete tempEventRooms[room.name];
 
-              Object.keys(tempEventPeers).forEach(async (key) => {
+              Object.keys(tempEventPeers).forEach((key) => {
                 let tempEventPeer = tempEventPeers[key];
                 if (tempEventPeer.roomName === room.name) {
                   delete tempEventPeers[key];
                 }
               });
 
-              Object.keys(peers).forEach(async (key) => {
+              Object.keys(peers).forEach((key) => {
                 let tempEventPeer = peers[key];
                 if (tempEventPeer.roomName === room.name) {
                   delete peers[key];
@@ -1151,7 +1153,7 @@ connections.on("connection", async (socket) => {
         await sleep(2000);
 
         tempEventMembers = tempEventRooms[roomName].members;
-        tempEventMembers.forEach(async (member_info) => {
+        tempEventMembers.forEach((member_info) => {
           try {
             let member_socket = tempEventPeers[member_info.id].socket;
             member_socket.emit("exitWaitRoom", {
@@ -1193,37 +1195,38 @@ connections.on("connection", async (socket) => {
   };
 
   const createWebRtcTransport = async (router) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const webRtcTransport_options = {
-          listenIps: [
-            {
-              ip: ip,
-              announcedIp: null,
-            },
-          ],
-          enableUdp: true,
-          enableTcp: true,
-          preferUdp: true,
-        };
+    try {
+      const webRtcTransport_options = {
+        listenIps: [
+          {
+            ip: listenIp,
+            announcedIp: announcedIp !== listenIp ? announcedIp : null,
+          },
+        ],
+        enableUdp: true,
+        enableTcp: true,
+        preferUdp: true,
+      };
 
-        let transport = await router.createWebRtcTransport(
-          webRtcTransport_options
-        );
+      let transport = await router.createWebRtcTransport(
+        webRtcTransport_options
+      );
 
-        transport.on("dtlsstatechange", (dtlsState) => {
-          if (dtlsState === "closed") {
-            transport.close();
-          }
-        });
+      transport.on("dtlsstatechange", (dtlsState) => {
+        if (dtlsState === "closed" || dtlsState === "failed") {
+          transport.close();
+        }
+      });
 
-        transport.on("close", () => {});
+      transport.on("close", () => {
+        logger.debug({ transportId: transport.id }, "WebRTC Transport closed");
+      });
 
-        resolve(transport);
-      } catch (error) {
-        reject(error);
-      }
-    });
+      return transport;
+    } catch (error) {
+      logger.error({ error: error.message }, "Error in createWebRtcTransport");
+      throw error;
+    }
   };
 
   const alertConsumers = async (roomName, socketId, id, islevel, isShare) => {
@@ -1254,7 +1257,7 @@ connections.on("connection", async (socket) => {
         let name = member;
 
         try {
-          rooms[roomName].members.forEach(async (member_info) => {
+          rooms[roomName].members.forEach((member_info) => {
             try {
               let member_socket = peers[member_info.id].socket;
               if (member_socket && member_info.name != name) {
@@ -1320,7 +1323,7 @@ connections.on("connection", async (socket) => {
 
   const updateMembersMain = async (roomName) => {
     try {
-      rooms[roomName].members.forEach(async (member) => {
+      for (const member of rooms[roomName].members) {
         if (member.islevel !== "2") {
           try {
             let {
@@ -1343,7 +1346,7 @@ connections.on("connection", async (socket) => {
             logger.error({ error: error.message }, "Error updating main members");
           }
         }
-      });
+      }
     } catch (error) {
       logger.error({ error: error.message }, "Error in updateMembersMain");
     }
@@ -1524,7 +1527,7 @@ connections.on("connection", async (socket) => {
           delete rooms[roomName];
 
           try {
-            Object.keys(tempEventPeers).forEach(async (key) => {
+            Object.keys(tempEventPeers).forEach((key) => {
               let tempEventPeer = tempEventPeers[key];
               if (tempEventPeer.roomName === roomName) {
                 delete tempEventPeers[key];
@@ -1533,7 +1536,7 @@ connections.on("connection", async (socket) => {
           } catch (error) {}
 
           try {
-            Object.keys(peers).forEach(async (key) => {
+            Object.keys(peers).forEach((key) => {
               let tempEventPeer = peers[key];
               if (tempEventPeer.roomName === roomName) {
                 delete peers[key];
@@ -1608,7 +1611,7 @@ connections.on("connection", async (socket) => {
         }
       }
 
-      rooms[roomName].members.forEach(async (member) => {
+      for (const member of rooms[roomName].members) {
         if (member.islevel !== "2") {
           try {
             let {
@@ -1656,7 +1659,7 @@ connections.on("connection", async (socket) => {
             logger.error({ error: error.message }, "Error updating member of change");
           }
         }
-      });
+      }
     } catch (error) {
 
       logger.error({ error: error.message }, "Error in updateMembersOfChange");
@@ -1758,7 +1761,7 @@ connections.on("connection", async (socket) => {
 
   const resumeProducerAudio = async ({ mediaTag, roomName, name, force }) => {
     try {
-      const [host] = await rooms[roomName].members.filter(
+      const [host] = rooms[roomName].members.filter(
         (member) => member.islevel === "2"
       );
 
@@ -1774,13 +1777,13 @@ connections.on("connection", async (socket) => {
               coHost,
               coHostResponsibilities,
             } = await getRoomSummary(roomName);
-            await host_socket.emit("allMembers", {
+            host_socket.emit("allMembers", {
               members,
               requests,
               coHost,
               coHostResponsibilities,
             });
-            await host_socket.emit("producer-media-resumed", {
+            host_socket.emit("producer-media-resumed", {
               name: name,
               kind: "audio",
             });
@@ -1788,7 +1791,7 @@ connections.on("connection", async (socket) => {
         } catch (error) {}
       }
 
-      await rooms[roomName].members.forEach(async (member) => {
+      for (const member of rooms[roomName].members) {
         if (member.islevel !== "2") {
           try {
             let {
@@ -1807,14 +1810,14 @@ connections.on("connection", async (socket) => {
               settings,
               members,
             });
-            let member_socket = await peers[member.id].socket;
-            await member_socket.emit("producer-media-resumed", {
+            let member_socket = peers[member.id].socket;
+            member_socket.emit("producer-media-resumed", {
               name: name,
               kind: "audio",
             });
           } catch (error) {}
         }
-      });
+      }
     } catch (error) {}
   };
 
@@ -1827,18 +1830,18 @@ connections.on("connection", async (socket) => {
     let Host;
 
     if (forCoHost) {
-      Host = await rooms[roomName].members.find(
+      Host = rooms[roomName].members.find(
         (member) => member.name === coHost
       );
     } else {
-      Host = await rooms[roomName].members.find(
+      Host = rooms[roomName].members.find(
         (member) => member.islevel === "2"
       );
     }
 
     if (Host) {
-      const HostSocket = await peers[Host.id].socket;
-      await HostSocket.emit("participantRequested", {
+      const HostSocket = peers[Host.id].socket;
+      HostSocket.emit("participantRequested", {
         userRequest: userRequest,
       });
     }
@@ -1848,18 +1851,18 @@ connections.on("connection", async (socket) => {
     try {
       let host;
       if (forCoHost) {
-        host = await rooms[roomName].members.find(
+        host = rooms[roomName].members.find(
           (member) => member.name === coHost
         );
       } else {
-        host = await rooms[roomName].members.find(
+        host = rooms[roomName].members.find(
           (member) => member.islevel === "2"
         );
       }
       if (host) {
-        const hostSocket = await peers[host.id].socket;
+        const hostSocket = peers[host.id].socket;
 
-        await hostSocket.emit("allWaitingRoomMembers", {
+        hostSocket.emit("allWaitingRoomMembers", {
           waitingParticipants: rooms[roomName].waiting,
         });
       }
@@ -1881,148 +1884,67 @@ connections.on("connection", async (socket) => {
   };
 
   const createRoom = async (roomName, socketId) => {
-    let router;
-    let members = [];
-    let peers = [];
-    let allowScreenShare;
-    let screenProducerId = null;
-    let screenProducerName = null;
-    let settings = [];
-    let waiting = [];
-    let eventStarted = false;
-    let eventEnded = false;
-    let eventStartedAt = null;
-    let eventEndedAt = null;
-    let eventDuration = null;
-    let capacity = null;
-    let scheduledDate = null;
-    let secureCode = null;
-    let messages = [];
-    let name = roomName;
-    let lastCheckHereMessageSentAt = null;
-    let lastCheckTimeLeftMessageSentAt = null;
-    let waitRoom;
-    let coHost = null;
-    let coHostResponsibilities = [
-      { name: "participants", value: false, dedicated: false },
-      { name: "waiting", value: false, dedicated: false },
-      { name: "chat", value: false, dedicated: false },
-      { name: "media", value: false, dedicated: false },
-    ];
-    let userAudios = [];
-    let roomPolls = [];
-    let currentPollId = null;
-    let currentPoll = null;
-    let breakoutRooms = [];
-    let breakoutRoomStarted = false;
-    let breakoutRoomEnded = false;
-    let breakoutRoomAction = null;
-    let hostBreakoutRoom = null;
-    let whiteboardUsers = [];
-    let whiteboardData = {};
-    let whiteboardStarted = false;
-    let whiteboardEnded = false;
-
     if (rooms[roomName]) {
-      router = rooms[roomName].router;
-      members = rooms[roomName].members;
-      peers = rooms[roomName].peers || [];
-      allowScreenShare = rooms[roomName].allowScreenShare;
-      screenProducerId = rooms[roomName].screenProducerId;
-      screenProducerName = rooms[roomName].screenProducerName;
-      settings = rooms[roomName].settings;
-      waiting = rooms[roomName].waiting;
-      eventStarted = rooms[roomName].eventStarted;
-      eventEnded = rooms[roomName].eventEnded;
-      eventStartedAt = rooms[roomName].eventStartedAt;
-      eventEndedAt = rooms[roomName].eventEndedAt;
-      eventDuration = rooms[roomName].eventDuration;
-      capacity = rooms[roomName].eventMaxParticipants;
-      scheduledDate = rooms[roomName].scheduledDate;
-      secureCode = rooms[roomName].secureCode;
-      messages = rooms[roomName].messages;
-      lastCheckHereMessageSentAt = rooms[roomName].lastCheckHereMessageSentAt;
-      lastCheckTimeLeftMessageSentAt =
-        rooms[roomName].lastCheckTimeLeftMessageSentAt;
-      waitRoom = rooms[roomName].waitRoom;
-      coHost = rooms[roomName].coHost;
-      coHostResponsibilities = rooms[roomName].coHostResponsibilities;
-      userAudios = rooms[roomName].userAudios;
-
-      roomPolls = rooms[roomName].roomPolls;
-      currentPollId = rooms[roomName].currentPollId;
-      currentPoll = rooms[roomName].currentPoll;
-      breakoutRooms = rooms[roomName].breakoutRooms;
-      breakoutRoomStarted = rooms[roomName].breakoutRoomStarted;
-      breakoutRoomEnded = rooms[roomName].breakoutRoomEnded;
-      breakoutRoomAction = rooms[roomName].breakoutRoomAction;
-      hostBreakoutRoom = rooms[roomName].hostBreakoutRoom;
-      whiteboardUsers = rooms[roomName].whiteboardUsers;
-      whiteboardData = rooms[roomName].whiteboardData;
-      whiteboardStarted = rooms[roomName].whiteboardStarted;
-      whiteboardEnded = rooms[roomName].whiteboardEnded;
-    } else {
-      // create new router
-      router = await worker.createRouter({ mediaCodecs });
-      allowScreenShare = true;
-      screenProducerId = null;
-      members = [];
-
-      settings = [
-        tempEventRooms[roomName].eventRoomParams.audioSetting,
-        tempEventRooms[roomName].eventRoomParams.videoSetting,
-        tempEventRooms[roomName].eventRoomParams.screenshareSetting,
-        tempEventRooms[roomName].eventRoomParams.chatSetting,
-      ];
-      let room_ = tempEventRooms[roomName];
-      if (room_) {
-        eventDuration = room_.duration;
-        capacity = room_.capacity;
-        waitRoom = room_.waitRoom;
+      // Existing room — just add the new peer and return the router
+      if (!rooms[roomName].peers.includes(socketId)) {
+        rooms[roomName].peers.push(socketId);
       }
-      eventStartedAt = new Date();
-      eventStarted = true;
-      eventEnded = false;
-      secureCode = tempEventRooms[roomName].secureCode;
+      return rooms[roomName].router;
     }
 
+    // New room — create router and initialize all state
+    const router = await worker.createRouter({ mediaCodecs });
+    const room_ = tempEventRooms[roomName];
+
+    const settings = room_ ? [
+      room_.eventRoomParams.audioSetting,
+      room_.eventRoomParams.videoSetting,
+      room_.eventRoomParams.screenshareSetting,
+      room_.eventRoomParams.chatSetting,
+    ] : [];
+
     rooms[roomName] = {
-      name,
+      name: roomName,
       router,
-      members,
-      peers: [...peers, socketId],
-      settings: settings,
-      allowScreenShare,
-      screenProducerId,
-      screenProducerName,
-      waiting,
-      eventStarted,
-      eventEnded,
-      eventStartedAt,
-      eventEndedAt,
-      eventDuration,
-      capacity,
-      scheduledDate,
-      secureCode,
-      messages,
-      lastCheckHereMessageSentAt,
-      lastCheckTimeLeftMessageSentAt,
-      waitRoom,
-      coHost,
-      coHostResponsibilities,
-      userAudios,
-      roomPolls,
-      currentPollId,
-      currentPoll,
-      breakoutRooms,
-      breakoutRoomStarted,
-      breakoutRoomEnded,
-      breakoutRoomAction,
-      hostBreakoutRoom,
-      whiteboardUsers,
-      whiteboardData,
-      whiteboardStarted,
-      whiteboardEnded,
+      members: [],
+      peers: [socketId],
+      settings,
+      allowScreenShare: true,
+      screenProducerId: null,
+      screenProducerName: null,
+      waiting: [],
+      eventStarted: true,
+      eventEnded: false,
+      eventStartedAt: new Date(),
+      eventEndedAt: null,
+      eventDuration: room_ ? room_.duration : null,
+      capacity: room_ ? room_.capacity : null,
+      scheduledDate: null,
+      secureCode: room_ ? room_.secureCode : null,
+      messages: [],
+      lastCheckHereMessageSentAt: null,
+      lastCheckTimeLeftMessageSentAt: null,
+      waitRoom: room_ ? room_.waitRoom : undefined,
+      coHost: null,
+      coHostResponsibilities: [
+        { name: "participants", value: false, dedicated: false },
+        { name: "waiting", value: false, dedicated: false },
+        { name: "chat", value: false, dedicated: false },
+        { name: "media", value: false, dedicated: false },
+      ],
+      userAudios: [],
+      roomPolls: [],
+      currentPollId: null,
+      currentPoll: null,
+      breakoutRooms: [],
+      breakoutRoomStarted: false,
+      breakoutRoomEnded: false,
+      breakoutRoomAction: null,
+      hostBreakoutRoom: null,
+      whiteboardUsers: [],
+      whiteboardData: {},
+      whiteboardStarted: false,
+      whiteboardEnded: false,
     };
 
     return router;
@@ -2068,16 +1990,16 @@ connections.on("connection", async (socket) => {
     try {
       const emitName = "pollUpdated";
 
-      await rooms[roomName].members.forEach(async (member) => {
+      rooms[roomName].members.forEach((member) => {
         try {
           let member_socket = peers[member.id].socket;
           if (member.islevel !== "2") {
-            await member_socket.emit(emitName, {
+            member_socket.emit(emitName, {
               poll: convertPolls([poll])[0],
               status: ended ? "ended" : "started",
             });
           } else {
-            await member_socket.emit(emitName, {
+            member_socket.emit(emitName, {
               poll: convertPolls([poll])[0],
               polls: convertPolls(polls),
               status: ended ? "ended" : "started",
@@ -2353,18 +2275,18 @@ connections.on("connection", async (socket) => {
       const emitName = "breakoutRoomUpdated";
       const hostNewRoom = rooms[roomName].hostBreakoutRoom;
 
-      await rooms[roomName].members.forEach(async (member) => {
+      rooms[roomName].members.forEach((member) => {
         try {
           let member_socket = peers[member.id].socket;
           if (member.islevel != "2") {
-            await member_socket.emit(emitName, {
+            member_socket.emit(emitName, {
               breakoutRooms: rooms[roomName].breakoutRooms,
               status: ended ? "ended" : "started",
               newRoom: hostNewRoom,
               forHost,
             });
           } else {
-            await member_socket.emit(emitName, {
+            member_socket.emit(emitName, {
               breakoutRooms: rooms[roomName].breakoutRooms,
               status: ended ? "ended" : "started",
               members: rooms[roomName].members,
@@ -2458,16 +2380,16 @@ connections.on("connection", async (socket) => {
     try {
       const emitName = "whiteboardUpdated"; // ended ? 'whiteboardEnded' : 'whiteboardStarted'
 
-      await rooms[roomName].members.forEach(async (member) => {
+      rooms[roomName].members.forEach((member) => {
         try {
           let member_socket = peers[member.id].socket;
           if (member.islevel != "2") {
-            await member_socket.emit(emitName, {
+            member_socket.emit(emitName, {
               whiteboardUsers: rooms[roomName].whiteboardUsers,
               status: ended ? "ended" : "started",
             });
           } else {
-            await member_socket.emit(emitName, {
+            member_socket.emit(emitName, {
               whiteboardUsers: rooms[roomName].whiteboardUsers,
               status: ended ? "ended" : "started",
               members: rooms[roomName].members,
@@ -2541,7 +2463,7 @@ connections.on("connection", async (socket) => {
           try {
             let member_socket = peers[member.id].socket;
             if (member.name !== name) {
-              await member_socket.emit(emitName, { action, payload, name });
+              member_socket.emit(emitName, { action, payload, name });
             }
           } catch (error) {
             logger.error(
@@ -2587,7 +2509,7 @@ connections.on("connection", async (socket) => {
       let roomName;
 
       for (const [key, value] of Object.entries(tempEventRooms)) {
-        member = await value.members.find((member) => member.socketId === sec);
+        member = value.members.find((member) => member.socketId === sec);
         roomName = key;
         if (member) break;
       }
@@ -2630,18 +2552,18 @@ connections.on("connection", async (socket) => {
     async ({ eventID, userName, secret }, callback) => {
       try {
         if (!rooms[eventID].eventEnded) {
-          let member = await tempEventRooms[eventID].members.find(
+          let member = tempEventRooms[eventID].members.find(
             (member) => member.name === userName && member.socketId === secret
           );
           if (member) {
-            let remainingCapacity = await tempEventRooms[eventID]
+            let remainingCapacity = tempEventRooms[eventID]
               .remainingCapacity;
 
             if (remainingCapacity < 1) {
               remainingCapacity = 1;
             }
 
-            tempEventRooms[eventID].remainingCapacity = await remainingCapacity;
+            tempEventRooms[eventID].remainingCapacity = remainingCapacity;
 
             let url = `/meet/${eventID}/${secret}`;
 
@@ -2662,7 +2584,7 @@ connections.on("connection", async (socket) => {
       try {
         let socketId = socket.id;
 
-        let islevel = await rooms[roomName].members.find(
+        let islevel = rooms[roomName].members.find(
           (member) => member.id === socketId
         ).islevel;
 
@@ -2682,9 +2604,9 @@ connections.on("connection", async (socket) => {
             rooms[roomName].coHost = coHost;
             rooms[roomName].coHostResponsibilities = coHostResponsibility;
             try {
-              await rooms[roomName].members.forEach(async (member) => {
+              rooms[roomName].members.forEach((member) => {
                 const socket_Id = member.id;
-                await peers[socket_Id].socket.emit("updatedCoHost", {
+                peers[socket_Id].socket.emit("updatedCoHost", {
                   coHost,
                   coHostResponsibilities: coHostResponsibility,
                 });
@@ -2737,10 +2659,10 @@ connections.on("connection", async (socket) => {
               });
             }
 
-            room.waiting = await room.waiting.filter(
+            room.waiting = room.waiting.filter(
               (member) => member.id !== participantId
             );
-            tempEventRooms[roomName].waiting = await tempEventRooms[
+            tempEventRooms[roomName].waiting = tempEventRooms[
               roomName
             ].waiting.filter((member) => member.id !== participantId);
 
@@ -2748,10 +2670,10 @@ connections.on("connection", async (socket) => {
 
             await updateWaitingHost({ roomName });
 
-            let coHost = await rooms[roomName].coHost;
+            let coHost = rooms[roomName].coHost;
 
             if (coHost) {
-              let eventID = await roomName;
+              let eventID = roomName;
 
               //let us check coHostResponsibilities
               let participantsDedicatedValue = false;
@@ -2785,8 +2707,8 @@ connections.on("connection", async (socket) => {
   socket.on("getMessage", async ({ roomName }, callback) => {
     try {
       try {
-        let name = await peers[socket.id].name;
-        let messages = await rooms[roomName].messages;
+        let name = peers[socket.id].name;
+        let messages = rooms[roomName].messages;
         if (messages) {
           callback({ messages_: messages });
         }
@@ -2798,14 +2720,14 @@ connections.on("connection", async (socket) => {
     try {
       if (rooms[roomName]) {
         try {
-          const room = await rooms[roomName];
+          const room = rooms[roomName];
           room.messages = [...room.messages, messageObject];
           rooms[roomName] = room;
-          const members = await rooms[roomName].members;
+          const members = rooms[roomName].members;
 
-          members.forEach(async (member) => {
+          members.forEach((member) => {
             try {
-              const member_socket = await peers[member.id].socket;
+              const member_socket = peers[member.id].socket;
               member_socket.emit("receiveMessage", { message: messageObject });
             } catch (error) {}
           });
@@ -2818,14 +2740,14 @@ connections.on("connection", async (socket) => {
     try {
       let socketId = socket.id;
 
-      const roomName = await peers[socket.id].roomName;
-      const name = await rooms[roomName].members.find(
+      const roomName = peers[socket.id].roomName;
+      const name = rooms[roomName].members.find(
         (member) => member.id === socket.id
       ).name;
 
       if (rooms[roomName]) {
         try {
-          let member = await rooms[roomName].members.find(
+          let member = rooms[roomName].members.find(
             (member_info) =>
               member_info.id == socketId && member_info.name == name
           );
@@ -2862,9 +2784,9 @@ connections.on("connection", async (socket) => {
 
   socket.on("startScreenShare", async () => {
     try {
-      const roomName = await peers[socket.id].roomName;
+      const roomName = peers[socket.id].roomName;
       if (rooms[roomName]) {
-        const room = await rooms[roomName];
+        const room = rooms[roomName];
         room.allowScreenShare = false;
         rooms[roomName] = room;
       }
@@ -2873,10 +2795,10 @@ connections.on("connection", async (socket) => {
 
   socket.on("requestScreenShare", async (callback) => {
     try {
-      let roomName = await peers[socket.id].roomName;
+      let roomName = peers[socket.id].roomName;
 
       if (rooms[roomName]) {
-        const room = await rooms[roomName];
+        const room = rooms[roomName];
         callback({ allowScreenShare: room.allowScreenShare });
       }
     } catch (error) {}
@@ -2887,23 +2809,23 @@ connections.on("connection", async (socket) => {
       if (rooms[roomName]) {
         try {
           let socketId = socket.id;
-          let name = await rooms[roomName].members.find(
+          let name = rooms[roomName].members.find(
             (member) => member.id === socketId
           ).name;
 
-          let members = await rooms[roomName].members;
-          let member_Index = await members.findIndex(
+          let members = rooms[roomName].members;
+          let member_Index = members.findIndex(
             (member) =>
               member.id === socketId && member.name === userRequest.username
           );
 
           if (member_Index !== -1) {
-            await members[member_Index].requests.push(userRequest);
+            members[member_Index].requests.push(userRequest);
             rooms[roomName].members = members;
           }
 
           let requests = [];
-          await rooms[roomName].members.forEach((memberData) => {
+          rooms[roomName].members.forEach((memberData) => {
             if (memberData.requests) {
               memberData.requests.forEach((request) => {
                 requests = [
@@ -2925,7 +2847,7 @@ connections.on("connection", async (socket) => {
 
           await updateHostCoHostOfRequest({ roomName, userRequest });
 
-          let coHost = await rooms[roomName].coHost;
+           let coHost = rooms[roomName].coHost;
 
           if (coHost) {
             let eventID = roomName;
@@ -2963,7 +2885,7 @@ connections.on("connection", async (socket) => {
       if (rooms[roomName]) {
         try {
           rooms[roomName].settings = settings;
-          await rooms[roomName].members.forEach((member) => {
+          rooms[roomName].members.forEach((member) => {
             try {
               let member_Socket = peers[member.id].socket;
               member_Socket.emit("updateMediaSettings", { settings });
@@ -2988,9 +2910,9 @@ connections.on("connection", async (socket) => {
 
         if (rooms[roomName]) {
           try {
-            const { id, name, type, action, username } = await requestResponse;
-            let members = await rooms[roomName].members;
-            let member = await members.find(
+            const { id, name, type, action, username } = requestResponse;
+            let members = rooms[roomName].members;
+            let member = members.find(
               (member) =>
                 member.id === requestResponse.id && member.name === username
             );
@@ -3000,11 +2922,11 @@ connections.on("connection", async (socket) => {
             }
 
             if (action === "accepted") {
-              member.requests = await member.requests.filter(
+              member.requests = member.requests.filter(
                 (request) => request.icon != type
               );
             } else {
-              member.requests = await member.requests.filter(
+              member.requests = member.requests.filter(
                 (request) => request.icon != type
               );
             }
@@ -3101,16 +3023,16 @@ connections.on("connection", async (socket) => {
     let member;
 
     try {
-      roomName = await peers[socket.id].roomName;
+      roomName = peers[socket.id].roomName;
 
       if (!roomName) {
         return;
       }
 
-      name = await rooms[roomName].members.find(
+      name = rooms[roomName].members.find(
         (member) => member.id === socket.id
       ).name;
-      member = await rooms[roomName].members.find(
+      member = rooms[roomName].members.find(
         (member) => member.id === socket.id
       );
 
@@ -3328,9 +3250,9 @@ connections.on("connection", async (socket) => {
         apiKey = tempCredentials.apiKey;
       }
 
-      let mediasfuURL = tempEventRooms[roomName].members.find(
+      let mediasfuURL = tempEventRooms[roomName]?.members?.find(
         (member_info) => member_info.name === member
-      ).mediasfuURL;
+      )?.mediasfuURL || null;
 
       callback({
         rtpCapabilities,
@@ -3412,7 +3334,7 @@ connections.on("connection", async (socket) => {
       let members = [];
 
       if (rooms[roomName]) {
-        members = await rooms[roomName].members;
+        members = rooms[roomName].members;
         if (members) {
           let member_Index = members.findIndex(
             (memberData) => memberData.name == member
@@ -3623,7 +3545,7 @@ connections.on("connection", async (socket) => {
         if (
           producerData.socketId !== socket.id &&
           producerData.roomName === roomName &&
-          producerData.islevel === islevel
+          (islevel == undefined || producerData.islevel == islevel)
         ) {
           producerList = [...producerList, producerData.producer.id];
         }
@@ -3682,7 +3604,7 @@ connections.on("connection", async (socket) => {
             try {
               let members = rooms[roomName].members;
 
-              members.forEach(async (member) => {
+              members.forEach((member) => {
                 if (member.id !== socketId) {
                   try {
                     const member_socket = peers[member.id].socket;
@@ -3753,7 +3675,12 @@ connections.on("connection", async (socket) => {
             transportData.transport.id == serverConsumerTransportId
         )?.transport;
 
-        consumerTransport.connect({ dtlsParameters });
+        if (consumerTransport) {
+          await consumerTransport.connect({ dtlsParameters });
+          logger.debug({ socketId: socket.id, serverConsumerTransportId }, "Consumer transport connected");
+        } else {
+          logger.warn({ socketId: socket.id, serverConsumerTransportId }, "Consumer transport not found");
+        }
       } catch (error) {
         logger.error({ error: error.message }, "Error in transport-recv-connect");
       }
