@@ -58,6 +58,8 @@ MediaSFU powers cost-efficient AI voice agents over traditional telephony networ
 
 📖 **[Complete SIP/PSTN & Telephony Documentation →](https://mediasfu.com/telephony)**
 
+> Cloud/NAT users (AWS/GCP/Azure): After setting your public `ip`, ensure mediasoup transports advertise it by setting `announcedIp` in `listenIps` (see the installation step for the exact before/after snippet).
+
 ---
 
 ## 💡 Key Features
@@ -188,13 +190,147 @@ sudo certbot --nginx -d example.mediasfu.com
 sudo systemctl restart nginx
 ```
 
-#### Step 5: Process Management with PM2
-```bash
-sudo npm install -g pm2
-pm2 start index.js --name mediasfu
-pm2 save
-pm2 startup
-```
+12. **Obtain SSL certificates using Certbot:**
+
+    ```bash
+    sudo certbot --nginx -d example.mediasfu.com
+    ```
+13. **Final Nginx configuration:**
+
+    The final Nginx configuration should look like this:
+
+    ```nginx
+    server {
+        root /var/www/html;
+        server_name example.com demo.example.com; #your domain details
+
+        location / {
+            proxy_pass http://localhost:3000; #whatever port your app runs on
+            proxy_set_header X-Real-IP $remote_addr; # Capture client's real IP
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Capture client's forwarded IP(s)
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        listen 443 ssl; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    }
+
+    server {
+        if ($host = example.com) {
+            return 301 https://$host$request_uri;
+        } # managed by Certbot
+
+        listen 80;
+        server_name example.com demo.example.com;
+        return 404; # managed by Certbot
+    }
+    ```
+    
+    Restart Nginx:
+    ```bash
+      sudo systemctl restart nginx
+    ```
+    
+    **Note:** Replace `example.com` with your domain details. You may need to enable the Nginx service to start on boot:
+
+    ```bash
+     sudo systemctl enable nginx
+    ```
+
+14. **Install PM2 globally:**
+
+    ```bash
+    sudo npm install pm2 -g
+    ```
+
+15. **Edit the `index.js` file to specify your server's IP address:**
+
+    Open the `index.js` file located in the root directory of your MediaSFUOpen installation.
+
+    Find the section of code where the IP address is specified, usually near the beginning of the file.
+
+    Change the IP address to your server's public IP address.
+
+    Save the changes and close the file.
+
+    ```javascript
+    // Example: Change this line to your server's public IP address
+    // If on AWS/GCP/Azure behind NAT, use your Elastic/Public IP (not a private 10.x/172.31.x)
+    const ip = 'your_server_public_ip';
+    ```
+
+    If you're deploying on AWS/GCP/Azure (NAT/Elastic IP), also update your mediasoup transport config so the announced public IP is used by clients:
+
+        ```javascript
+        // BEFORE
+        listenIps: [
+            {
+                ip: ip,
+                announcedIp: null,
+            },
+        ],
+
+        // AFTER (cloud/NAT)
+        listenIps: [
+            {
+                ip: '0.0.0.0',
+                announcedIp: ip, // your Elastic/Public IP here
+            },
+        ],
+        ```
+
+        Updating the IP address ensures that MediaSFUOpen binds to the correct network interface and listens on the appropriate IP address.
+    
+16. **🛡️ Edit the `index.js` file to specify safe origins for secure Socket.IO Connections**
+
+    To restrict Socket.IO connections to specific origins for enhanced security, follow these steps:
+
+    Open the `index.js` file located in your Node.js application's directory.
+
+    Find the section of code where the safe origins are specified.
+
+    Add the origins you want to allow to the `safeOrigins` array.
+
+    Save the changes and close the file.
+
+    ```javascript
+    // Example: Define safe origins
+    const safeOrigins = [`https://localhost:${PORT}`];
+    ```
+    
+    Replace with the origins you want to allow. You can add as many origins as needed to the array. Example:
+    
+    ```javascript
+    const safeOrigins = ['https://example.com', 'http://localhost:3000'];
+    ```
+
+17. **Start the MediaSFU application using PM2:**
+
+    ```bash
+    sudo pm2 start index.js
+    ```
+
+18. **Access the application:**
+
+    You can access your MediaSFU application at `/meeting/start` on your domain. Starting a meeting is straightforward and easy. If you need help, refer to the [documentation](https://www.mediasfu.com/docs) for a guide and full feature access.
+
+19. **Replace images and HTML files:**
+
+    If needed, you can replace the images located in the `public` and `public_alt` folders with your own images. Additionally, update the HTML files in the project to match your brand.
+
+20. **Maximum Participants:**
+
+    MediaSFU recommends a maximum of 100 participants on HD or 200 on SD video.
+
+Once the installation is complete, your MediaSFU application will be running with SSL enabled, providing a secure streaming environment.
 
 ---
 
@@ -214,7 +350,175 @@ pm2 startup
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
 
-- **Website**: [mediasfu.com](https://mediasfu.com)
-- **Documentation**: [mediasfu.com/docs](https://www.mediasfu.com/docs)
-- **Community Forum**: [mediasfu.com/forums](https://www.mediasfu.com/forums)
-- **GitHub**: [github.com/MediaSFU](https://github.com/MediaSFU)
+- [**macOS Setup Guide**](./macOS_SETUP.md)
+- [**Windows Setup Guide**](./WINDOWS_SETUP.md)
+
+These guides will cover:
+
+- Installing Node.js and dependencies on macOS or Windows.
+- Adjusting firewall settings or using system tools to open necessary ports.
+- Obtaining or creating SSL certificates and configuring your application to run securely.
+- Setting up reverse proxies (if needed) and local web servers.
+- Using PM2 or platform-specific process managers.
+- Any platform-specific instructions that differ from the Ubuntu production setup.
+
+---
+
+## Cloud Recording & Egress
+
+**Cloud Recording and Egress** are powerful features provided by [MediaSFU.com](https://mediasfu.com) as part of their MediaSFU Cloud services. These features enable functionalities such as cloud recording, capturing audio buffers, real-time image processing for machine learning (ML) applications (e.g., Large Language Models), and other egress purposes.
+
+By default, MediaSFU is configured to support these egress capabilities. However, to utilize these features effectively, you need to perform specific configurations. This section provides detailed instructions on enabling cloud recording and configuring your client applications to connect securely to your MediaSFU server.
+
+### Overview
+
+1. **Enable Cloud Recording:**
+   - Configure environment variables.
+   - Provide necessary API credentials.
+   - Set the operational mode (sandbox or production).
+
+2. **Connect Client Applications to MediaSFU Server:**
+   - Configure `safeOrigins` for each client framework.
+   - Utilize MediaSFU Keys for enhanced security.
+   - Refer to Quickstart Guides for specific frameworks.
+
+3. **Security Best Practices:**
+   - Implement authentication methods.
+   - Restrict cross-origin requests.
+   - Use SSL/TLS for encrypted communication.
+
+---
+
+### 1. Enable Cloud Recording
+
+Cloud recording is a premium feature that allows you to record media streams for later playback, analysis, or processing.
+
+#### Steps to Enable Cloud Recording:
+
+1. **Edit the `.env` File:**
+
+   Open the `.env` file located in the root directory of your MediaSFU installation.
+
+2. **Set `ALLOWRECORD` to `true`:**
+
+   Enable recording by modifying the `ALLOWRECORD` environment variable.
+
+   ```env
+   ALLOWRECORD=true
+   ```
+
+3. **Provide API Credentials:**
+
+   Obtain a valid username and API key from [MediaSFU.com](https://mediasfu.com). These credentials are essential for authenticating recording requests.
+
+   ```env
+   APIUSERNAME=your_mediasfu_username
+   APIKEY=your_mediasfu_apikey
+   ```
+
+4. **Set the Operational Mode:**
+
+   MediaSFU offers different modes to suit your development and production needs.
+
+   - **sandbox:** Ideal for development and testing. It allows requests from non-registered domains but comes with usage limitations.
+   - **production:** Designed for live deployments. It restricts requests to registered domains and offers unlimited usage.
+
+   ```env
+   MODE=sandbox
+   ```
+   
+   or
+
+   ```env
+   MODE=production
+   ```
+
+   **Note:** After editing the `.env` file, save the changes and restart your MediaSFU server to apply the new configurations.
+
+   
+    Sample `.env` file:
+
+    - **Edit the `.env` file:**
+
+      Open the `.env` file located in the root directory of your MediaSFU installation.
+
+    - **Set `ALLOWRECORD` to true:**
+
+      Change the value of `ALLOWRECORD` to true.
+
+      ```
+      ALLOWRECORD=true
+      ```
+
+    - **Provide API credentials:**
+
+      You need a valid username and API key from MediaSFU.com to enable recording. You can obtain these credentials from MediaSFU.com.
+
+      - **APIUSERNAME:** Your MediaSFU username
+      - **APIKEY:** Your MediaSFU API key
+
+      ```
+      APIUSERNAME=your_mediasu_username
+      APIKEY=your_mediasfu_apikey
+      ```
+
+    - **Set the mode:**
+
+      MediaSFU provides demo, sandbox, and production keys. You may use either the sandbox or production mode.
+
+      - **MODE:** Choose either sandbox or production mode based on your needs.
+
+        - **sandbox:** Allows requests from non-registered domains but is limited.
+        - **production:** Only allows requests from registered domains and is unlimited.
+
+      ```
+      MODE=sandbox
+      ```
+      
+      Make sure to save the changes after editing the `.env` file and restart.
+
+5. **Subscription Plans:**
+
+   For detailed information about available subscription plans, visit [MediaSFU Subscription Info](https://mediasfu.com/subscription-info).
+
+> **Note:**  
+> The majority of subscription fees are designed to support large organizations and institutions that manage numerous users under a single profile. This structure allows for the efficient handling of sub-users, ensuring seamless scalability and robust support. The fees help cover the overhead costs associated with maintaining and servicing extensive client bases, providing reliable performance and dedicated resources to meet the needs of large-scale deployments.
+>
+> **Additional Note:**  
+> If your organization does not require support for a large number of users, please contact our support team. We can credit your account and adjust your subscription to accommodate a reduced number of sub-user limits, ensuring you only pay for the resources you need.
+
+---
+
+## Connecting Your MediaSFU SDKs to the Community Edition Server
+
+To connect your MediaSFU SDKs to the Community Edition server, follow these steps:
+- [**Connecting MediaSFU SDKs to the Community Edition Server**](./CONNECT.md)
+
+---
+
+## Additional Resources
+
+- [MediaSFU Documentation](https://www.mediasfu.com/docs)
+- [GitHub Repository](https://github.com/MediaSFU)
+- [Community Forums](https://www.mediasfu.com/forums)
+
+---
+
+## 📡 Connecting Your MediaSFU SDKs to the Community Edition Server
+
+To connect your MediaSFU SDKs to the Community Edition server, follow the guides below based on your preferred framework:
+
+### ✅ Video Guides Available:
+- **React SDK Setup:** [Watch the React SDK Setup Guide](https://youtu.be/VvulSNB_AYg)  
+  [![YouTube](http://i.ytimg.com/vi/VvulSNB_AYg/hqdefault.jpg)](https://www.youtube.com/watch?v=VvulSNB_AYg)  
+
+- **Flutter SDK Setup:** [Watch the Flutter SDK Setup Guide](https://youtu.be/IzwVEMBQ3p0)  
+  [![YouTube](http://i.ytimg.com/vi/IzwVEMBQ3p0/hqdefault.jpg)](https://www.youtube.com/watch?v=IzwVEMBQ3p0)  
+
+- **React Native SDK Setup (Expo & CLI):** [Watch the React Native SDK Setup Guide](https://youtu.be/uJkI7H26jq4)  
+  [![YouTube](http://i.ytimg.com/vi/uJkI7H26jq4/hqdefault.jpg)](https://www.youtube.com/watch?v=uJkI7H26jq4)  
+
+### 🚧 Coming Soon:
+- **Angular SDK Setup** *(Coming Soon)*  
+
+For additional instructions, refer to the [**Connecting SDKs Documentation**](./CONNECT.md).
